@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_ds/nocturne-b784e110-754a-4756-b3b3-8d8879273ee8/styles.css">
+<script src="_ds/nocturne-b784e110-754a-4756-b3b3-8d8879273ee8/_ds_bundle.js"></script>
+<style>
+html,body{margin:0;background:#12131c;color:#f2f2f7;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter",system-ui,sans-serif;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+a{color:#b5abfc;text-decoration:none}a:hover{color:#d2cefd}
+*{box-sizing:border-box}
+::selection{background:#423a6a}
+button:focus-visible{outline:2px solid #9184d9;outline-offset:2px}
+.nosb::-webkit-scrollbar{display:none}
+.press:active{transform:scale(0.97);opacity:0.85}
+.press{transition:transform 0.12s ease,opacity 0.12s ease}
+</style>
+</helmet>
+<div style="min-height:100vh;background:#12131c;color:#f2f2f7;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Inter',system-ui,sans-serif;font-size:16px;display:flex;flex-direction:column;max-width:560px;margin:0 auto;padding-bottom:96px">
+
+  <div style="padding:calc(14px + env(safe-area-inset-top)) 20px 12px;display:flex;flex-direction:column;gap:14px;background:#12131c;z-index:5;border-bottom:1px solid rgba(255,255,255,0.06)">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+      <div style="font-size:13px;font-weight:600;color:#8e8e93;letter-spacing:-0.01em">TMH Radiology</div>
+      <a href="index.html?desktop=1" style="font-size:13px;color:#8e8e93;font-weight:500">Desktop</a>
+    </div>
+    <div style="position:relative">
+      <button class="press" onClick="{{ toggleMenu }}" style="border:0;cursor:pointer;font:inherit;background:transparent;color:#f2f2f7;display:flex;align-items:center;gap:8px;padding:0;text-align:left">
+        <span style="font-size:30px;font-weight:700;letter-spacing:-0.03em;line-height:1.05">{{ periodTitle }}</span>
+        <span style="width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,0.1);display:inline-flex;align-items:center;justify-content:center;font-size:10px;color:#b5abfc;transform:{{ chevronRot }};transition:transform 0.2s;flex:0 0 auto;margin-top:4px">▼</span>
+      </button>
+      <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;top:100%;left:0;right:0;margin-top:10px;background:rgba(44,44,52,0.96);backdrop-filter:blur(30px);border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,0.5), 0 0 0 0.5px rgba(255,255,255,0.12);padding:6px;display:flex;flex-direction:column;gap:2px;z-index:20">
+          <sc-for list="{{ periodTabs }}" as="t" hint-placeholder-count="2">
+            <button class="press" onClick="{{ t.select }}" style="border:0;cursor:pointer;font:inherit;text-align:left;font-size:16px;font-weight:500;min-height:48px;padding:0 14px;border-radius:11px;background:{{ t.bg }};color:{{ t.fg }};display:flex;justify-content:space-between;align-items:center"><span>{{ t.title }}</span><span style="color:#b5abfc;font-weight:600">{{ t.check }}</span></button>
+          </sc-for>
+        </div>
+      </sc-if>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:6px;padding-top:2px">
+      <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px">
+        <div style="text-align:center;font-size:11px;font-weight:600;color:#636366">S</div>
+        <div style="text-align:center;font-size:11px;font-weight:600;color:#636366">M</div>
+        <div style="text-align:center;font-size:11px;font-weight:600;color:#636366">T</div>
+        <div style="text-align:center;font-size:11px;font-weight:600;color:#636366">W</div>
+        <div style="text-align:center;font-size:11px;font-weight:600;color:#636366">T</div>
+        <div style="text-align:center;font-size:11px;font-weight:600;color:#636366">F</div>
+        <div style="text-align:center;font-size:11px;font-weight:600;color:#636366">S</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px">
+        <sc-for list="{{ days }}" as="d" hint-placeholder-count="28">
+          <button class="press" onClick="{{ d.select }}" style="border:0;cursor:pointer;font:inherit;height:48px;border-radius:14px;background:{{ d.bg }};color:{{ d.fg }};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;opacity:{{ d.op }};padding:0;transition:background 0.2s;position:relative">
+            <span style="font-size:9px;font-weight:600;line-height:1;color:{{ d.monColor }};position:absolute;top:5px;left:0;right:0;text-align:center">{{ d.mon }}</span>
+            <span style="font-size:17px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:-0.02em;margin-top:6px">{{ d.num }}</span>
+            <span style="display:flex;gap:3px;height:5px;align-items:center">
+              <span style="width:5px;height:5px;border-radius:50%;background:{{ d.todayDot }}"></span>
+              <span style="width:5px;height:5px;border-radius:50%;background:{{ d.gapDot }}"></span>
+            </span>
+          </button>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+
+  <sc-if value="{{ showDay }}" hint-placeholder-val="{{ true }}">
+    <div style="padding:20px;display:flex;flex-direction:column;gap:18px">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+        <div style="display:flex;flex-direction:column;gap:3px">
+          <div style="font-size:13px;font-weight:600;color:#8e8e93">On shift</div>
+          <div style="display:flex;align-items:baseline;gap:10px"><span style="font-size:24px;font-weight:700;letter-spacing:-0.025em;line-height:1.1">{{ selDateLabel }}</span><span style="font-size:12px;font-weight:600;color:#b5abfc;background:rgba(145,132,217,0.16);padding:3px 8px;border-radius:999px">{{ todayTag }}</span></div>
+        </div>
+        <sc-if value="{{ todayVisible }}" hint-placeholder-val="{{ false }}">
+          <button class="press" onClick="{{ goToday }}" style="border:0;cursor:pointer;font:inherit;height:36px;padding:0 14px;border-radius:999px;background:rgba(145,132,217,0.16);color:#b5abfc;font-size:14px;font-weight:600">Today</button>
+        </sc-if>
+      </div>
+      <div class="nosb" data-cards="1" onScroll="{{ onCardsScroll }}" style="display:flex;gap:12px;overflow-x:auto;scrollbar-width:none;scroll-snap-type:x mandatory;margin:0 -20px;padding:0 20px;align-items:flex-start">
+        <sc-for list="{{ onGroups }}" as="g" hint-placeholder-count="3">
+          <div style="flex:0 0 100%;scroll-snap-align:center;scroll-snap-stop:always;background:rgba(255,255,255,0.06);border-radius:20px;padding:6px 0 0;display:flex;flex-direction:column;overflow:hidden;min-height:180px">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 18px 10px">
+              <div style="display:flex;align-items:center;gap:10px">
+                <span style="width:10px;height:10px;border-radius:50%;background:{{ g.dot }};box-shadow:0 0 10px {{ g.dot }}"></span>
+                <span style="font-size:17px;font-weight:600;letter-spacing:-0.01em">{{ g.name }}</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px">
+                
+                <span style="font-size:15px;font-weight:600;color:#8e8e93;font-variant-numeric:tabular-nums;background:rgba(255,255,255,0.08);min-width:30px;height:28px;padding:0 10px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center">{{ g.count }}</span>
+              </div>
+            </div>
+            <sc-for list="{{ g.people }}" as="p" hint-placeholder-count="2">
+              <div title="{{ p.tag }}" style="display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px;padding:0 18px;border-top:0.5px solid rgba(255,255,255,0.1);background:{{ p.rowBg }};color:{{ p.rowFg }}">
+                <span style="font-size:16px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-0.01em">{{ p.name }}</span>
+                <span style="font-size:15px;color:{{ p.timeFg }};white-space:nowrap;font-variant-numeric:tabular-nums">{{ p.time }}</span>
+              </div>
+            </sc-for>
+            <div style="font-size:14px;color:#636366;padding:0 18px 14px">{{ g.empty }}</div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="display:flex;justify-content:center;gap:8px;padding-top:2px">
+        <sc-for list="{{ cardDots }}" as="dt" hint-placeholder-count="3">
+          <button class="press" onClick="{{ dt.go }}" title="{{ dt.name }}" style="border:0;cursor:pointer;padding:0;width:{{ dt.w }};height:7px;border-radius:999px;background:{{ dt.bg }};transition:width 0.2s,background 0.2s"></button>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ showStaff }}" hint-placeholder-val="{{ false }}">
+    <div style="padding:8px 20px 20px;display:flex;flex-direction:column;gap:0">
+      <sc-for list="{{ staff }}" as="s" hint-placeholder-count="8">
+        <sc-if value="{{ s.isSection }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:13px;font-weight:600;color:#8e8e93;padding:22px 4px 8px;text-transform:uppercase;letter-spacing:0.02em">{{ s.name }}</div>
+        </sc-if>
+        <sc-if value="{{ s.isPerson }}" hint-placeholder-val="{{ true }}">
+          <div style="background:rgba(255,255,255,0.06);border-radius:18px;overflow:hidden;margin-bottom:8px;box-shadow:0 0 0 1px {{ s.ring }};transition:box-shadow 0.2s">
+            <button class="press" onClick="{{ s.toggle }}" style="border:0;cursor:pointer;font:inherit;background:transparent;color:#f2f2f7;width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:60px;padding:10px 18px;text-align:left">
+              <div style="display:flex;flex-direction:column;gap:7px;min-width:0">
+                <span style="font-size:17px;font-weight:600;letter-spacing:-0.01em">{{ s.name }}</span>
+                <div style="display:flex;height:4px;border-radius:2px;overflow:hidden;background:rgba(255,255,255,0.08);width:110px;gap:2px">
+                  <div style="flex:{{ s.dayH }};background:oklch(0.73 0.125 75);border-radius:2px"></div>
+                  <div style="flex:{{ s.eveH }};background:oklch(0.73 0.125 289);border-radius:2px"></div>
+                  <div style="flex:{{ s.nightH }};background:oklch(0.73 0.125 205);border-radius:2px"></div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px">
+                <span style="font-size:14px;color:#8e8e93;font-variant-numeric:tabular-nums">{{ s.summary }}</span>
+                <span style="font-size:13px;color:#636366;transform:{{ s.chev }};transition:transform 0.2s;display:inline-block">›</span>
+              </div>
+            </button>
+            <sc-if value="{{ s.open }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:0 18px 14px;display:flex;flex-direction:column">
+                <div style="font-size:13px;color:#8e8e93;padding:0 0 6px">{{ s.pnote }}</div>
+                <sc-for list="{{ s.shifts }}" as="sh" hint-placeholder-count="4">
+                  <div style="display:flex;align-items:center;gap:12px;min-height:46px;border-top:0.5px solid rgba(255,255,255,0.1);opacity:{{ sh.op }}">
+                    <span style="width:88px;font-size:14px;color:{{ sh.dateColor }};font-weight:500;flex:0 0 auto;white-space:nowrap">{{ sh.date }}</span>
+                    <span style="flex:1;display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;background:{{ sh.bg }};color:{{ sh.fg }};border:1px {{ sh.borderStyle }} {{ sh.border }};font-size:14px;font-weight:500;min-width:0"><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ sh.label }}</span><span style="font-size:10px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;opacity:0.9">{{ sh.tag }}</span></span>
+                    <span style="width:40px;text-align:right;font-size:13px;color:#8e8e93;font-variant-numeric:tabular-nums">{{ sh.hours }}</span>
+                  </div>
+                </sc-for>
+                <div style="display:flex;justify-content:space-between;padding-top:12px;font-size:14px;color:#8e8e93"><span>{{ s.weeks }}</span><span style="font-weight:600;color:#f2f2f7">{{ s.total }}</span></div>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+      </sc-for>
+    </div>
+  </sc-if>
+
+  <div style="position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:center;background:rgba(18,19,28,0.72);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border-top:0.5px solid rgba(255,255,255,0.08);padding:10px 20px calc(10px + env(safe-area-inset-bottom));z-index:6">
+    <div style="display:flex;gap:2px;padding:3px;border-radius:12px;background:rgba(255,255,255,0.08);width:100%;max-width:520px">
+      <button class="press" onClick="{{ viewDay }}" style="flex:1;border:0;cursor:pointer;font:inherit;min-height:40px;border-radius:9px;font-size:15px;font-weight:600;background:{{ dayTabBg }};color:{{ dayTabFg }};box-shadow:{{ dayTabShadow }};transition:background 0.2s">Day</button>
+      <button class="press" onClick="{{ viewStaff }}" style="flex:1;border:0;cursor:pointer;font:inherit;min-height:40px;border-radius:9px;font-size:15px;font-weight:600;background:{{ staffTabBg }};color:{{ staffTabFg }};box-shadow:{{ staffTabShadow }};transition:background 0.2s">Staff</button>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:844},&quot;minDay&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:5,&quot;min&quot;:0,&quot;max&quot;:12,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Coverage&quot;},&quot;minEvening&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:2,&quot;min&quot;:0,&quot;max&quot;:8,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Coverage&quot;},&quot;minNight&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:2,&quot;min&quot;:0,&quot;max&quot;:8,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Coverage&quot;}}">
+const CODES = { '7': '7a-730p', '(7)': '7a-730p', '8': '8a-430p', '(8)': '8a-430p', '3': '3p-1130p', '11': '11p-730a' };
+const TYPES = {
+  day:   { name: 'Day',     dot: 'oklch(0.73 0.125 75)',  bg: 'oklch(0.36 0.07 75)',  fg: 'oklch(0.92 0.06 75)' },
+  eve:   { name: 'Evening', dot: 'oklch(0.73 0.125 289)', bg: 'oklch(0.36 0.07 289)', fg: 'oklch(0.92 0.05 289)' },
+  night: { name: 'Night',   dot: 'oklch(0.73 0.125 205)', bg: 'oklch(0.36 0.07 205)', fg: 'oklch(0.92 0.05 205)' },
+};
+const ON = { bg: 'oklch(0.48 0.16 25)', fg: 'oklch(0.97 0.02 25)' };
+const OFFS = Array.from({ length: 28 }, (_, i) => i + 1);
+const WD = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const WDL = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const weekOf = o => Math.floor((o - 1) / 7);
+const toMin = (h, m, mer) => ((h % 12) + (mer === 'p' ? 12 : 0)) * 60 + m;
+const fmt = m => { m %= 1440; const h = Math.floor(m / 60), mm = m % 60, s = h >= 12 ? 'p' : 'a'; return (h % 12 || 12) + (mm ? ':' + String(mm).padStart(2, '0') : '') + s; };
+const hrs = n => Number.isInteger(n) ? String(n) : n.toFixed(1).replace('.0', '');
+function parseShift(raw) {
+  const red = raw.includes('*'), pen = raw.includes('~');
+  const code = raw.replace(/[*~]/g, '').trim();
+  const meta = { code, red, pen };
+  if (code === '/') return { ...meta, kind: 'off' };
+  if (code === 'V') return { ...meta, kind: 'vac' };
+  if (code === 'H') return { ...meta, kind: 'hol' };
+  const flagged = /^\(\d\)$/.test(code);
+  const note = flagged ? '' : code.replace(/^SF\s+/, '').replace(/^[\d:apm()-]+\s*/i, '').trim();
+  const rangeStr = (CODES[code] || code).replace(/^SF\s+/, '').split(/\s+/)[0];
+  const m = rangeStr.match(/^(\d{1,2})(\d{2})?([ap])?-(\d{1,2})(\d{2})?([ap])?$/);
+  if (!m) return { ...meta, kind: 'off' };
+  const sh = +m[1], eh = +m[4];
+  let endMer = m[6], startMer = m[3];
+  if (!endMer) endMer = (!startMer && (eh < sh || eh === 12)) ? 'p' : (startMer || 'a');
+  if (!startMer) startMer = m[6] ? endMer : 'a';
+  const start = toMin(sh, +(m[2] || 0), startMer), end = toMin(eh, +(m[5] || 0), endMer);
+  let dur = end - start; if (dur <= 0) dur += 1440;
+  const type = start < 600 ? 'day' : start < 1080 ? 'eve' : 'night';
+  return { ...meta, kind: 'shift', start, end, hours: dur / 60, type, flagged, note };
+}
+const parseRow = str => { const map = {}; str.split(',').forEach(tok => { if (!tok) return; const i = tok.indexOf(':'); map[+tok.slice(0, i)] = parseShift(tok.slice(i + 1)); }); return map; };
+const buildData = periods => periods.map(p => ({ ...p, sections: p.sections.map(([section, people]) => ({ section, people: people.map(([name, s, pnote]) => ({ name, shifts: parseRow(s), pnote: pnote || '' })) })) }));
+const dayOffset = (P, d) => { const s = new Date(P.start[0], P.start[1], P.start[2]); const o = Math.round((new Date(d.getFullYear(), d.getMonth(), d.getDate()) - s) / 86400000) + 1; return o >= 1 && o <= 28 ? o : null; };
+const todayInfo = DATA => { const now = new Date(); for (let i = 0; i < DATA.length; i++) { const o = dayOffset(DATA[i], now); if (o) return { period: i, offset: o }; } return null; };
+
+class Component extends DCLogic {
+  state = { data: null, selected: null, period: null, view: 'day', menuOpen: false, open: null, card: 0 };
+  componentDidMount() { import('./schedule-data.js').then(m => this.setState({ data: buildData(m.PERIODS) })); }
+  renderVals() {
+    const DATA = this.state.data;
+    if (!DATA) return { periodTitle: 'Loading…', days: [], onGroups: [], staff: [], periodTabs: [], showDay: true, showStaff: false };
+    const mins = { day: this.props.minDay ?? 5, eve: this.props.minEvening ?? 2, night: this.props.minNight ?? 2 };
+    const today = todayInfo(DATA);
+    const pi = this.state.period ?? (today ? today.period : DATA.length - 1);
+    const P = DATA[pi];
+    const todayOff = today && today.period === pi ? today.offset : null;
+    const sel = this.state.selected ?? todayOff ?? 1;
+    const dateOf = o => new Date(P.start[0], P.start[1], P.start[2] + o - 1);
+    const isPast = o => todayOff != null && o < todayOff;
+    const allCounts = {}; OFFS.forEach(o => allCounts[o] = { day: 0, eve: 0, night: 0 });
+    P.sections.forEach(({ people }) => people.forEach(p => OFFS.forEach(o => { const s = p.shifts[o]; if (s && s.kind === 'shift') allCounts[o][s.type]++; })));
+    const hasGap = o => ['day', 'eve', 'night'].some(k => allCounts[o][k] < mins[k]);
+    const days = OFFS.map(o => {
+      const dt = dateOf(o), isSel = o === sel;
+      return {
+        num: dt.getDate(), wd: WD[dt.getDay()], mon: (o === 1 || dt.getDate() === 1) ? MON[dt.getMonth()].toUpperCase() : '', monColor: isSel ? 'rgba(18,19,28,0.7)' : '#8e8e93',
+        gapDot: hasGap(o) ? (isSel ? 'rgba(18,19,28,0.55)' : 'oklch(0.8 0.15 70)') : 'transparent',
+        bg: isSel ? '#9184d9' : 'rgba(255,255,255,0.06)', fg: isSel ? '#12131c' : '#f2f2f7',
+        wdColor: isSel ? 'rgba(18,19,28,0.7)' : '#8e8e93', todayDot: o === todayOff ? (isSel ? '#12131c' : '#9184d9') : 'transparent', op: isPast(o) && !isSel ? 0.45 : 1,
+        select: () => this.setState({ selected: o === sel ? null : o }), selAttr: isSel ? '1' : '0',
+      };
+    });
+    const counts = { day: 0, eve: 0, night: 0 }, onLists = { day: [], eve: [], night: [] };
+    const staff = [];
+    P.sections.forEach(({ section, people }) => {
+      staff.push({ isSection: true, isPerson: false, name: section });
+      people.forEach(p => {
+        const wk = [0, 0, 0, 0], byType = { day: 0, eve: 0, night: 0 }; const shifts = []; let onCalls = 0;
+        OFFS.forEach(o => {
+          const s = p.shifts[o]; if (!s) return;
+          const dt = dateOf(o); const dateStr = WD[dt.getDay()] + ' ' + MON[dt.getMonth()] + ' ' + dt.getDate();
+          const row = { date: dateStr, dateColor: o === todayOff ? '#b5abfc' : '#9397ab', op: isPast(o) ? 0.5 : 1, tag: '', hours: '', bg: 'transparent', fg: '#b2b6ca', border: 'transparent', borderStyle: 'solid' };
+          if (s.kind === 'off') { shifts.push({ ...row, label: 'Requested off', fg: '#75798c' }); return; }
+          if (s.kind === 'hol') { shifts.push({ ...row, label: 'Holiday', fg: '#9397ab' }); return; }
+          if (s.kind === 'vac') { shifts.push({ ...row, label: 'Vacation', border: '#75798c', borderStyle: 'dashed' }); return; }
+          const t = TYPES[s.type]; wk[weekOf(o)] += s.hours; byType[s.type] += s.hours; counts[s.type] += o === sel ? 1 : 0;
+          if (s.red) onCalls++;
+          const time = fmt(s.start) + '–' + fmt(s.end) + (s.note ? ' · ' + s.note : '');
+          if (o === sel) onLists[s.type].push({ name: p.name, time, dot: s.red ? ON.bg : t.dot, tag: s.red ? 'On call' : '', rowBg: s.red ? ON.bg : 'transparent', rowFg: s.red ? ON.fg : '#f2f2f7', timeFg: s.red ? 'rgba(255,255,255,0.8)' : '#8e8e93', start: s.start });
+          shifts.push({ ...row, label: time, bg: s.red ? ON.bg : t.bg, fg: s.red ? ON.fg : t.fg, border: s.pen ? '#b5abfc' : 'transparent', tag: s.red ? 'on call' : '', hours: hrs(s.hours) + 'h' });
+        });
+        const total = wk.reduce((a, b) => a + b, 0); const open = this.state.open === p.name;
+        staff.push({
+          isSection: false, isPerson: true, name: p.name, pnote: p.pnote, open, ring: open ? 'rgba(145,132,217,0.5)' : 'transparent', chev: open ? 'rotate(90deg)' : 'rotate(0deg)',
+          toggle: () => this.setState(st => ({ open: st.open === p.name ? null : p.name })),
+          dayH: byType.day || 0, eveH: byType.eve || 0, nightH: byType.night || 0,
+          summary: hrs(total) + 'h' + (onCalls ? ' · ' + onCalls + ' on call' : ''), shifts,
+          weeks: 'Weeks ' + wk.map(h => h ? hrs(h) : '·').join(' / '), total: hrs(total) + ' h total',
+        });
+      });
+    });
+    const sd = dateOf(sel);
+    const view = this.state.view;
+    return {
+      periodTitle: P.title, menuOpen: this.state.menuOpen, toggleMenu: () => this.setState(s => ({ menuOpen: !s.menuOpen })), chevronRot: this.state.menuOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+      periodTabs: DATA.map((p, i) => ({ title: p.title, check: i === pi ? '✓' : '', bg: i === pi ? 'rgba(255,255,255,0.08)' : 'transparent', fg: '#f2f2f7', select: () => this.setState({ period: i, selected: null, menuOpen: false }) })),
+      days, selDateLabel: WDL[sd.getDay()] + ', ' + MON[sd.getMonth()] + ' ' + sd.getDate(), todayTag: sel === todayOff ? 'Today' : '',
+      todayVisible: !!today && (sel !== todayOff || today.period !== pi), goToday: () => today && this.setState({ period: today.period, selected: null }),
+      onGroups: ['day', 'eve', 'night'].map(k => { const low = counts[k] < mins[k]; return { name: TYPES[k].name, dot: TYPES[k].dot, count: counts[k], people: onLists[k].sort((a, b) => a.start - b.start), empty: counts[k] ? '' : 'No one scheduled', warn: low ? '⚠ below min ' + mins[k] : '', warnColor: 'oklch(0.8 0.15 70)' }; }),
+      staff, showDay: view === 'day', showStaff: view === 'staff',
+      onCardsScroll: e => { const el = e.currentTarget; const w = el.clientWidth; const i = Math.round(el.scrollLeft / (w + 12 - 40)); if (i !== this.state.card) this.setState({ card: Math.max(0, Math.min(2, i)) }); },
+      cardDots: ['Day', 'Evening', 'Night'].map((name, i) => ({ name, w: i === this.state.card ? '22px' : '7px', bg: i === this.state.card ? '#b5abfc' : 'rgba(255,255,255,0.18)', go: () => { const el = document.querySelector('[data-cards]'); if (el) el.scrollTo({ left: i * (el.clientWidth - 40 + 12), behavior: 'smooth' }); } })),
+      viewDay: () => this.setState({ view: 'day' }), viewStaff: () => this.setState({ view: 'staff' }),
+      dayTabBg: view === 'day' ? 'rgba(255,255,255,0.14)' : 'transparent', dayTabFg: view === 'day' ? '#f2f2f7' : '#8e8e93', dayTabShadow: view === 'day' ? '0 2px 8px rgba(0,0,0,0.35)' : 'none',
+      staffTabBg: view === 'staff' ? 'rgba(255,255,255,0.14)' : 'transparent', staffTabFg: view === 'staff' ? '#f2f2f7' : '#8e8e93', staffTabShadow: view === 'staff' ? '0 2px 8px rgba(0,0,0,0.35)' : 'none',
+    };
+  }
+}
+</script>
+</body>
+</html>
