@@ -43,7 +43,7 @@ button:focus-visible{outline:2px solid #9184d9;outline-offset:2px}
       <div style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:3px;border:1px dashed #75798c"></span>Vacation</div>
       <div style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:3px;display:flex;align-items:center;justify-content:center;color:#9397ab;font-size:8px;font-weight:600">H</span>Holiday</div>
       <div style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:3px;display:flex;align-items:center;justify-content:center;color:#75798c;font-size:10px">–</span>Requested off</div>
-      <div style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:3px;background:oklch(0.48 0.16 25)"></span>On call (stays over for call-ins)</div>
+      <div style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:3px;background:oklch(0.48 0.16 25)"></span>On call</div>
       <div style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:3px;border:1px solid #b5abfc"></span>Pen edit</div>
       <div style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:3px;background:oklch(0.42 0.1 25)"></span>Below minimum coverage</div>
     </div>
@@ -295,8 +295,8 @@ class Component extends DCLogic {
           const s = p.shifts[o]; const dt = dateOf(o);
           const base = { sepColor: sepColor(o), colBg: colBg(o), bg: 'rgba(233,233,237,0.035)', fg: '#75798c', border: 'transparent', borderStyle: 'solid', label: '', markBg: 'transparent', title: p.name + ' · ' + MON[dt.getMonth()] + ' ' + dt.getDate() };
           if (!s) return base;
-          const NOTES = { TMH: 'Thomas Memorial Hospital (main campus)', SF: 'St. Francis / Thomas Orthopedic Hospital', UC: 'University of Charleston (classroom, clinical instructor)' };
-          const extra = (s.red ? ' · ON CALL (stays over if a call comes in)' : '') + (s.pen ? ' · pen edit on original' : '');
+          const NOTES = { TMH: 'Thomas Memorial Hospital', SF: 'St. Francis / Thomas Orthopedic', UC: 'University of Charleston' };
+          const extra = (s.red ? ' · on call' : '') + (s.pen ? ' · pen edit' : '');
           const mark = { markBg: 'transparent', border: s.pen ? '#b5abfc' : 'transparent' };
           const ON = { bg: 'oklch(0.48 0.16 25)', fg: 'oklch(0.97 0.02 25)' };
           if (s.kind === 'off') return { ...base, ...mark, label: '–', title: base.title + ' · requested off' + extra };
@@ -306,7 +306,7 @@ class Component extends DCLogic {
           wk[weekOf(o)] += s.hours; byType[s.type] += s.hours; counts[o][s.type]++;
           const time = fmt(s.start) + '–' + fmt(s.end);
           if (o === sel) onLists[s.type].push({ name: p.name, time: time + (s.note ? ' ' + s.note : ''), bg: s.red ? ON.bg : TYPES[s.type].bg, fg: s.red ? ON.fg : TYPES[s.type].fg, tag: s.red ? 'on call' : '' });
-          return { ...base, ...mark, bg: s.red ? ON.bg : t.bg, fg: s.red ? ON.fg : t.fg, label: labelMode === 'codes' ? s.code : fmt(s.start) + '\n' + fmt(s.end) + (s.note ? '\n' + s.note : ''), title: base.title + ' · ' + time + ' · ' + hrs(s.hours) + 'h' + (s.note ? ' · ' + s.note.split(/\s+/).map(w => NOTES[w.toUpperCase()] || w).join(', ') : '') + (s.flagged ? ' · in parentheses on original' : '') + extra };
+          return { ...base, ...mark, bg: s.red ? ON.bg : t.bg, fg: s.red ? ON.fg : t.fg, label: labelMode === 'codes' ? s.code : fmt(s.start) + '\n' + fmt(s.end) + (s.note ? '\n' + s.note : ''), title: base.title + ' · ' + time + ' · ' + hrs(s.hours) + 'h' + (s.note ? ' · ' + s.note.split(/\s+/).map(w => NOTES[w.toUpperCase()] || w).join(', ') : '') + '' + extra };
         });
         const total = wk.reduce((a, b) => a + b, 0);
         rows.push({
