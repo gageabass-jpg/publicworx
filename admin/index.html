@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Schedule console · TMH Radiology</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#161826;--surface:#232532;--raised:#292b31;--hi:#2b2741;--line:#3f424d;--line-2:#595d6c;
+  --text:#e9e9ed;--text-2:#b2b6ca;--muted:#9397ab;--dim:#75798c;
+  --accent:#9184d9;--accent-2:#b5abfc;--accent-3:#d2cefd;--accent-4:#e7e5fe;--accent-line:#5d5294;--accent-bg:#423a6a;
+  --ok:oklch(0.75 0.15 150);--warn:oklch(0.8 0.15 70);--bad:oklch(0.72 0.17 25);--bad-bg:oklch(0.36 0.09 25);
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:"Inter",system-ui,sans-serif;font-size:13px;-webkit-font-smoothing:antialiased}
+a{color:var(--accent-2);text-decoration:none}a:hover{color:var(--accent-3)}
+::selection{background:var(--accent-bg)}
+button{font:inherit;cursor:pointer;border:0;border-radius:6px;padding:7px 12px;background:var(--hi);color:var(--accent-4);font-weight:500;box-shadow:0 0 0 1px var(--accent-line);transition:background .12s}
+button:hover{background:#342f52}
+button:disabled{opacity:.45;cursor:default}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button.primary{background:var(--accent);color:#161826;box-shadow:none}
+button.primary:hover{background:var(--accent-2)}
+button.ghost{background:transparent;box-shadow:0 0 0 1px var(--line);color:var(--text-2)}
+button.ghost:hover{background:var(--raised);color:var(--text)}
+button.danger{box-shadow:0 0 0 1px oklch(0.5 0.14 25);color:oklch(0.9 0.05 25);background:transparent}
+button.danger:hover{background:var(--bad-bg)}
+input[type=text],input[type=password]{font:inherit;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:8px 10px;width:100%}
+input:focus{outline:none;border-color:var(--accent)}
+.wrap{max-width:1100px;margin:0 auto;padding:22px 24px 60px;display:flex;flex-direction:column;gap:16px}
+.eyebrow{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
+h1{margin:0;font-size:24px;font-weight:500;letter-spacing:-.01em;line-height:1.1}
+h2{margin:0;font-size:14px;font-weight:500}
+.card{background:var(--surface);border-radius:10px;box-shadow:0 0 0 1px var(--line);padding:16px 18px;display:flex;flex-direction:column;gap:12px}
+.card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:860px){.grid2{grid-template-columns:1fr}}
+.muted{color:var(--muted)}.dim{color:var(--dim)}.small{font-size:11.5px}
+.mono{font-variant-numeric:tabular-nums;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:3px 8px;border-radius:999px;font-size:11px;font-weight:500;background:var(--hi);color:var(--accent-3)}
+.pill.ok{background:oklch(0.3 0.06 150);color:var(--ok)}
+.pill.warn{background:oklch(0.32 0.07 70);color:var(--warn)}
+.pill.bad{background:var(--bad-bg);color:oklch(0.95 0.03 25)}
+.periods{display:flex;flex-direction:column;gap:6px}
+.period{display:grid;grid-template-columns:1fr auto;gap:4px 12px;padding:9px 12px;border-radius:8px;background:var(--bg);box-shadow:0 0 0 1px var(--line)}
+.period .t{font-weight:500}
+.period .m{color:var(--muted);font-size:11.5px}
+.drop{border:1px dashed var(--line-2);border-radius:10px;padding:26px 16px;text-align:center;color:var(--text-2);background:var(--bg);cursor:pointer;transition:border-color .12s,background .12s}
+.drop.over,.drop:hover{border-color:var(--accent);background:var(--hi)}
+.drop input{display:none}
+.msg{padding:9px 12px;border-radius:8px;font-size:12.5px;line-height:1.45}
+.msg.bad{background:var(--bad-bg);color:oklch(0.95 0.03 25)}
+.msg.warn{background:oklch(0.3 0.06 70);color:oklch(0.95 0.04 70)}
+.msg.ok{background:oklch(0.28 0.06 150);color:oklch(0.95 0.04 150)}
+.msg.info{background:var(--hi);color:var(--accent-3)}
+ul.list{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:3px}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-weight:500;color:var(--muted);font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:6px 8px;border-bottom:1px solid var(--line)}
+td{padding:8px;border-bottom:1px solid var(--line);vertical-align:middle}
+tr:last-child td{border-bottom:0}
+tr.live td{background:rgba(145,132,217,.08)}
+iframe.preview{width:100%;height:520px;border:0;border-radius:8px;background:var(--bg);box-shadow:0 0 0 1px var(--line)}
+.spinner{display:inline-block;width:12px;height:12px;border:2px solid var(--accent-line);border-top-color:var(--accent-3);border-radius:50%;animation:spin .8s linear infinite;vertical-align:-2px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.hidden{display:none!important}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:12.5px}
+.kv div:nth-child(odd){color:var(--muted)}
+.steps{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:var(--text-2)}
+.steps .n{display:inline-flex;width:18px;height:18px;border-radius:50%;background:var(--hi);color:var(--accent-3);align-items:center;justify-content:center;font-size:11px;font-weight:500;margin-right:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="row" style="justify-content:space-between;align-items:flex-end">
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <div class="eyebrow" style="font-size:20px">TMH Radiology | Schedule console</div>
+      <h1>Publish a new copy of the staff schedule</h1>
+    </div>
+    <div class="row">
+      <a id="siteLink" href="/" target="_blank" rel="noopener"><button class="ghost">Open live schedule ↗</button></a>
+      <button id="signOut" class="ghost hidden">Sign out</button>
+    </div>
+  </div>
+
+  <!-- Not configured -->
+  <div id="notConfigured" class="card hidden">
+    <h2>The console is not set up yet</h2>
+    <div class="steps">
+      <div><span class="n">1</span>In GitHub, create a fine-grained personal access token for this repository with <b>Contents: Read and write</b>.</div>
+      <div><span class="n">2</span>In the Vercel project, open <b>Settings → Environment Variables</b> and add <span class="mono">ADMIN_PASSWORD</span> and <span class="mono">GITHUB_TOKEN</span>.</div>
+      <div><span class="n">3</span>Redeploy the project. Then reload this page.</div>
+    </div>
+    <div id="notConfiguredDetail" class="small muted"></div>
+  </div>
+
+  <!-- Sign in -->
+  <div id="signIn" class="card hidden" style="max-width:420px">
+    <h2>Sign in</h2>
+    <div class="small muted">Enter the console password to view and publish schedules.</div>
+    <form id="signInForm" class="row" style="flex-wrap:nowrap">
+      <input id="password" type="password" autocomplete="current-password" placeholder="Console password" required>
+      <button class="primary" type="submit">Sign in</button>
+    </form>
+    <div id="signInMsg" class="msg bad hidden"></div>
+  </div>
+
+  <!-- Main -->
+  <div id="main" class="hidden" style="display:flex;flex-direction:column;gap:16px">
+
+    <div class="grid2">
+      <div class="card">
+        <div class="card-head">
+          <h2>Live schedule</h2>
+          <div class="row"><span id="liveState" class="pill">Loading…</span><button id="refresh" class="ghost">Refresh</button></div>
+        </div>
+        <div id="livePeriods" class="periods"></div>
+        <div id="liveMeta" class="kv"></div>
+        <div id="liveWarnings" class="hidden msg warn"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h2>Upload a new copy</h2><span class="small muted">Export from Claude Design, then drop the .html here</span></div>
+        <label class="drop" id="drop">
+          <input id="file" type="file" accept=".html,.htm,text/html">
+          <div style="font-size:14px;font-weight:500;color:var(--text)">Drop the exported schedule page here</div>
+          <div class="small muted" style="margin-top:4px">or click to choose a file · X-ray Schedule.dc.html or index.html</div>
+        </label>
+        <div id="fileInfo" class="hidden">
+          <div class="row" style="justify-content:space-between">
+            <div><span id="fileName" style="font-weight:500"></span> <span id="fileSize" class="small muted"></span></div>
+            <span id="fileState" class="pill"></span>
+          </div>
+        </div>
+        <div id="report" class="hidden" style="display:flex;flex-direction:column;gap:10px">
+          <div id="reportErrors" class="msg bad hidden"></div>
+          <div id="reportWarnings" class="msg warn hidden"></div>
+          <div id="reportPeriods" class="periods"></div>
+          <div class="row" style="gap:8px">
+            <button id="togglePreview" class="ghost">Show preview</button>
+            <button id="clearFile" class="ghost">Clear</button>
+          </div>
+          <input id="message" type="text" placeholder="Commit note (optional) — for example: September schedule, pen edits from 9/5">
+          <div class="row" style="justify-content:space-between">
+            <div class="small muted">Publishing commits the file to GitHub. Vercel deploys it in about a minute.</div>
+            <button id="publish" class="primary" disabled>Publish to live site</button>
+          </div>
+          <div id="publishMsg" class="msg hidden"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="previewCard" class="card hidden">
+      <div class="card-head"><h2>Preview of the uploaded copy</h2><span class="small muted">Rendered with the runtime that is already on this site. Nothing is published yet.</span></div>
+      <iframe id="preview" class="preview" sandbox="allow-scripts allow-same-origin" title="Schedule preview"></iframe>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h2>History</h2><span class="small muted">Recent copies of the schedule file. Restore puts an older copy back on the live site as a new commit.</span></div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th>When</th><th>Note</th><th>By</th><th>Commit</th><th></th></tr></thead>
+          <tbody id="historyBody"><tr><td colspan="5" class="muted">Loading…</td></tr></tbody>
+        </table>
+      </div>
+      <div id="historyMsg" class="msg hidden"></div>
+    </div>
+
+  </div>
+
+  <div class="small dim">Console for the schedule page. Publishing writes to the repository branch that Vercel deploys.</div>
+</div>
+
+<script>
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const API = '/api/schedule';
+  const KEY = 'tmh-schedule-console-password';
+
+  let password = '';
+  try { password = sessionStorage.getItem(KEY) || ''; } catch {}
+  let upload = null; // { name, html, report }
+  let status = null;
+
+  // ---------- helpers ----------
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const kb = n => n < 1024 ? n + ' B' : n < 1048576 ? (n / 1024).toFixed(1) + ' KB' : (n / 1048576).toFixed(2) + ' MB';
+  const when = iso => {
+    if (!iso) return '';
+    const d = new Date(iso);
+    const diff = (Date.now() - d.getTime()) / 1000;
+    const rel = diff < 60 ? 'just now' : diff < 3600 ? Math.floor(diff / 60) + ' min ago' : diff < 86400 ? Math.floor(diff / 3600) + ' h ago' : diff < 86400 * 14 ? Math.floor(diff / 86400) + ' d ago' : '';
+    const abs = d.toLocaleString(undefined, { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' });
+    return rel ? `${rel} · ${abs}` : abs;
+  };
+  const show = (el, on) => el.classList.toggle('hidden', !on);
+  const setMsg = (el, kind, html) => { el.className = 'msg ' + kind; el.innerHTML = html; show(el, true); };
+
+  async function api(method, op, body) {
+    const res = await fetch(API + '?op=' + encodeURIComponent(op), {
+      method,
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Password': password },
+      body: body ? JSON.stringify(body) : undefined,
+    });
+    let data = null;
+    try { data = await res.json(); } catch { data = { error: 'The server returned an unreadable response (' + res.status + ').' }; }
+    if (!res.ok) { const e = new Error(data.error || ('Request failed (' + res.status + ')')); e.status = res.status; e.data = data; throw e; }
+    return data;
+  }
+
+  // ---------- periods list ----------
+  function renderPeriods(el, periods, opts = {}) {
+    if (!periods || !periods.length) { el.innerHTML = '<div class="small muted">No periods found.</div>'; return; }
+    el.innerHTML = periods.map(p => {
+      const tag = opts.compare && !opts.compare.some(q => q.title === p.title) ? '<span class="pill ok">new</span>' : '';
+      return `<div class="period"><div class="t">${esc(p.title)} ${tag}</div><div class="m">${p.people} staff · ${p.sections} sections</div><div class="m">Starts ${esc(p.startIso || '?')} · 4 weeks · tab "${esc(p.label)}"</div><div class="m"></div></div>`;
+    }).join('');
+  }
+
+  // ---------- live status ----------
+  async function loadStatus() {
+    $('liveState').textContent = 'Loading…'; $('liveState').className = 'pill';
+    $('historyBody').innerHTML = '<tr><td colspan="5" class="muted">Loading…</td></tr>';
+    try {
+      status = await api('GET', 'status');
+    } catch (err) {
+      if (err.status === 401) return signOut('Wrong password.');
+      $('liveState').textContent = 'Error'; $('liveState').className = 'pill bad';
+      $('liveMeta').innerHTML = `<div>Error</div><div>${esc(err.message)}</div>`;
+      $('historyBody').innerHTML = `<tr><td colspan="5" class="muted">${esc(err.message)}</td></tr>`;
+      return;
+    }
+    const L = status.live;
+    $('liveState').textContent = L.errors.length ? 'Check failed' : L.warnings.length ? 'Live · warnings' : 'Live';
+    $('liveState').className = 'pill ' + (L.errors.length ? 'bad' : L.warnings.length ? 'warn' : 'ok');
+    renderPeriods($('livePeriods'), L.periods);
+    const c = L.lastCommit;
+    $('liveMeta').innerHTML =
+      `<div>Updated</div><div>${c ? esc(when(c.date)) + (c.author ? ' by ' + esc(c.author) : '') : '—'}</div>` +
+      `<div>Note</div><div>${c ? esc(c.message) : '—'}</div>` +
+      `<div>File</div><div><a href="${esc(status.target.url)}" target="_blank" rel="noopener">${esc(status.target.repo)} · ${esc(status.target.branch)} · ${esc(status.target.path)}</a> · ${kb(L.bytes)}</div>`;
+    const notes = [...L.errors, ...L.warnings];
+    if (notes.length) setMsg($('liveWarnings'), L.errors.length ? 'bad' : 'warn', notes.map(esc).join('<br>')); else show($('liveWarnings'), false);
+    renderHistory(status.history, L.sha);
+    if (upload) renderReport();
+  }
+
+  function renderHistory(list, liveSha) {
+    if (!list.length) { $('historyBody').innerHTML = '<tr><td colspan="5" class="muted">No history yet.</td></tr>'; return; }
+    $('historyBody').innerHTML = list.map((c, i) => `
+      <tr class="${i === 0 ? 'live' : ''}">
+        <td style="white-space:nowrap">${esc(when(c.date))}</td>
+        <td>${esc(c.message)}</td>
+        <td>${esc(c.author)}</td>
+        <td><a class="mono" href="${esc(c.url)}" target="_blank" rel="noopener">${esc(c.short)}</a></td>
+        <td style="text-align:right;white-space:nowrap">${i === 0 ? '<span class="pill ok">live</span>' : `<button class="ghost restore" data-sha="${esc(c.sha)}" data-short="${esc(c.short)}">Restore</button>`}</td>
+      </tr>`).join('');
+    $('historyBody').querySelectorAll('button.restore').forEach(b => b.addEventListener('click', () => restore(b.dataset.sha, b.dataset.short)));
+  }
+
+  async function restore(sha, short) {
+    if (!confirm(`Restore the copy from commit ${short}? It becomes the live schedule as a new commit.`)) return;
+    const el = $('historyMsg');
+    setMsg(el, 'info', '<span class="spinner"></span> Restoring…');
+    try {
+      const out = await api('POST', 'restore', { op: 'restore', ref: sha });
+      setMsg(el, 'ok', `Restored as commit <a href="${esc(out.commit.url)}" target="_blank" rel="noopener" class="mono">${esc(out.commit.short)}</a>. Vercel is deploying it now.`);
+      loadStatus();
+    } catch (err) {
+      setMsg(el, 'bad', esc(err.message));
+    }
+  }
+
+  // ---------- upload ----------
+  function inspectLocal(html) {
+    // Mirrors api/schedule.js inspectSchedule so the user gets feedback before the request.
+    const errors = [], warnings = [], periods = [];
+    if (!/<x-dc[\s>]/.test(html) || !html.includes('</x-dc>')) errors.push('No <x-dc> block. This is not an exported schedule page.');
+    if (!/data-dc-script/.test(html)) errors.push('No data-dc-script block. The page has no logic script.');
+    const s = html.indexOf('const PERIODS = [');
+    if (s === -1) errors.push('No PERIODS array. The page has no schedule data.');
+    else {
+      const e = html.indexOf('\n];', s);
+      const block = html.slice(s, e === -1 ? undefined : e);
+      const re = /\{\s*label:\s*'((?:[^'\\]|\\.)*)'\s*,\s*title:\s*'((?:[^'\\]|\\.)*)'\s*,\s*start:\s*\[\s*(\d{4})\s*,\s*(\d{1,2})\s*,\s*(\d{1,2})\s*\]/g;
+      const heads = []; let m;
+      while ((m = re.exec(block))) heads.push({ index: m.index, label: m[1], title: m[2], start: [+m[3], +m[4], +m[5]] });
+      heads.forEach((h, i) => {
+        const chunk = block.slice(h.index, i + 1 < heads.length ? heads[i + 1].index : undefined);
+        const sections = (chunk.match(/\[\s*'[^']+'\s*,\s*\[\s*\n/g) || []).length;
+        const people = (chunk.match(/^\s*\[\s*'[^']+'\s*,\s*'[^']*'/gm) || []).length;
+        const [y, mo, d] = h.start; const dt = new Date(Date.UTC(y, mo, d));
+        const bad = mo < 0 || mo > 11 || d < 1 || d > 31 || isNaN(dt.getTime());
+        if (bad) warnings.push(`Period "${h.title}" has a start date that does not look right: [${y}, ${mo}, ${d}].`);
+        if (!people) warnings.push(`Period "${h.title}" has no staff rows.`);
+        periods.push({ label: h.label, title: h.title, start: h.start, startIso: bad ? null : dt.toISOString().slice(0, 10), sections, people });
+      });
+      if (!heads.length) errors.push('The PERIODS array has no periods with a label, title and start date.');
+    }
+    if (!/support\.js/.test(html)) warnings.push('The page does not load support.js. It will not render unless the runtime is inlined.');
+    return { ok: !errors.length, errors, warnings, periods, bytes: new TextEncoder().encode(html).length };
+  }
+
+  function takeFile(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const html = String(reader.result || '');
+      upload = { name: file.name, html, report: inspectLocal(html) };
+      renderReport();
+    };
+    reader.readAsText(file);
+  }
+
+  function renderReport() {
+    const R = upload.report;
+    show($('fileInfo'), true); show($('report'), true); show($('publishMsg'), false);
+    $('fileName').textContent = upload.name; $('fileSize').textContent = kb(R.bytes);
+    const same = status && status.live && JSON.stringify(status.live.periods) === JSON.stringify(R.periods) && status.live.bytes === R.bytes;
+    $('fileState').textContent = R.errors.length ? 'Rejected' : same ? 'Looks identical to live' : R.warnings.length ? 'Ready · warnings' : 'Ready';
+    $('fileState').className = 'pill ' + (R.errors.length ? 'bad' : same ? 'warn' : R.warnings.length ? 'warn' : 'ok');
+    if (R.errors.length) setMsg($('reportErrors'), 'bad', '<b>This file cannot be published.</b><br>' + R.errors.map(esc).join('<br>')); else show($('reportErrors'), false);
+    if (R.warnings.length) setMsg($('reportWarnings'), 'warn', R.warnings.map(esc).join('<br>')); else show($('reportWarnings'), false);
+    renderPeriods($('reportPeriods'), R.periods, { compare: status && status.live ? status.live.periods : null });
+    $('publish').disabled = !R.ok;
+    if (!$('previewCard').classList.contains('hidden')) renderPreview();
+  }
+
+  function renderPreview() {
+    if (!upload) return;
+    // The export loads ./support.js and _ds/… relative to the page. <base> points those at the site root.
+    let html = upload.html;
+    html = /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, m => m + '<base href="' + location.origin + '/">') : '<base href="' + location.origin + '/">' + html;
+    $('preview').srcdoc = html;
+  }
+
+  async function publish() {
+    if (!upload || !upload.report.ok) return;
+    const titles = upload.report.periods.map(p => p.title).join(', ');
+    if (!confirm(`Publish "${upload.name}" as the live schedule?\n\nPeriods: ${titles}`)) return;
+    const btn = $('publish'); btn.disabled = true;
+    const el = $('publishMsg');
+    setMsg(el, 'info', '<span class="spinner"></span> Checking and committing…');
+    try {
+      const out = await api('POST', 'publish', { op: 'publish', html: upload.html, message: $('message').value.trim() });
+      setMsg(el, 'ok', `Published as commit <a href="${esc(out.commit.url)}" target="_blank" rel="noopener" class="mono">${esc(out.commit.short)}</a>. Vercel is deploying it now. Reload the live schedule in about a minute.`);
+      $('message').value = '';
+      loadStatus();
+    } catch (err) {
+      const extra = err.data && err.data.report ? '<br>' + err.data.report.errors.map(esc).join('<br>') : '';
+      setMsg(el, 'bad', esc(err.message) + extra);
+      btn.disabled = false;
+    }
+  }
+
+  function clearFile() {
+    upload = null; $('file').value = '';
+    show($('fileInfo'), false); show($('report'), false); show($('previewCard'), false);
+    $('togglePreview').textContent = 'Show preview'; $('preview').srcdoc = '';
+  }
+
+  // ---------- auth ----------
+  function signOut(msg) {
+    password = ''; try { sessionStorage.removeItem(KEY); } catch {}
+    show($('main'), false); show($('signOut'), false); show($('signIn'), true);
+    if (msg) setMsg($('signInMsg'), 'bad', esc(msg)); else show($('signInMsg'), false);
+    $('password').focus();
+  }
+
+  async function signIn(pw) {
+    password = pw;
+    try {
+      await api('GET', 'status');
+    } catch (err) {
+      password = '';
+      setMsg($('signInMsg'), 'bad', esc(err.status === 401 ? 'Wrong password.' : err.message));
+      return;
+    }
+    try { sessionStorage.setItem(KEY, pw); } catch {}
+    show($('signIn'), false); show($('main'), true); show($('signOut'), true);
+    loadStatus();
+  }
+
+  async function boot() {
+    let health;
+    try { health = await (await fetch(API + '?op=health', { cache: 'no-store' })).json(); }
+    catch { health = null; }
+    if (!health || !health.ok) {
+      show($('notConfigured'), true);
+      $('notConfiguredDetail').textContent = 'The API at /api/schedule did not answer. On Vercel, the api/ folder deploys as a serverless function. On GitHub Pages there is no API, so the console cannot publish from there.';
+      return;
+    }
+    if (!health.configured.password || !health.configured.token) {
+      show($('notConfigured'), true);
+      const missing = [!health.configured.password && 'ADMIN_PASSWORD', !health.configured.token && 'GITHUB_TOKEN'].filter(Boolean).join(' and ');
+      $('notConfiguredDetail').textContent = `Missing: ${missing}. Target: ${health.target.repo} · ${health.target.branch} · ${health.target.path}.`;
+      return;
+    }
+    if (password) { show($('main'), true); show($('signOut'), true); loadStatus(); }
+    else show($('signIn'), true);
+  }
+
+  // ---------- wiring ----------
+  $('signInForm').addEventListener('submit', e => { e.preventDefault(); signIn($('password').value); });
+  $('signOut').addEventListener('click', () => signOut());
+  $('refresh').addEventListener('click', loadStatus);
+  $('file').addEventListener('change', e => takeFile(e.target.files[0]));
+  const drop = $('drop');
+  ['dragenter', 'dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
+  ['dragleave', 'drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); }));
+  drop.addEventListener('drop', e => takeFile(e.dataTransfer.files[0]));
+  $('togglePreview').addEventListener('click', () => {
+    const card = $('previewCard'); const open = card.classList.contains('hidden');
+    show(card, open); $('togglePreview').textContent = open ? 'Hide preview' : 'Show preview';
+    if (open) { renderPreview(); card.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+  });
+  $('clearFile').addEventListener('click', clearFile);
+  $('publish').addEventListener('click', publish);
+
+  boot();
+})();
+</script>
+</body>
+</html>
