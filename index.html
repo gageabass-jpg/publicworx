@@ -19,7 +19,7 @@ a{color:#b5abfc;text-decoration:none}a:hover{color:#d2cefd}
 *{box-sizing:border-box}
 ::selection{background:#423a6a}
 </style>
-<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#2b2741"/><rect x="30" y="34" width="12" height="12" rx="2" fill="oklch(0.73 0.125 75)"/><rect x="44" y="34" width="12" height="12" rx="2" fill="oklch(0.73 0.125 289)"/><rect x="58" y="34" width="12" height="12" rx="2" fill="oklch(0.73 0.125 205)"/><rect x="30" y="48" width="12" height="12" rx="2" fill="oklch(0.73 0.125 289)"/><rect x="44" y="48" width="12" height="12" rx="2" fill="oklch(0.48 0.16 25)"/><rect x="58" y="48" width="12" height="12" rx="2" fill="oklch(0.73 0.125 75)"/></svg></template>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#2b2741"></rect><rect x="30" y="34" width="12" height="12" rx="2" fill="oklch(0.73 0.125 75)"></rect><rect x="44" y="34" width="12" height="12" rx="2" fill="oklch(0.73 0.125 289)"></rect><rect x="58" y="34" width="12" height="12" rx="2" fill="oklch(0.73 0.125 205)"></rect><rect x="30" y="48" width="12" height="12" rx="2" fill="oklch(0.73 0.125 289)"></rect><rect x="44" y="48" width="12" height="12" rx="2" fill="oklch(0.48 0.16 25)"></rect><rect x="58" y="48" width="12" height="12" rx="2" fill="oklch(0.73 0.125 75)"></rect></svg></template>
 <style>
 button:focus-visible{outline:2px solid #9184d9;outline-offset:2px}
 </style>
@@ -29,54 +29,82 @@ button:focus-visible{outline:2px solid #9184d9;outline-offset:2px}
   <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px">
     <div style="display:flex;flex-direction:column;gap:6px">
       <div style="font-size: 20px; letter-spacing: 0.08em; text-transform: uppercase; color: #9397ab; font-weight: 500">TMH Radiology | Staff Schedule</div>
-      <h1 style="margin:0;font-size:24px;font-weight:500;letter-spacing:-0.01em;line-height:1.1">{{ periodTitle }}</h1>
-      <div style="display:inline-flex;gap:2px;padding:2px;border-radius:6px;border:1px solid #3f424d;align-self:flex-start;margin-top:4px">
-        <sc-for list="{{ periodTabs }}" as="t" hint-placeholder-count="2">
-          <button onClick="{{ t.select }}" style="border:0;cursor:pointer;font:inherit;font-size:12px;font-weight:500;padding:5px 10px;border-radius:4px;background:{{ t.bg }};color:{{ t.fg }}" style-hover="color:#e7e5fe">{{ t.label }}</button>
-        </sc-for>
+      <div style="position:relative;align-self:flex-start">
+        <button onClick="{{ toggleMenu }}" style="border:0;cursor:pointer;font:inherit;background:transparent;color:#e9e9ed;display:flex;align-items:center;gap:10px;padding:4px 10px 4px 0;border-radius:6px;margin-left:-0px" style-hover="color:#e7e5fe">
+          <h1 style="margin:0;font-size:24px;font-weight:500;letter-spacing:-0.01em;line-height:1.1">{{ periodTitle }}</h1>
+          <span style="font-size:12px;color:#b5abfc;transform:{{ chevronRot }};transition:transform 0.15s;line-height:1">▼</span>
+        </button>
+        <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;top:100%;left:0;margin-top:6px;min-width:260px;background:#232532;border-radius:8px;box-shadow:0 0 0 1px #595d6c, 0 6px 18px rgba(0,0,0,0.55);padding:4px;display:flex;flex-direction:column;gap:2px;z-index:20">
+            <sc-for list="{{ periodTabs }}" as="t" hint-placeholder-count="2">
+              <button onClick="{{ t.select }}" style="border:0;cursor:pointer;font:inherit;text-align:left;font-size:13px;font-weight:500;padding:8px 10px;border-radius:6px;background:{{ t.bg }};color:{{ t.fg }};display:flex;justify-content:space-between;align-items:center;gap:12px" style-hover="background:#292b31;color:#e7e5fe"><span>{{ t.title }}</span><span style="font-size:11px;color:#b5abfc">{{ t.check }}</span></button>
+            </sc-for>
+          </div>
+        </sc-if>
       </div>
-    </div>
-    <div style="display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;font-size:11.5px;color:#b2b6ca">
-      <div style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:3px;background:oklch(0.73 0.125 75)"></span>Day</div>
-      <div style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:3px;background:oklch(0.73 0.125 289)"></span>Evening</div>
-      <div style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:3px;background:oklch(0.73 0.125 205)"></span>Night</div>
-      <div style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:3px;border:1px dashed #75798c"></span>Vacation</div>
-      <div style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:3px;display:flex;align-items:center;justify-content:center;color:#9397ab;font-size:8px;font-weight:600">H</span>Holiday</div>
-      <div style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:3px;display:flex;align-items:center;justify-content:center;color:#75798c;font-size:10px">–</span>Requested off</div>
-      <div style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:3px;background:oklch(0.48 0.16 25)"></span>On call</div>
-      <div style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:3px;border:1px solid #b5abfc"></span>Pen edit</div>
-      <div style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:3px;background:oklch(0.42 0.1 25)"></span>Below minimum coverage</div>
     </div>
   </div>
 
-  <div style="background:#232532;border-radius:8px;box-shadow:0 0 0 1px #3f424d;padding:12px 14px;display:flex;flex-wrap:wrap;gap:12px 28px;align-items:flex-start">
-    <div style="display:flex;flex-direction:column;gap:2px;min-width:120px">
-      <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#9397ab;font-weight:500">On shift</div>
-      <div style="font-size:18px;font-weight:500;line-height:1.2">{{ selDateLabel }}</div>
-      <div style="font-size:11.5px;color:#9397ab">{{ selCounts }} · click a date to change · click a name to focus · ctrl/⌘-click to compare</div>
-    </div>
-    <sc-for list="{{ onGroups }}" as="g" hint-placeholder-count="3">
-      <div style="display:flex;flex-direction:column;gap:6px;min-width:150px;flex:1 1 150px">
-        <div style="display:flex;align-items:center;gap:6px;font-size:11.5px;color:#b2b6ca"><span style="width:8px;height:8px;border-radius:2px;background:{{ g.dot }}"></span>{{ g.name }} <span style="color:#75798c">{{ g.count }}</span></div>
-        <div style="display:flex;flex-wrap:wrap;gap:4px">
-          <sc-for list="{{ g.people }}" as="p" hint-placeholder-count="3">
-            <span style="display:inline-flex;align-items:baseline;gap:5px;padding:3px 7px;border-radius:4px;background:{{ p.bg }};color:{{ p.fg }};font-size:11.5px;line-height:1.2" title="{{ p.tag }}"><span style="font-weight:500">{{ p.name }}</span><span style="opacity:0.75;font-size:10.5px">{{ p.time }}</span><span style="font-size:9.5px;text-transform:uppercase;letter-spacing:0.06em;opacity:0.9">{{ p.tag }}</span></span>
-          </sc-for>
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:4px 0 2px">
+      <div style="display:flex;align-items:center;gap:14px">
+        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;width:64px;height:64px;border-radius:10px;background:linear-gradient(180deg,#2b2741,#232532);box-shadow:0 0 0 1px #423a6a;line-height:1">
+          <span style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:#b5abfc;font-weight:500">{{ selMon }}</span>
+          <span style="font-size:30px;font-weight:500;color:#e9e9ed;margin-top:3px;font-variant-numeric:tabular-nums">{{ selDay }}</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:3px">
+          <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#9397ab;font-weight:500">On shift</div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="font-size:24px;font-weight:500;line-height:1.1">{{ selWeekday }}</div>
+            <span style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#b5abfc;font-weight:500">{{ todayTag }}</span>
+            <sc-if value="{{ todayVisible }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ goToday }}" style="border:0;cursor:pointer;font:inherit;height:26px;padding:0 10px;border-radius:6px;background:transparent;color:#b5abfc;box-shadow:0 0 0 1px #5d5294;font-size:12px;font-weight:500" style-hover="background:#2b2741;color:#e7e5fe">Back to today</button>
+            </sc-if>
+          </div>
+          <div style="font-size:12.5px;color:#b2b6ca">{{ selCounts }} scheduled</div>
         </div>
       </div>
-    </sc-for>
+      <div style="display:flex;align-items:center;gap:6px;margin-left:auto">
+        <button onClick="{{ toggleDim }}" title="Grey out days before today" style="border:0;cursor:pointer;font:inherit;background:transparent;padding:0;display:flex;align-items:center;gap:12px;color:#b2b6ca;font-size:16px;font-weight:500" style-hover="color:#d2cefd">
+                      <span>Fade past days</span>
+<span style="position:relative;width:44px;height:24px;border-radius:12px;background:{{ dimTrack }};box-shadow:0 0 0 1px #3f424d;transition:background 0.15s;display:block">
+            <span style="position:absolute;top:3px;left:{{ dimKnobLeft }};width:18px;height:18px;border-radius:50%;background:{{ dimKnob }};transition:left 0.15s;display:block"></span>
+          </span>
+        </button>
+        
+        
+        
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px">
+      <sc-for list="{{ onGroups }}" as="g" hint-placeholder-count="3">
+        <div style="background:#232532;border-radius:8px;box-shadow:0 0 0 1px #3f424d;padding:14px 16px;display:flex;flex-direction:column;gap:12px;min-height:120px;border-top:3px solid {{ g.dot }}">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px">
+            <div style="font-size:15px;font-weight:500;color:#e9e9ed">{{ g.name }}</div>
+            <div style="font-size:24px;font-weight:500;line-height:1;color:{{ g.dot }};font-variant-numeric:tabular-nums">{{ g.count }}</div>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px">
+            <sc-for list="{{ g.people }}" as="p" hint-placeholder-count="3">
+              <span style="display:inline-flex;align-items:baseline;gap:7px;padding:6px 10px;border-radius:6px;background:{{ p.bg }};color:{{ p.fg }};font-size:14px;line-height:1.2" title="{{ p.tag }}"><span style="font-weight:500">{{ p.name }}</span><span style="opacity:0.8;font-size:12.5px">{{ p.time }}</span><span style="font-size:10.5px;text-transform:uppercase;letter-spacing:0.06em;opacity:0.95">{{ p.tag }}</span></span>
+            </sc-for>
+          </div>
+          <div style="font-size:12px;color:#75798c">{{ g.empty }}</div>
+        </div>
+      </sc-for>
+    </div>
   </div>
 
   <div style="overflow-x:auto;border-radius:8px;box-shadow:0 0 0 1px #3f424d;background:#161826">
     <div style="min-width:max-content;width:100%">
 
-      <div style="display:grid;grid-template-columns:172px repeat(28,minmax(38px,1fr)) 14px {{ hoursCols }};align-items:stretch;border-bottom:1px solid #3f424d;position:sticky;top:0;background:#161826;z-index:3">
+      <div style="display:grid;grid-template-columns:172px repeat(28,minmax(38px,1fr)) {{ hoursCols }};align-items:stretch;border-bottom:1px solid #3f424d;position:sticky;top:0;background:#161826;z-index:3">
         <div style="position:sticky;left:0;background:#161826;z-index:2;padding:10px 12px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#9397ab;font-weight:500;display:flex;align-items:flex-end">Staff</div>
         <sc-for list="{{ days }}" as="d" hint-placeholder-count="28">
           <div onClick="{{ d.select }}" style="cursor:pointer;padding:8px 0 6px;border-left:1px solid {{ d.sepColor }};background:{{ d.colBg }};display:flex;flex-direction:column;align-items:center;gap:2px" style-hover="background:#292b31">
             <span style="font-size:10px;color:{{ d.wdColor }};font-weight:500">{{ d.wd }}</span>
             <span style="font-size:13px;font-weight:500;color:{{ d.numColor }}">{{ d.num }}</span>
             <span style="font-size:9px;color:#75798c;line-height:1;min-height:9px">{{ d.mon }}</span>
+            <span style="width:4px;height:4px;border-radius:50%;background:{{ d.todayDot }};margin-top:2px"></span>
           </div>
         </sc-for>
         <div></div>
@@ -87,7 +115,7 @@ button:focus-visible{outline:2px solid #9184d9;outline-offset:2px}
           <div style="padding:8px 0 6px;text-align:center;font-size:10px;color:#9397ab;display:flex;align-items:flex-end;justify-content:center">W4</div>
           <div style="padding:8px 0 6px;text-align:right;font-size:10px;color:#9397ab;display:flex;align-items:flex-end;justify-content:flex-end">Hours</div>
         </sc-if>
-        <button onClick="{{ toggleHours }}" title="{{ hoursToggleTitle }}" style="border:0;cursor:pointer;font:inherit;background:transparent;color:#9397ab;display:flex;align-items:flex-end;justify-content:center;padding:8px 0 6px;font-size:10px;letter-spacing:0.06em;text-transform:uppercase;writing-mode:vertical-rl;transform:rotate(180deg)" style-hover="color:#d2cefd">{{ hoursToggleLabel }}</button>
+        <button onClick="{{ toggleHours }}" title="{{ hoursToggleTitle }}" style="position:absolute;top:0;right:0;border:0;cursor:pointer;font:inherit;background:{{ hoursToggleBg }};color:#b5abfc;display:flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:0 8px 0 4px;box-shadow:0 0 0 1px #423a6a;font-size:12px;line-height:1;padding:0 0 1px" style-hover="background:#2b2741;color:#e7e5fe">{{ hoursToggleLabel }}</button>
       </div>
 
       <sc-for list="{{ rows }}" as="r" hint-placeholder-count="12">
@@ -98,7 +126,7 @@ button:focus-visible{outline:2px solid #9184d9;outline-offset:2px}
           </div>
         </sc-if>
         <sc-if value="{{ r.isPerson }}" hint-placeholder-val="{{ true }}">
-          <div style="display:grid;grid-template-columns:172px repeat(28,minmax(38px,1fr)) 14px {{ hoursCols }};align-items:stretch;border-bottom:1px solid rgba(233,233,237,0.06);background:{{ r.rowBg }};opacity:{{ r.rowOpacity }};filter:{{ r.rowBlur }};transition:opacity 0.2s,filter 0.2s">
+          <div style="display:grid;grid-template-columns:172px repeat(28,minmax(38px,1fr)) {{ hoursCols }};align-items:stretch;border-bottom:1px solid rgba(233,233,237,0.06);background:{{ r.rowBg }};opacity:{{ r.rowOpacity }};filter:{{ r.rowBlur }};transition:opacity 0.2s,filter 0.2s">
             <div onClick="{{ r.select }}" style="cursor:pointer;position:sticky;left:0;background:{{ r.nameBg }};z-index:2;padding:6px 12px;display:flex;flex-direction:column;justify-content:center;gap:4px;box-shadow:inset 2px 0 0 {{ r.nameBar }}" style-hover="background:#292b31">
               <div style="font-size:12.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.name }}</div>
               
@@ -109,7 +137,7 @@ button:focus-visible{outline:2px solid #9184d9;outline-offset:2px}
               </div>
             </div>
             <sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="28">
-              <div style="padding:3px 2px;border-left:1px solid {{ c.sepColor }};background:{{ c.colBg }};display:flex" title="{{ c.title }}">
+              <div style="padding:3px 2px;border-left:1px solid {{ c.sepColor }};background:{{ c.colBg }};display:flex;opacity:{{ c.op }}" title="{{ c.title }}">
                 <div style="position:relative;flex:1;min-height:30px;display:flex;align-items:center;justify-content:center;border-radius:4px;background:{{ c.bg }};color:{{ c.fg }};border:1px {{ c.borderStyle }} {{ c.border }};font-size:9.5px;font-weight:500;line-height:1.1;text-align:center;white-space:pre-line;letter-spacing:-0.01em">{{ c.label }}<span style="position:absolute;top:2px;right:2px;width:5px;height:5px;border-radius:50%;background:{{ c.markBg }}"></span></div>
               </div>
             </sc-for>
@@ -127,16 +155,16 @@ button:focus-visible{outline:2px solid #9184d9;outline-offset:2px}
 
       <sc-if value="{{ showCoverage }}" hint-placeholder-val="{{ true }}">
         <div style="display:grid;grid-template-columns:172px 1fr;background:#1c1e2b;border-bottom:1px solid #292b31;border-top:1px solid #3f424d">
-          <div style="position:sticky;left:0;padding:7px 12px 5px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#b5abfc;font-weight:500;background:#1c1e2b">Coverage · headcount</div>
+          <div onClick="{{ toggleCoverage }}" style="cursor:pointer;position:sticky;left:0;padding:7px 12px 5px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#b5abfc;font-weight:500;background:#1c1e2b;display:flex;align-items:center;gap:8px;white-space:nowrap" style-hover="color:#e7e5fe"><span style="font-size:9px;display:inline-block;transform:{{ coverageChevron }};transition:transform 0.15s">▶</span>VACANCIES<span style="margin-left:auto;font-size:13px;font-weight:600;line-height:1;color:{{ coverageSummaryColor }};text-transform:none;letter-spacing:0">{{ coverageSummary }}</span></div>
           <div></div>
         </div>
-        <sc-for list="{{ coverage }}" as="cv" hint-placeholder-count="3">
-          <div style="display:grid;grid-template-columns:172px repeat(28,minmax(38px,1fr)) 14px {{ hoursCols }};align-items:stretch;border-bottom:1px solid rgba(233,233,237,0.06)">
+        <sc-for list="{{ coverageRows }}" as="cv" hint-placeholder-count="0">
+          <div style="display:grid;grid-template-columns:172px repeat(28,minmax(38px,1fr)) {{ hoursCols }};align-items:stretch;border-bottom:1px solid rgba(233,233,237,0.06)">
             <div style="position:sticky;left:0;background:#161826;z-index:2;padding:6px 12px;display:flex;align-items:center;gap:8px;font-size:12px">
-              <span style="width:8px;height:8px;border-radius:2px;background:{{ cv.dot }}"></span>{{ cv.name }}<span style="color:#75798c;font-size:11px">min {{ cv.min }}</span><span style="margin-left:auto;font-size:10.5px;color:{{ cv.gapsColor }};white-space:nowrap">{{ cv.gaps }}</span>
+              <span style="width:8px;height:8px;border-radius:2px;background:{{ cv.dot }}"></span>{{ cv.name }}<span title="{{ cv.gapsTitle }}" style="margin-left:auto;font-size:13px;color:{{ cv.gapsColor }};white-space:nowrap;font-weight:600;line-height:1">{{ cv.gaps }}</span>
             </div>
             <sc-for list="{{ cv.cells }}" as="c" hint-placeholder-count="28">
-              <div style="padding:3px 2px;border-left:1px solid {{ c.sepColor }};background:{{ c.colBg }};display:flex">
+              <div style="padding:3px 2px;border-left:1px solid {{ c.sepColor }};background:{{ c.colBg }};display:flex;opacity:{{ c.op }}">
                 <div style="flex:1;min-height:26px;display:flex;align-items:center;justify-content:center;border-radius:4px;background:{{ c.bg }};color:{{ c.fg }};font-size:12px;font-weight:500;font-variant-numeric:tabular-nums">{{ c.n }}</div>
               </div>
             </sc-for>
@@ -147,10 +175,20 @@ button:focus-visible{outline:2px solid #9184d9;outline-offset:2px}
     </div>
   </div>
 
-  <div style="font-size:11px;color:#75798c;line-height:1.5;width:100%;max-width:none"><br></div>
+    <div style="display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;font-size:16.5px;color:#b2b6ca;padding-top:6px">
+      <div style="display:flex;align-items:center;gap:8px"><span style="width:14px;height:14px;border-radius:3px;background:oklch(0.73 0.125 75)"></span>Day</div>
+      <div style="display:flex;align-items:center;gap:8px"><span style="width:14px;height:14px;border-radius:3px;background:oklch(0.73 0.125 289)"></span>Evening</div>
+      <div style="display:flex;align-items:center;gap:8px"><span style="width:14px;height:14px;border-radius:3px;background:oklch(0.73 0.125 205)"></span>Night</div>
+      <div style="display:flex;align-items:center;gap:8px"><span style="width:14px;height:14px;border-radius:3px;border:1px dashed #75798c"></span>Vacation</div>
+      <div style="display:flex;align-items:center;gap:8px"><span style="width:14px;height:14px;border-radius:3px;display:flex;align-items:center;justify-content:center;color:#9397ab;font-size:11px;font-weight:600">H</span>Holiday</div>
+      <div style="display:flex;align-items:center;gap:8px"></div>
+      <div style="display:flex;align-items:center;gap:8px"><span style="width:14px;height:14px;border-radius:3px;background:oklch(0.48 0.16 25)"></span>On call</div>
+      <div style="display:flex;align-items:center;gap:8px"></div>
+      <div style="display:flex;align-items:center;gap:8px"></div>
+    </div>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;period&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[0,1],&quot;default&quot;:1,&quot;tsType&quot;:&quot;0 | 1&quot;,&quot;section&quot;:&quot;Grid&quot;},&quot;labelMode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;times&quot;,&quot;codes&quot;],&quot;default&quot;:&quot;times&quot;,&quot;tsType&quot;:&quot;'times' | 'codes'&quot;,&quot;section&quot;:&quot;Grid&quot;},&quot;selectedDay&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:11,&quot;min&quot;:1,&quot;max&quot;:28,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Grid&quot;},&quot;showHours&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Grid&quot;},&quot;showCoverage&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Coverage&quot;},&quot;minDay&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:5,&quot;min&quot;:0,&quot;max&quot;:12,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Coverage&quot;},&quot;minEvening&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:2,&quot;min&quot;:0,&quot;max&quot;:8,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Coverage&quot;},&quot;minNight&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:2,&quot;min&quot;:0,&quot;max&quot;:8,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Coverage&quot;}}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;period&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[0,1],&quot;default&quot;:1,&quot;tsType&quot;:&quot;0 | 1&quot;,&quot;section&quot;:&quot;Grid&quot;},&quot;labelMode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;times&quot;,&quot;codes&quot;],&quot;default&quot;:&quot;times&quot;,&quot;tsType&quot;:&quot;'times' | 'codes'&quot;,&quot;section&quot;:&quot;Grid&quot;},&quot;selectedDay&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:11,&quot;min&quot;:1,&quot;max&quot;:28,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Grid&quot;},&quot;showHours&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Grid&quot;},&quot;showCoverage&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Coverage&quot;},&quot;minDay&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:5,&quot;min&quot;:0,&quot;max&quot;:12,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Coverage&quot;},&quot;minEvening&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:2,&quot;min&quot;:0,&quot;max&quot;:8,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Coverage&quot;},&quot;minNight&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:2,&quot;min&quot;:0,&quot;max&quot;:8,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Coverage&quot;}}">
 const PERIODS = [
   { label: 'Aug 2 – 29', title: 'August 2 – 29, 2026', start: [2026, 7, 2], sections: [
     ['Day shift', [
@@ -263,23 +301,31 @@ function parseRow(str) {
 const DATA = PERIODS.map(p => ({ ...p, sections: p.sections.map(([section, people]) => ({ section, people: people.map(([name, s, pnote]) => ({ name, shifts: parseRow(s), pnote: pnote || '' })) })) }));
 const hrs = n => Number.isInteger(n) ? String(n) : n.toFixed(1).replace('.0', '');
 
+const dayOffset = (P, d) => { const s = new Date(P.start[0], P.start[1], P.start[2]); const o = Math.round((new Date(d.getFullYear(), d.getMonth(), d.getDate()) - s) / 86400000) + 1; return o >= 1 && o <= 28 ? o : null; };
+const todayInfo = () => { const now = new Date(); for (let i = 0; i < DATA.length; i++) { const o = dayOffset(DATA[i], now); if (o) return { period: i, offset: o }; } return null; };
 class Component extends DCLogic {
-  state = { selected: null, period: null, people: [], hoursOpen: null };
+  state = { selected: null, period: null, people: [], hoursOpen: null, menuOpen: false, coverageOpen: false, dimPast: true };
   renderVals() {
     const labelMode = this.props.labelMode ?? 'times';
     const mins = { day: this.props.minDay ?? 5, eve: this.props.minEvening ?? 2, night: this.props.minNight ?? 2 };
-    const pi = this.state.period ?? this.props.period ?? 1;
+    const today = todayInfo();
+    const pi = this.state.period ?? (today ? today.period : (this.props.period ?? DATA.length - 1));
     const P = DATA[pi];
-    const sel = this.state.selected ?? this.props.selectedDay ?? 11;
+    const todayOff = today && today.period === pi ? today.offset : null;
+    const sel = this.state.selected ?? todayOff ?? this.props.selectedDay ?? 1;
     const dateOf = o => new Date(P.start[0], P.start[1], P.start[2] + o - 1);
     const sepColor = o => weekOf(o) > 0 && (o - 1) % 7 === 0 ? '#3f424d' : 'transparent';
     const colBg = o => o === sel ? '#2b2741' : 'transparent';
+    const dimPast = this.state.dimPast;
+    const isPast = o => dimPast && todayOff != null && o < todayOff;
+    const cellOp = o => isPast(o) ? 0.32 : 1;
     const days = OFFS.map(o => {
       const dt = dateOf(o);
       return {
         num: dt.getDate(), wd: WD[dt.getDay()], mon: (o === 1 || dt.getDate() === 1) ? MON[dt.getMonth()] : '', sepColor: sepColor(o), colBg: colBg(o),
-        wdColor: o === sel ? '#d2cefd' : '#75798c', numColor: o === sel ? '#e7e5fe' : '#b2b6ca',
-        select: () => this.setState({ selected: o }),
+        wdColor: o === sel ? '#d2cefd' : isPast(o) ? '#595d6c' : '#75798c', numColor: o === sel ? '#e7e5fe' : isPast(o) ? '#595d6c' : '#b2b6ca',
+        select: () => this.setState({ selected: o === sel ? null : o }),
+        todayDot: o === todayOff ? '#9184d9' : 'transparent',
       };
     });
     const counts = {}; OFFS.forEach(o => counts[o] = { day: 0, eve: 0, night: 0 });
@@ -293,7 +339,7 @@ class Component extends DCLogic {
         const wk = [0, 0, 0, 0]; const byType = { day: 0, eve: 0, night: 0 };
         const cells = OFFS.map(o => {
           const s = p.shifts[o]; const dt = dateOf(o);
-          const base = { sepColor: sepColor(o), colBg: colBg(o), bg: 'rgba(233,233,237,0.035)', fg: '#75798c', border: 'transparent', borderStyle: 'solid', label: '', markBg: 'transparent', title: p.name + ' · ' + MON[dt.getMonth()] + ' ' + dt.getDate() };
+          const base = { op: cellOp(o), sepColor: sepColor(o), colBg: colBg(o), bg: 'rgba(233,233,237,0.035)', fg: '#75798c', border: 'transparent', borderStyle: 'solid', label: '', markBg: 'transparent', title: p.name + ' · ' + MON[dt.getMonth()] + ' ' + dt.getDate() };
           if (!s) return base;
           const NOTES = { TMH: 'Thomas Memorial Hospital', SF: 'St. Francis / Thomas Orthopedic', UC: 'University of Charleston' };
           const extra = (s.red ? ' · on call' : '') + (s.pen ? ' · pen edit' : '');
@@ -327,23 +373,31 @@ class Component extends DCLogic {
       let gaps = 0;
       const cells = OFFS.map(o => {
         const n = counts[o][k], low = n < mins[k]; if (low) gaps++;
-        return { n, sepColor: sepColor(o), colBg: colBg(o), bg: low ? 'oklch(0.42 0.1 25)' : 'transparent', fg: low ? 'oklch(0.95 0.03 25)' : n ? '#cfd3e5' : '#595d6c' };
+        return { n, op: cellOp(o), sepColor: sepColor(o), colBg: colBg(o), bg: low ? 'oklch(0.42 0.1 25)' : 'transparent', fg: low ? 'oklch(0.95 0.03 25)' : n ? '#cfd3e5' : '#595d6c' };
       });
-      return { name: TYPES[k].name, dot: TYPES[k].dot, min: mins[k], cells, gaps: gaps ? gaps + ' short' : 'covered', gapsColor: gaps ? 'oklch(0.75 0.14 25)' : '#75798c' };
+      return { name: TYPES[k].name, dot: TYPES[k].dot, min: mins[k], cells, gapCount: gaps, gaps: gaps ? '⚠ ' + gaps : '✓', gapsColor: gaps ? 'oklch(0.8 0.15 70)' : 'oklch(0.75 0.15 150)', gapsTitle: gaps ? gaps + ' day' + (gaps > 1 ? 's' : '') + ' below minimum' : 'All days covered' };
     });
     const c = counts[sel]; const sd = dateOf(sel);
-    const hoursOpen = this.state.hoursOpen ?? (this.props.showHours ?? true);
+    const hoursOpen = this.state.hoursOpen ?? (this.props.showHours ?? false);
+    const coverageOpen = this.state.coverageOpen;
+    const totalGaps = coverage.reduce((a, cv) => a + cv.gapCount, 0);
     return {
       days, rows, coverage, showCoverage: this.props.showCoverage ?? true,
-      hoursOpen, hoursCols: hoursOpen ? 'repeat(4,44px) 54px 22px' : '22px',
+      coverageRows: coverageOpen ? coverage : [], toggleCoverage: () => this.setState({ coverageOpen: !coverageOpen }), coverageChevron: coverageOpen ? 'rotate(90deg)' : 'rotate(0deg)',
+      coverageSummary: coverageOpen ? '' : (totalGaps ? '⚠ ' + totalGaps : '✓'), coverageSummaryColor: totalGaps ? 'oklch(0.8 0.15 70)' : 'oklch(0.75 0.15 150)',
+      hoursOpen, hoursCols: hoursOpen ? '14px repeat(4,44px) 54px 26px' : '0px 0px',
       toggleHours: () => this.setState({ hoursOpen: !hoursOpen }),
-      hoursToggleLabel: hoursOpen ? 'hide hours ▸' : '◂ hours',
+      hoursToggleLabel: hoursOpen ? '»' : '«', hoursToggleBg: hoursOpen ? '#2b2741' : 'transparent',
       hoursToggleTitle: hoursOpen ? 'Collapse hours' : 'Show hours per week',
       periodTitle: P.title,
-      periodTabs: DATA.map((p, i) => ({ label: p.label, bg: i === pi ? '#2b2741' : 'transparent', fg: i === pi ? '#e7e5fe' : '#9397ab', select: () => this.setState({ period: i }) })),
-      selDateLabel: WDL[sd.getDay()] + ', ' + MON[sd.getMonth()] + ' ' + sd.getDate(),
-      selCounts: (c.day + c.eve + c.night) + ' on shift',
-      onGroups: ['day', 'eve', 'night'].map(k => ({ name: TYPES[k].name, dot: TYPES[k].dot, bg: TYPES[k].bg, fg: TYPES[k].fg, count: c[k], people: onLists[k].sort((a, b) => a.time.localeCompare(b.time)) })),
+      periodTabs: DATA.map((p, i) => ({ label: p.label, title: p.title, check: i === pi ? '✓' : '', bg: i === pi ? '#2b2741' : 'transparent', fg: i === pi ? '#e7e5fe' : '#b2b6ca', select: () => this.setState({ period: i, selected: null, menuOpen: false }) })),
+      menuOpen: this.state.menuOpen, toggleMenu: () => this.setState(s => ({ menuOpen: !s.menuOpen })), chevronRot: this.state.menuOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+      selWeekday: WDL[sd.getDay()], selMon: MON[sd.getMonth()], selDay: sd.getDate(),
+      prevDay: () => this.setState({ selected: Math.max(1, sel - 1) }), nextDay: () => this.setState({ selected: Math.min(28, sel + 1) }),
+      goToday: () => today ? this.setState({ period: today.period, selected: null }) : null, todayVisible: !!today && (sel !== todayOff || today.period !== pi), todayTag: todayOff === sel ? 'Today' : '',
+      selCounts: (c.day + c.eve + c.night),
+      toggleDim: () => this.setState({ dimPast: !dimPast }), dimTrack: dimPast ? '#5d5294' : '#292b31', dimKnob: dimPast ? '#e7e5fe' : '#75798c', dimKnobLeft: dimPast ? '23px' : '3px',
+      onGroups: ['day', 'eve', 'night'].map(k => ({ name: TYPES[k].name, dot: TYPES[k].dot, bg: TYPES[k].bg, fg: TYPES[k].fg, count: c[k], people: onLists[k].sort((a, b) => a.time.localeCompare(b.time)), empty: c[k] ? '' : 'No one scheduled' })),
     };
   }
 }
