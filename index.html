@@ -1,658 +1,352 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Clancy Trial Tracker</title>
-<style>
-  :root{
-    --bg:#f6f7f9; --panel:#ffffff; --ink:#1a1c1f; --muted:#5b6069;
-    --line:#e3e6ea; --accent:#3a6ea5; --accent-ink:#274f78;
-    --pros:#a24b3a; --pros-bg:#fbeeeb; --def:#3a7a5c; --def-bg:#e9f5ef;
-    --warn:#8a6d15; --warn-bg:#fdf6e3; --warn-line:#e9d98c;
-    --shadow:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
-    --radius:12px;
-  }
-  @media (prefers-color-scheme: dark){
-    :root{
-      --bg:#0f1114; --panel:#181b1f; --ink:#e8eaed; --muted:#9aa0a8;
-      --line:#2a2f36; --accent:#6ea0d8; --accent-ink:#9ec3ea;
-      --pros:#e08a76; --pros-bg:#2a1a16; --def:#78c39c; --def-bg:#152820;
-      --warn:#e0c15a; --warn-bg:#2a2410; --warn-line:#4d431c;
-      --shadow:0 1px 3px rgba(0,0,0,.4);
-    }
-  }
-  *{box-sizing:border-box}
-  html{-webkit-text-size-adjust:100%}
-  body{
-    margin:0;background:var(--bg);color:var(--ink);
-    font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    padding:0 16px 80px;
-  }
-  .wrap{max-width:860px;margin:0 auto}
-  header.top{padding:40px 0 8px}
-  h1{font-size:1.9rem;line-height:1.15;margin:0 0 6px;letter-spacing:-.02em}
-  .sub{color:var(--muted);font-size:1rem;margin:0}
-  .updated{color:var(--muted);font-size:.82rem;margin-top:10px}
-
-  .banner{
-    background:var(--warn-bg);border:1px solid var(--warn-line);
-    border-radius:var(--radius);padding:14px 16px;margin:20px 0 8px;
-    font-size:.92rem;color:var(--ink);
-  }
-  .banner strong{color:var(--warn)}
-
-  nav.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0 6px;position:sticky;top:0;
-    background:var(--bg);padding:10px 0;z-index:5;border-bottom:1px solid var(--line)}
-  .tab{
-    border:1px solid var(--line);background:var(--panel);color:var(--muted);
-    padding:7px 14px;border-radius:999px;font-size:.88rem;cursor:pointer;font-weight:600;
-  }
-  .tab[aria-selected="true"]{color:#fff;background:var(--accent);border-color:var(--accent)}
-  @media (prefers-color-scheme: dark){.tab[aria-selected="true"]{color:#0f1114}}
-
-  section{display:none;margin-top:22px}
-  section.active{display:block;animation:fade .2s ease}
-  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
-
-  h2{font-size:1.25rem;margin:6px 0 4px;letter-spacing:-.01em}
-  .lead{color:var(--muted);margin:0 0 18px;font-size:.95rem}
-
-  /* timeline */
-  .tl{position:relative;margin:0;padding:0 0 0 26px;list-style:none}
-  .tl:before{content:"";position:absolute;left:7px;top:6px;bottom:6px;width:2px;background:var(--line)}
-  .tl li{position:relative;margin:0 0 18px}
-  .tl li:before{content:"";position:absolute;left:-26px;top:5px;width:12px;height:12px;border-radius:50%;
-    background:var(--panel);border:2px solid var(--accent)}
-  .tl li.key:before{background:var(--accent)}
-  .date{font-size:.78rem;font-weight:700;color:var(--accent-ink);text-transform:uppercase;letter-spacing:.03em}
-  .ev{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-top:4px;box-shadow:var(--shadow)}
-  .ev p{margin:0;font-size:.94rem}
-  .src{font-size:.78rem;margin-top:7px}
-  .src a{color:var(--accent);text-decoration:none}
-  .src a:hover{text-decoration:underline}
-
-  /* two cases */
-  .cases{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-  @media (max-width:620px){.cases{grid-template-columns:1fr}}
-  .card{border-radius:var(--radius);padding:16px;border:1px solid var(--line);box-shadow:var(--shadow)}
-  .card.pros{background:var(--pros-bg);border-color:var(--pros)}
-  .card.def{background:var(--def-bg);border-color:var(--def)}
-  .card h3{margin:0 0 4px;font-size:1.05rem}
-  .card.pros h3{color:var(--pros)} .card.def h3{color:var(--def)}
-  .card .who{font-size:.78rem;color:var(--muted);margin:0 0 10px}
-  .card ul{margin:0;padding-left:18px;font-size:.92rem}
-  .card li{margin-bottom:7px}
-  .agree{background:var(--panel);border:1px dashed var(--line);border-radius:10px;padding:14px;margin-top:14px;font-size:.92rem}
-
-  /* disputed */
-  .disputed{background:var(--warn-bg);border:1px solid var(--warn-line);border-radius:var(--radius);padding:16px 18px}
-  .flag{display:inline-block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;
-    color:var(--warn);border:1px solid var(--warn-line);border-radius:6px;padding:2px 8px;margin-bottom:10px}
-  .disputed h3{margin:.4em 0 .3em;font-size:1.02rem}
-  .disputed p{font-size:.92rem;margin:.5em 0}
-  table.meds{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:10px}
-  .medscroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
-  table.meds th,table.meds td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--warn-line);white-space:nowrap}
-  table.meds th{color:var(--warn);font-size:.72rem;text-transform:uppercase;letter-spacing:.03em}
-  .note{font-size:.82rem;color:var(--muted);margin-top:10px;font-style:italic}
-
-  .srclist{font-size:.9rem}
-  .srclist li{margin-bottom:8px}
-  .srclist a{color:var(--accent);text-decoration:none}
-  .srclist a:hover{text-decoration:underline}
-
-  /* verdict watch */
-  .status{border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);
-    background:var(--panel)}
-  .status .pill{display:inline-flex;align-items:center;gap:8px;font-size:.74rem;font-weight:800;letter-spacing:.06em;
-    text-transform:uppercase;color:var(--warn);background:var(--warn-bg);border:1px solid var(--warn-line);
-    border-radius:999px;padding:5px 12px}
-  .status .pill .dot{width:8px;height:8px;border-radius:50%;background:var(--warn);animation:pulse 1.8s ease-in-out infinite}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
-  .status h3{margin:12px 0 2px;font-size:1.15rem}
-  .status .stage{color:var(--muted);font-size:.9rem;margin:0}
-  .steps{list-style:none;margin:16px 0 0;padding:0;counter-reset:s}
-  .steps li{position:relative;padding:6px 0 6px 34px;font-size:.92rem;border-left:2px solid var(--line);margin-left:11px}
-  .steps li:before{counter-increment:s;content:counter(s);position:absolute;left:-13px;top:5px;width:24px;height:24px;
-    border-radius:50%;background:var(--panel);border:2px solid var(--accent);color:var(--accent);font-size:.75rem;
-    font-weight:700;display:flex;align-items:center;justify-content:center}
-  .steps li.now:before{background:var(--accent);color:#fff}
-  @media (prefers-color-scheme: dark){.steps li.now:before{color:#0f1114}}
-  .steps li.now{font-weight:600}
-  .steps li small{color:var(--muted);font-weight:400}
-  .placeholder{border:1px dashed var(--line);border-radius:10px;padding:14px 16px;margin-top:16px;
-    background:var(--bg);font-size:.9rem;color:var(--muted)}
-  footer{margin-top:40px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:.8rem}
-</style>
+<script src="./support.js"></script>
 </head>
 <body>
-<div class="wrap">
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="_ds/nocturne-b784e110-754a-4756-b3b3-8d8879273ee8/styles.css">
+<script src="_ds/nocturne-b784e110-754a-4756-b3b3-8d8879273ee8/_ds_bundle.js"></script>
+<style>
+html{zoom:0.5}
+html,body{margin:0;background:#161826;color:#e9e9ed;font-family:"Inter",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#b5abfc;text-decoration:none}a:hover{color:#d2cefd}
+*{box-sizing:border-box}
+::selection{background:#423a6a}
+</style>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#2b2741"/><rect x="30" y="34" width="12" height="12" rx="2" fill="oklch(0.73 0.125 75)"/><rect x="44" y="34" width="12" height="12" rx="2" fill="oklch(0.73 0.125 289)"/><rect x="58" y="34" width="12" height="12" rx="2" fill="oklch(0.73 0.125 205)"/><rect x="30" y="48" width="12" height="12" rx="2" fill="oklch(0.73 0.125 289)"/><rect x="44" y="48" width="12" height="12" rx="2" fill="oklch(0.48 0.16 25)"/><rect x="58" y="48" width="12" height="12" rx="2" fill="oklch(0.73 0.125 75)"/></svg></template>
+<style>
+button:focus-visible{outline:2px solid #9184d9;outline-offset:2px}
+</style>
+</helmet>
+<div style="min-height:100vh;background:#161826;color:#e9e9ed;font-family:'Inter',system-ui,sans-serif;font-size:13px;padding:22px 24px 40px;display:flex;flex-direction:column;gap:16px">
 
-  <header class="top">
-    <h1>Commonwealth v. Lindsay Clancy</h1>
-    <p class="sub">A sourced tracker of a live Massachusetts criminal trial.</p>
-    <p class="updated">Snapshot compiled Aug 25, 2026 · verify against live reporting before relying on any detail.</p>
-  </header>
-
-  <div class="banner">
-    <strong>Active trial — no verdict.</strong> As of this snapshot the jury has not deliberated.
-    Lindsay Clancy has pleaded <em>not guilty</em> and is legally presumed innocent unless and until a jury
-    finds otherwise. Both sides agree she caused her children's deaths; the trial is a dispute over
-    <em>criminal responsibility</em>, not over what happened. Language here is deliberately neutral
-    (<em>charged, alleged, testified</em>) — not "murder" as a settled fact.
+  <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px">
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <div style="font-size: 20px; letter-spacing: 0.08em; text-transform: uppercase; color: #9397ab; font-weight: 500">TMH Radiology | Staff Schedule</div>
+      <h1 style="margin:0;font-size:24px;font-weight:500;letter-spacing:-0.01em;line-height:1.1">{{ periodTitle }}</h1>
+      <div style="display:inline-flex;gap:2px;padding:2px;border-radius:6px;border:1px solid #3f424d;align-self:flex-start;margin-top:4px">
+        <sc-for list="{{ periodTabs }}" as="t" hint-placeholder-count="2">
+          <button onClick="{{ t.select }}" style="border:0;cursor:pointer;font:inherit;font-size:12px;font-weight:500;padding:5px 10px;border-radius:4px;background:{{ t.bg }};color:{{ t.fg }}" style-hover="color:#e7e5fe">{{ t.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;font-size:11.5px;color:#b2b6ca">
+      <div style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:3px;background:oklch(0.73 0.125 75)"></span>Day</div>
+      <div style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:3px;background:oklch(0.73 0.125 289)"></span>Evening</div>
+      <div style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:3px;background:oklch(0.73 0.125 205)"></span>Night</div>
+      <div style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:3px;border:1px dashed #75798c"></span>Vacation</div>
+      <div style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:3px;display:flex;align-items:center;justify-content:center;color:#9397ab;font-size:8px;font-weight:600">H</span>Holiday</div>
+      <div style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:3px;display:flex;align-items:center;justify-content:center;color:#75798c;font-size:10px">–</span>Requested off</div>
+      <div style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:3px;background:oklch(0.48 0.16 25)"></span>On call (stays over for call-ins)</div>
+      <div style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:3px;border:1px solid #b5abfc"></span>Pen edit</div>
+      <div style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:3px;background:oklch(0.42 0.1 25)"></span>Below minimum coverage</div>
+    </div>
   </div>
 
-  <nav class="tabs" role="tablist">
-    <button class="tab" role="tab" aria-selected="true" data-tab="timeline">Timeline</button>
-    <button class="tab" role="tab" aria-selected="false" data-tab="verdict">Verdict Watch</button>
-    <button class="tab" role="tab" aria-selected="false" data-tab="cases">The Two Cases</button>
-    <button class="tab" role="tab" aria-selected="false" data-tab="husband">The Husband</button>
-    <button class="tab" role="tab" aria-selected="false" data-tab="testimony">Key Testimony</button>
-    <button class="tab" role="tab" aria-selected="false" data-tab="disputed">Disputed Claims</button>
-    <button class="tab" role="tab" aria-selected="false" data-tab="sources">Sources &amp; Method</button>
-  </nav>
-
-  <!-- TIMELINE -->
-  <section id="timeline" class="active">
-    <h2>Documented timeline</h2>
-    <p class="lead">Events reported by credible outlets or matters of court record. Dates in 2023 are the underlying
-      events; 2024–2025 covers pretrial procedure; 2026 is the trial itself.</p>
-    <ul class="tl">
-      <li class="key">
-        <div class="date">Jan 24, 2023</div>
-        <div class="ev"><p>Emergency responders find the three Clancy children — Cora (5), Dawson (3) and Callan
-          (8 months) — with injuries at the family's Duxbury, MA home. Cora and Dawson are pronounced dead that day.
-          Lindsay Clancy is hospitalized with serious self-inflicted injuries.</p>
-          <div class="src"><a href="https://crimetimelines.com/crime-news/lindsay-clancy-timeline/" target="_blank" rel="noopener">Crime Timelines</a> · <a href="https://www.cbsnews.com/boston/live-updates/lindsay-clancy-trial-live-updates-patrick-clancy/" target="_blank" rel="noopener">CBS Boston</a></div>
+  <div style="background:#232532;border-radius:8px;box-shadow:0 0 0 1px #3f424d;padding:12px 14px;display:flex;flex-wrap:wrap;gap:12px 28px;align-items:flex-start">
+    <div style="display:flex;flex-direction:column;gap:2px;min-width:120px">
+      <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#9397ab;font-weight:500">On shift</div>
+      <div style="font-size:18px;font-weight:500;line-height:1.2">{{ selDateLabel }}</div>
+      <div style="font-size:11.5px;color:#9397ab">{{ selCounts }} · click a date to change · click a name to focus · ctrl/⌘-click to compare</div>
+    </div>
+    <sc-for list="{{ onGroups }}" as="g" hint-placeholder-count="3">
+      <div style="display:flex;flex-direction:column;gap:6px;min-width:150px;flex:1 1 150px">
+        <div style="display:flex;align-items:center;gap:6px;font-size:11.5px;color:#b2b6ca"><span style="width:8px;height:8px;border-radius:2px;background:{{ g.dot }}"></span>{{ g.name }} <span style="color:#75798c">{{ g.count }}</span></div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px">
+          <sc-for list="{{ g.people }}" as="p" hint-placeholder-count="3">
+            <span style="display:inline-flex;align-items:baseline;gap:5px;padding:3px 7px;border-radius:4px;background:{{ p.bg }};color:{{ p.fg }};font-size:11.5px;line-height:1.2" title="{{ p.tag }}"><span style="font-weight:500">{{ p.name }}</span><span style="opacity:0.75;font-size:10.5px">{{ p.time }}</span><span style="font-size:9.5px;text-transform:uppercase;letter-spacing:0.06em;opacity:0.9">{{ p.tag }}</span></span>
+          </sc-for>
         </div>
-      </li>
-      <li>
-        <div class="date">Jan 27, 2023</div>
-        <div class="ev"><p>Callan, the youngest child, dies after being taken off life support.</p>
-          <div class="src"><a href="https://crimetimelines.com/crime-news/lindsay-clancy-timeline/" target="_blank" rel="noopener">Crime Timelines</a></div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="overflow-x:auto;border-radius:8px;box-shadow:0 0 0 1px #3f424d;background:#161826">
+    <div style="min-width:max-content;width:100%">
+
+      <div style="display:grid;grid-template-columns:172px repeat(28,minmax(38px,1fr)) 14px {{ hoursCols }};align-items:stretch;border-bottom:1px solid #3f424d;position:sticky;top:0;background:#161826;z-index:3">
+        <div style="position:sticky;left:0;background:#161826;z-index:2;padding:10px 12px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#9397ab;font-weight:500;display:flex;align-items:flex-end">Staff</div>
+        <sc-for list="{{ days }}" as="d" hint-placeholder-count="28">
+          <div onClick="{{ d.select }}" style="cursor:pointer;padding:8px 0 6px;border-left:1px solid {{ d.sepColor }};background:{{ d.colBg }};display:flex;flex-direction:column;align-items:center;gap:2px" style-hover="background:#292b31">
+            <span style="font-size:10px;color:{{ d.wdColor }};font-weight:500">{{ d.wd }}</span>
+            <span style="font-size:13px;font-weight:500;color:{{ d.numColor }}">{{ d.num }}</span>
+            <span style="font-size:9px;color:#75798c;line-height:1;min-height:9px">{{ d.mon }}</span>
+          </div>
+        </sc-for>
+        <div></div>
+        <sc-if value="{{ hoursOpen }}" hint-placeholder-val="{{ true }}">
+          <div style="padding:8px 0 6px;text-align:center;font-size:10px;color:#9397ab;display:flex;align-items:flex-end;justify-content:center">W1</div>
+          <div style="padding:8px 0 6px;text-align:center;font-size:10px;color:#9397ab;display:flex;align-items:flex-end;justify-content:center">W2</div>
+          <div style="padding:8px 0 6px;text-align:center;font-size:10px;color:#9397ab;display:flex;align-items:flex-end;justify-content:center">W3</div>
+          <div style="padding:8px 0 6px;text-align:center;font-size:10px;color:#9397ab;display:flex;align-items:flex-end;justify-content:center">W4</div>
+          <div style="padding:8px 0 6px;text-align:right;font-size:10px;color:#9397ab;display:flex;align-items:flex-end;justify-content:flex-end">Hours</div>
+        </sc-if>
+        <button onClick="{{ toggleHours }}" title="{{ hoursToggleTitle }}" style="border:0;cursor:pointer;font:inherit;background:transparent;color:#9397ab;display:flex;align-items:flex-end;justify-content:center;padding:8px 0 6px;font-size:10px;letter-spacing:0.06em;text-transform:uppercase;writing-mode:vertical-rl;transform:rotate(180deg)" style-hover="color:#d2cefd">{{ hoursToggleLabel }}</button>
+      </div>
+
+      <sc-for list="{{ rows }}" as="r" hint-placeholder-count="12">
+        <sc-if value="{{ r.isSection }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid;grid-template-columns:172px 1fr;background:#1c1e2b;border-bottom:1px solid #292b31">
+            <div style="position:sticky;left:0;padding:7px 12px 5px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#b5abfc;font-weight:500;background:#1c1e2b">{{ r.name }}</div>
+            <div></div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ r.isPerson }}" hint-placeholder-val="{{ true }}">
+          <div style="display:grid;grid-template-columns:172px repeat(28,minmax(38px,1fr)) 14px {{ hoursCols }};align-items:stretch;border-bottom:1px solid rgba(233,233,237,0.06);background:{{ r.rowBg }};opacity:{{ r.rowOpacity }};filter:{{ r.rowBlur }};transition:opacity 0.2s,filter 0.2s">
+            <div onClick="{{ r.select }}" style="cursor:pointer;position:sticky;left:0;background:{{ r.nameBg }};z-index:2;padding:6px 12px;display:flex;flex-direction:column;justify-content:center;gap:4px;box-shadow:inset 2px 0 0 {{ r.nameBar }}" style-hover="background:#292b31">
+              <div style="font-size:12.5px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.name }}</div>
+              
+              <div style="display:flex;height:3px;border-radius:2px;overflow:hidden;background:#292b31;width:110px">
+                <div style="flex:{{ r.dayH }};background:oklch(0.73 0.125 75)"></div>
+                <div style="flex:{{ r.eveH }};background:oklch(0.73 0.125 289)"></div>
+                <div style="flex:{{ r.nightH }};background:oklch(0.73 0.125 205)"></div>
+              </div>
+            </div>
+            <sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="28">
+              <div style="padding:3px 2px;border-left:1px solid {{ c.sepColor }};background:{{ c.colBg }};display:flex" title="{{ c.title }}">
+                <div style="position:relative;flex:1;min-height:30px;display:flex;align-items:center;justify-content:center;border-radius:4px;background:{{ c.bg }};color:{{ c.fg }};border:1px {{ c.borderStyle }} {{ c.border }};font-size:9.5px;font-weight:500;line-height:1.1;text-align:center;white-space:pre-line;letter-spacing:-0.01em">{{ c.label }}<span style="position:absolute;top:2px;right:2px;width:5px;height:5px;border-radius:50%;background:{{ c.markBg }}"></span></div>
+              </div>
+            </sc-for>
+            <div></div>
+            <sc-if value="{{ hoursOpen }}" hint-placeholder-val="{{ true }}">
+              <sc-for list="{{ r.weekHours }}" as="h" hint-placeholder-count="4">
+                <div style="display:flex;align-items:center;justify-content:center;font-size:11.5px;color:{{ h.color }};font-variant-numeric:tabular-nums">{{ h.text }}</div>
+              </sc-for>
+              <div style="display:flex;align-items:center;justify-content:flex-end;font-size:12px;font-weight:500;font-variant-numeric:tabular-nums">{{ r.totalHours }}</div>
+            </sc-if>
+            <div></div>
+          </div>
+        </sc-if>
+      </sc-for>
+
+      <sc-if value="{{ showCoverage }}" hint-placeholder-val="{{ true }}">
+        <div style="display:grid;grid-template-columns:172px 1fr;background:#1c1e2b;border-bottom:1px solid #292b31;border-top:1px solid #3f424d">
+          <div style="position:sticky;left:0;padding:7px 12px 5px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#b5abfc;font-weight:500;background:#1c1e2b">Coverage · headcount</div>
+          <div></div>
         </div>
-      </li>
-      <li class="key">
-        <div class="date">Feb 7, 2023</div>
-        <div class="ev"><p>Clancy is arraigned from a hospital bed and charged with three counts each of murder,
-          strangulation/suffocation, and assault and battery with a dangerous weapon. A not-guilty plea is entered.</p>
-          <div class="src"><a href="https://www.biography.com/crime/a71603379/who-is-lindsay-clancy-duxbury-murder-trial" target="_blank" rel="noopener">Biography</a></div>
-        </div>
-      </li>
-      <li>
-        <div class="date">Oct 2023</div>
-        <div class="ev"><p>Clancy is re-arraigned (reported at Tewksbury Hospital) on three counts of murder and
-          strangulation; a plea of not guilty is again entered on her behalf.</p>
-          <div class="src"><a href="https://crimetimelines.com/crime-news/lindsay-clancy-timeline/" target="_blank" rel="noopener">Crime Timelines</a></div>
-        </div>
-      </li>
-      <li>
-        <div class="date">2024 – 2025</div>
-        <div class="ev"><p>Extended pretrial period: competency and DNA-testing motions, and a fight over prosecutors'
-          efforts to obtain the husband's statements and reporter materials tied to a <em>New Yorker</em> profile.
-          The trial is postponed multiple times.</p>
-          <div class="src"><a href="https://www.yahoo.com/news/lindsay-clancy-trial-set-2026-204143147.html" target="_blank" rel="noopener">Yahoo/AP</a></div>
-        </div>
-      </li>
-      <li>
-        <div class="date">Pretrial ruling</div>
-        <div class="ev"><p>The defense asks for a <strong>bifurcated (two-phase) trial</strong> — guilt first, criminal
-          responsibility second. Plymouth Superior Court Judge William F. Sullivan <strong>denies</strong> the motion;
-          the case proceeds as a single trial.</p>
-          <div class="src"><a href="https://www.nbcboston.com/news/local/lindsay-clancy-murder-case-judge-issues-key-ruling/3925435/" target="_blank" rel="noopener">NBC Boston</a></div>
-        </div>
-      </li>
-      <li class="key">
-        <div class="date">Jul 20, 2026</div>
-        <div class="ev"><p>Jury selection begins in Plymouth Superior Court.</p>
-          <div class="src"><a href="https://www.cnn.com/2026/07/20/us/lindsay-clancy-murder-trial-massachusetts" target="_blank" rel="noopener">CNN</a></div>
-        </div>
-      </li>
-      <li>
-        <div class="date">Jul 27, 2026</div>
-        <div class="ev"><p>Opening statements and testimony begin. The prosecution argues the killings were planned;
-          the defense argues Clancy was not criminally responsible due to postpartum psychosis.</p>
-          <div class="src"><a href="https://www.cbsnews.com/news/lindsay-clancy-trial-key-moments/" target="_blank" rel="noopener">CBS News</a></div>
-        </div>
-      </li>
-      <li>
-        <div class="date">Aug 2026</div>
-        <div class="ev"><p>Defense presents its case — roughly ten witnesses, including mental-health professionals who
-          testify Clancy was in a severe mental-health crisis and describe an overmedication argument. The defense
-          says she heard a voice the night of the deaths.</p>
-          <div class="src"><a href="https://www.cnn.com/2026/08/08/us/lindsay-clancy-trial-what-we-learned" target="_blank" rel="noopener">CNN</a> · <a href="https://www.wbur.org/news/2026/08/12/massachusetts-lindsay-clancy-murder-children-delusions-maternal-care" target="_blank" rel="noopener">WBUR</a></div>
-        </div>
-      </li>
-      <li class="key">
-        <div class="date">Aug 20–21, 2026</div>
-        <div class="ev"><p>The defense rests after psychiatric testimony. Prosecutors begin calling rebuttal witnesses,
-          including a rebuttal psychiatrist contesting the postpartum-psychosis defense.</p>
-          <div class="src"><a href="https://www.cnn.com/2026/08/21/us/lindsay-clancy-trial-defense-rests" target="_blank" rel="noopener">CNN</a> · <a href="https://abc7ny.com/post/lindsay-clancy-trial-day-18-defense-could-rest-case-friday/19713230/" target="_blank" rel="noopener">ABC7</a></div>
-        </div>
-      </li>
-      <li class="key">
-        <div class="date">Week of Aug 24, 2026</div>
-        <div class="ev"><p>Rebuttal winds down; closing arguments are expected (reported as early as Tuesday).
-          <strong>The jury has not yet deliberated.</strong></p>
-          <div class="src"><a href="https://www.spokesman.com/stories/2026/aug/23/lindsay-clancy-trial-closing-arguments-expected-th/" target="_blank" rel="noopener">Spokesman-Review/AP</a> · <a href="https://www.wfsb.com/2026/08/24/lindsay-clancy-trial-nears-closing-arguments/" target="_blank" rel="noopener">WFSB</a></div>
-        </div>
-      </li>
-    </ul>
-  </section>
-
-  <!-- VERDICT WATCH -->
-  <section id="verdict">
-    <h2>Verdict watch</h2>
-    <p class="lead">The live status of the case and what each possible outcome would mean. This section is built to be
-      updated the moment the jury returns.</p>
-
-    <!-- VERDICT-STATUS:START — update this block when status changes -->
-    <div class="status">
-      <span class="pill"><span class="dot"></span>Awaiting verdict</span>
-      <h3>No verdict has been reached.</h3>
-      <p class="stage">Status as of Aug 25, 2026 — prosecution rebuttal wrapping up; closing arguments expected this week.</p>
-      <ol class="steps">
-        <li class="now">Testimony concludes <small>— defense rested Aug 20–21; prosecution rebuttal wrapping up</small></li>
-        <li>Closing arguments <small>— expected the week of Aug 24</small></li>
-        <li>Judge's jury instructions <small>— Judge William F. Sullivan charges the jury on the law</small></li>
-        <li>Jury deliberations <small>— a <strong>unanimous</strong> verdict is required</small></li>
-        <li>Verdict returned <small>— then, if applicable, sentencing or commitment</small></li>
-      </ol>
+        <sc-for list="{{ coverage }}" as="cv" hint-placeholder-count="3">
+          <div style="display:grid;grid-template-columns:172px repeat(28,minmax(38px,1fr)) 14px {{ hoursCols }};align-items:stretch;border-bottom:1px solid rgba(233,233,237,0.06)">
+            <div style="position:sticky;left:0;background:#161826;z-index:2;padding:6px 12px;display:flex;align-items:center;gap:8px;font-size:12px">
+              <span style="width:8px;height:8px;border-radius:2px;background:{{ cv.dot }}"></span>{{ cv.name }}<span style="color:#75798c;font-size:11px">min {{ cv.min }}</span><span style="margin-left:auto;font-size:10.5px;color:{{ cv.gapsColor }};white-space:nowrap">{{ cv.gaps }}</span>
+            </div>
+            <sc-for list="{{ cv.cells }}" as="c" hint-placeholder-count="28">
+              <div style="padding:3px 2px;border-left:1px solid {{ c.sepColor }};background:{{ c.colBg }};display:flex">
+                <div style="flex:1;min-height:26px;display:flex;align-items:center;justify-content:center;border-radius:4px;background:{{ c.bg }};color:{{ c.fg }};font-size:12px;font-weight:500;font-variant-numeric:tabular-nums">{{ c.n }}</div>
+              </div>
+            </sc-for>
+            <div></div>
+          </div>
+        </sc-for>
+      </sc-if>
     </div>
-    <!-- VERDICT-STATUS:END -->
+  </div>
 
-    <div class="agree" style="margin-top:16px">
-      <strong>The question the jury must answer.</strong> Not <em>whether</em> Clancy killed her children — both sides
-      agree she did — but whether she is <strong>criminally responsible</strong>. Under Massachusetts law the burden is
-      on the <strong>prosecution to prove criminal responsibility beyond a reasonable doubt</strong>; if jurors have a
-      reasonable doubt that she could appreciate the wrongfulness of her actions (or conform her conduct to the law),
-      the verdict is not-guilty by reason of lack of criminal responsibility.
-    </div>
-
-    <h3 style="font-size:1.1rem;margin:22px 0 4px">Possible outcomes</h3>
-    <p class="lead" style="margin-bottom:14px">As outlined by legal analysts covering the case. The jury may reach a
-      different verdict on each of the three counts.</p>
-    <div class="cases">
-      <div class="card pros">
-        <h3>Guilty — first-degree murder</h3>
-        <p class="who">If found criminally responsible &amp; premeditated/deliberate</p>
-        <ul>
-          <li>Carries a <strong>mandatory sentence of life in prison without the possibility of parole</strong> in
-            Massachusetts.</li>
-        </ul>
-      </div>
-      <div class="card pros">
-        <h3>Guilty — second-degree murder</h3>
-        <p class="who">Lesser included offense</p>
-        <ul>
-          <li>Also a <strong>life sentence</strong>, but with <strong>eventual parole eligibility</strong>.</li>
-        </ul>
-      </div>
-      <div class="card def">
-        <h3>Not criminally responsible</h3>
-        <p class="who">The insanity ("NGRI") verdict the defense seeks</p>
-        <ul>
-          <li><strong>Not an acquittal to freedom.</strong> It typically leads to <strong>commitment to a secure state
-            psychiatric facility</strong>, subject to periodic review hearings — potentially long-term.</li>
-        </ul>
-      </div>
-      <div class="card" style="background:var(--panel)">
-        <h3 style="color:var(--ink)">Other possibilities</h3>
-        <p class="who">Depending on the judge's instructions</p>
-        <ul>
-          <li>Jurors could convict on a <strong>lesser offense</strong> (e.g. manslaughter) on one or more counts, or
-            fail to reach unanimity (a <strong>hung jury / mistrial</strong>) — which can lead to a retrial.</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="placeholder">
-      <strong>When the verdict lands,</strong> this tab will be updated with: the verdict on each of the three counts,
-      the judge's sentencing or commitment order, and reaction — each with sources. Until then, treat this as a
-      forward-looking guide, not a prediction.
-    </div>
-
-    <p class="note" style="margin-top:12px">Note: the defense's mid-trial motion for a mistrial (over a witness's
-      reference to religion) was <strong>denied</strong> by Judge Sullivan; the trial continued.</p>
-    <div class="src" style="margin-top:6px"><a href="https://www.newsnationnow.com/crime/lindsay-clancy-possible-verdicts/" target="_blank" rel="noopener">NewsNation — What each verdict would mean</a> · <a href="https://www.mysuncoast.com/2026/08/24/legal-analyst-discusses-lindsay-clancy-murder-trial-case-nears-jury-deliberations/" target="_blank" rel="noopener">Legal analysis — nearing deliberations</a> · <a href="https://www.tvinsider.com/1282266/when-will-lindsay-clancy-trial-end-what-happens-next-after-defense-rests/" target="_blank" rel="noopener">What happens next</a></div>
-  </section>
-
-  <!-- CASES -->
-  <section id="cases">
-    <h2>The two cases</h2>
-    <p class="lead">The core dispute is not <em>what</em> happened but <em>criminal responsibility</em> — whether
-      mental illness means Clancy should not be held criminally responsible under Massachusetts law.</p>
-    <div class="cases">
-      <div class="card pros">
-        <h3>Prosecution</h3>
-        <p class="who">Plymouth County District Attorney's Office</p>
-        <ul>
-          <li>Argues the killings were <strong>planned and deliberate</strong>.</li>
-          <li>Points to evidence they say shows intent and awareness of wrongfulness.</li>
-          <li>Called a <strong>rebuttal psychiatrist</strong> disputing that Clancy met the standard for lacking
-            criminal responsibility.</li>
-          <li>Seeks conviction on three counts of first-degree murder.</li>
-        </ul>
-      </div>
-      <div class="card def">
-        <h3>Defense</h3>
-        <p class="who">Atty. Kevin Reddington</p>
-        <ul>
-          <li>Argues Clancy was <strong>not criminally responsible</strong> due to severe <strong>postpartum
-            psychosis</strong>.</li>
-          <li>Testimony that she experienced delusions and heard a voice the night of the deaths.</li>
-          <li>Raises an <strong>overmedication</strong> theory — that her prescribed regimen worsened her state
-            (see Disputed Claims).</li>
-          <li>Called mental-health professionals and treating clinicians.</li>
-        </ul>
-      </div>
-    </div>
-    <div class="agree">
-      <strong>What both sides accept:</strong> that Lindsay Clancy strangled her three children on Jan 24, 2023.
-      The trial turns on her mental state and criminal responsibility, which is why psychiatric testimony has
-      dominated the proceedings.
-      <div class="src" style="margin-top:8px"><a href="https://www.cnn.com/2026/08/21/us/lindsay-clancy-trial-defense-rests" target="_blank" rel="noopener">CNN</a> · <a href="https://www.npr.org/2026/08/16/nx-s1-5931964/lindsay-clancy-trial-postpartum-psychosis-diagnosis" target="_blank" rel="noopener">NPR</a></div>
-    </div>
-  </section>
-
-  <!-- HUSBAND -->
-  <section id="husband">
-    <h2>The husband: Patrick Clancy</h2>
-    <p class="lead">Patrick Clancy — Lindsay's husband at the time, since divorced — is the case's pivotal
-      lay witness. He made the 911 call, discovered the scene, and was the <strong>prosecution's first witness</strong>.
-      He is a grieving parent and a witness; he faces no charges or allegations of wrongdoing.</p>
-
-    <h3 style="font-size:1.05rem;margin-bottom:2px">The night of Jan 24, 2023 (per his testimony)</h3>
-    <ul class="tl" style="margin-top:10px">
-      <li class="key">
-        <div class="date">~5:15 p.m.</div>
-        <div class="ev"><p>Patrick leaves the house — testimony describes an errand run to pick up medication at a
-          CVS and takeout from a restaurant (ThreeV). Prosecutors leaned hard on how <em>short</em> this window was.</p>
-          <div class="src"><a href="https://www.oxygen.com/crime-news/lindsay-clancy-trial-timeline-her-patrick-clancys-day-before-kids-killed" target="_blank" rel="noopener">Oxygen</a> · <a href="https://www.foxnews.com/us/lindsay-clancy-prosecutors-squeeze-timeline-ex-husband-jury-weighs-murder-versus-madness-expert" target="_blank" rel="noopener">Fox News</a></div>
-        </div>
-      </li>
-      <li class="key">
-        <div class="date">~6:09 p.m.</div>
-        <div class="ev"><p>He returns — under an hour later. He testified he called out and got no answer, went upstairs,
-          found the bedroom door locked, and once inside saw blood and an open window. He found Lindsay on the ground
-          outside below the window, and his three children in the basement. He placed the 911 call, which was played
-          for the jury.</p>
-          <div class="src"><a href="https://www.wbur.org/news/2026/07/29/lindsay-clancy-patrick-clancy-testimony-911-murder-trial" target="_blank" rel="noopener">WBUR</a> · <a href="https://www.cbsnews.com/boston/live-updates/lindsay-clancy-trial-live-updates-patrick-clancy-day-2/" target="_blank" rel="noopener">CBS Boston</a></div>
-        </div>
-      </li>
-    </ul>
-
-    <div class="cases" style="margin-top:8px">
-      <div class="card pros">
-        <h3>How the prosecution used him</h3>
-        <p class="who">Direct examination</p>
-        <ul>
-          <li>Established the tight <strong>~54-minute timeline</strong> — the window in which the deaths occurred.</li>
-          <li>Testified Lindsay had told him she was <strong>suicidal</strong> and had <strong>intrusive thoughts</strong>
-            about harming the children.</li>
-          <li>Described her worsening in Dec 2022 after a Seroquel increase, and a multi-day stay in a locked
-            psychiatric ward in early January.</li>
-        </ul>
-      </div>
-      <div class="card def">
-        <h3>How the defense used him</h3>
-        <p class="who">Cross-examination (Atty. Reddington)</p>
-        <ul>
-          <li>Drew out a portrait of a <strong>loving, devoted mother</strong> — including her social-media posts of
-            the children.</li>
-          <li>Had him detail Lindsay's <strong>repeated efforts to get mental-health care</strong> in the months prior.</li>
-          <li>Used his account to support the argument that a well mother would not have harmed her children.</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="agree" style="margin-top:14px">
-      <strong>His public stance.</strong> In a 2024 <em>New Yorker</em> interview, Patrick Clancy said:
-      <em>"I wasn't married to a monster — I was married to someone who got sick,"</em> and publicly urged compassion.
-      Prosecutors fought pretrial to obtain his statements to the magazine and the reporter's materials — one reason the
-      trial was repeatedly delayed.
-      <div class="src" style="margin-top:8px"><a href="https://www.cnn.com/2026/08/01/us/lindsay-clancy-trial-patrick-testimony" target="_blank" rel="noopener">CNN — What his testimony revealed</a> · <a href="https://www.yahoo.com/news/lindsay-clancy-trial-set-2026-204143147.html" target="_blank" rel="noopener">Yahoo/AP — New Yorker fight</a></div>
-    </div>
-
-    <p class="note" style="margin-top:14px">Some coverage has framed his role as "what did he know beforehand?"
-      (e.g. NewsNation). Treat that as a media angle, not an accusation — he has not been charged with or accused of any
-      wrongdoing, and his knowledge of her illness is exactly what both sides questioned him about.</p>
-  </section>
-
-  <!-- TESTIMONY -->
-  <section id="testimony">
-    <h2>Key testimony: the expert psychiatrists</h2>
-    <p class="lead">Because both sides agree Clancy caused the deaths, the verdict hinges on <em>criminal
-      responsibility</em> — and that turned into a battle of forensic experts giving directly opposing readings of the
-      same person. Their conclusions, as reported from the courtroom:</p>
-
-    <div class="agree" style="margin:0 0 16px">
-      <strong>What they're actually arguing about (Massachusetts standard).</strong> A defendant lacks criminal
-      responsibility if, because of a mental disease or defect, they lacked <em>substantial capacity</em> either to
-      <em>appreciate the wrongfulness</em> of their conduct or to <em>conform their conduct to the law</em>. The
-      experts split on both halves: was she psychotic, and — even if she was — could she still tell right from wrong?
-    </div>
-
-    <div class="cases">
-      <div class="card def">
-        <h3>Dr. Phillip Resnick</h3>
-        <p class="who">Defense · forensic psychiatrist, postpartum-disorders expert</p>
-        <ul>
-          <li>Concluded Clancy was <strong>"frankly psychotic"</strong> the day of the deaths and labeled it
-            <strong>postpartum psychosis</strong>.</li>
-          <li>Described a <strong>"command hallucination"</strong> — a voice directing her — and a <strong>"delusion of
-            influence,"</strong> a sense of an external force taking over her body.</li>
-          <li>Supports the defense's core claim: she could not appreciate the wrongfulness of her actions.</li>
-        </ul>
-      </div>
-      <div class="card def">
-        <h3>Paul Zeizel</h3>
-        <p class="who">Defense · clinical &amp; forensic psychologist</p>
-        <ul>
-          <li>Evaluated Clancy in <strong>early February 2023</strong>, shortly after the deaths.</li>
-          <li>Testified she was <strong>experiencing psychosis</strong> at the time and <strong>could not tell right
-            from wrong</strong>.</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="cases" style="margin-top:14px">
-      <div class="card pros">
-        <h3>Dr. Avram Mack</h3>
-        <p class="who">Prosecution rebuttal · forensic psychiatrist (retained by the Plymouth DA)</p>
-        <ul>
-          <li>Reviewed her records and <strong>interviewed her twice</strong>; concluded she had a <strong>major
-            depressive episode</strong>, <strong>not psychosis</strong>, around the time of the deaths.</li>
-          <li>Argued that <strong>even if</strong> she were psychotic, she likely could still distinguish right from
-            wrong — testifying, "There's no reason that psychosis, in [and] of itself, inhibits a person's ability to
-            know right from wrong."</li>
-          <li>Supports the prosecution's claim that she is criminally responsible.</li>
-        </ul>
-      </div>
-      <div class="card" style="background:var(--panel)">
-        <h3 style="color:var(--ink)">The disputed account</h3>
-        <p class="who">Reported from psychiatric testimony</p>
-        <ul>
-          <li>Testimony recounted Clancy's own description of the event — including that she said <strong>"Go to
-            God"</strong> to each child — offered by experts as evidence of her delusional state, not as a confession
-            of intent.</li>
-          <li>How to read that account is precisely what the two sides dispute.</li>
-        </ul>
-      </div>
-    </div>
-
-    <p class="note" style="margin-top:14px">These are competing <em>expert opinions</em> presented to the jury, not
-      findings of fact. The jury — not any expert — decides criminal responsibility. Verbatim quotes are as reported by
-      outlets covering the courtroom; check the sources for full context.</p>
-    <div class="src" style="margin-top:6px"><a href="https://www.bostonglobe.com/2026/08/21/metro/lindsay-clancy-trial-mack-resnick/" target="_blank" rel="noopener">Boston Globe — Resnick &amp; Mack</a> · <a href="https://www.cnn.com/2026/08/21/us/lindsay-clancy-trial-defense-rests" target="_blank" rel="noopener">CNN</a> · <a href="https://abcnews.com/GMA/News/lindsay-clancy-defense-rest-friday-after-final-witness/story?id=135835493" target="_blank" rel="noopener">ABC News</a></div>
-  </section>
-
-  <!-- DISPUTED -->
-  <section id="disputed">
-    <h2>Disputed &amp; unverified claims</h2>
-    <p class="lead">Content that circulates as "evidence" but is not confirmed court record — or, in some cases,
-      has been explicitly excluded from it. Each item below shows the claim <em>and</em> why it should be treated
-      with caution.</p>
-
-    <div class="disputed">
-      <span class="flag">Unverified media graphic</span>
-      <h3>The circulating "medication timeline"</h3>
-      <p>A widely shared Fox News graphic lists dozens of prescriptions — drug, dose, date, and a named prescriber
-        for each — under a headline calling the deaths a "murder." It is frequently reposted as if it were
-        an evidentiary record. Treat it as <strong>an unverified media claim</strong>, relevant mainly because it
-        overlaps with the defense's <em>overmedication</em> argument:</p>
-      <ul style="font-size:.9rem">
-        <li><strong>Not authenticated here.</strong> This tracker cannot confirm the list against pharmacy records or
-          trial exhibits. Reposted infographics routinely contain errors.</li>
-        <li><strong>The headline presupposes guilt.</strong> "Murder" is a legal conclusion the jury has not reached.</li>
-        <li><strong>It names private clinicians.</strong> Tying named individual prescribers to a patient's
-          medication history — while the accuracy is unverified — is exactly the kind of claim that harms real people
-          if it is wrong. Prescribers are generalized below rather than reproduced by name.</li>
-      </ul>
-      <p style="font-size:.9rem">Illustrative of the <em>claim's shape</em> only — a heavy, escalating psychiatric
-        regimen over ~4 months. Not verified, not complete, not a court exhibit:</p>
-      <div class="medscroll">
-      <table class="meds">
-        <thead><tr><th>Approx. period</th><th>Drug classes named in the graphic</th><th>Prescriber</th></tr></thead>
-        <tbody>
-          <tr><td>Sep 2022</td><td>SSRI antidepressant (low dose)</td><td>Treating physician</td></tr>
-          <tr><td>Oct 2022</td><td>Benzodiazepine, antihistamine, anxiolytic added</td><td>Treating physician</td></tr>
-          <tr><td>Nov 2022</td><td>Additional antidepressants, sleep aid, further benzodiazepines</td><td>Physician / nurse practitioner</td></tr>
-          <tr><td>Dec 2022</td><td>Antipsychotic (incl. extended-release), more benzodiazepines</td><td>Nurse practitioner</td></tr>
-          <tr><td>Jan 2023</td><td>Antidepressants and benzodiazepines continued/adjusted</td><td>Physician / nurse practitioner</td></tr>
-        </tbody>
-      </table>
-      </div>
-      <p class="note">Whether such a regimen was appropriate, and what role (if any) it played, is contested expert
-        testimony at trial — not a settled fact. If you want to evaluate the overmedication argument, follow the
-        psychiatric testimony reported by NPR, WBUR and PBS in the Sources tab rather than a social-media graphic.</p>
-    </div>
-
-    <div class="disputed" style="margin-top:16px">
-      <span class="flag">Viral conspiracy theory</span>
-      <h3>That someone else — the husband — "really" did it</h3>
-      <p>As the trial ran, amateur-sleuth videos alleging that <strong>Patrick Clancy</strong> (not Lindsay) killed the
-        children — citing supposed "discrepancies" in the timeline or 911 call — spread widely and drew heavy
-        engagement. Reporting has documented the phenomenon itself, not the theory's substance. Treat these as
-        <strong>unsubstantiated conspiracy content</strong>:</p>
-      <ul style="font-size:.9rem">
-        <li><strong>It contradicts what both sides agree on.</strong> At trial the prosecution <em>and</em> the defense
-          proceed from the fact that Lindsay Clancy caused the deaths; who did it is not actually in dispute in the
-          courtroom. The fight is over criminal responsibility.</li>
-        <li><strong>Patrick Clancy is a witness, not a suspect.</strong> He made the 911 call, was the prosecution's
-          first witness, and has not been charged with or accused of any crime.</li>
-        <li><strong>Engagement is not evidence.</strong> Analysts quoted in the coverage attribute the spread to
-          recommendation algorithms rewarding sensational content, not to any new fact.</li>
-      </ul>
-      <p class="note">A "discrepancy" pointed out in a short clip is not a court finding. If a detail seems to
-        contradict the official account, check it against full courtroom reporting before repeating it.</p>
-      <div class="src" style="margin-top:6px"><a href="https://www.boston.com/news/crime/2026/08/17/lindsay-clancy-murder-trial-conspiracy-theories/" target="_blank" rel="noopener">Boston.com — Why conspiracy theories are spreading</a> · <a href="https://www.irishexaminer.com/opinion/commentanalysis/arid-41901220.html" target="_blank" rel="noopener">Irish Examiner — Social media in overdrive</a></div>
-    </div>
-
-    <div class="disputed" style="margin-top:16px">
-      <span class="flag">Prejudicial framing</span>
-      <h3>"Murder" and "monster" as settled facts</h3>
-      <p>Much circulating content calls the deaths "murder" and Lindsay Clancy a "monster." Both are
-        <strong>conclusions the jury has not reached</strong> — and one was publicly rejected by the person closest to
-        the case:</p>
-      <ul style="font-size:.9rem">
-        <li><strong>"Murder" is a legal verdict, not a description.</strong> The charge is murder; whether it is
-          <em>proven</em> — and whether Clancy was criminally responsible — is exactly what the trial decides.</li>
-        <li><strong>Patrick Clancy rejected the "monster" framing.</strong> In his 2024 <em>New Yorker</em> interview he
-          said, <em>"I wasn't married to a monster — I was married to someone who got sick,"</em> and said he wanted to
-          root out the "lies and misinformation" around the case.</li>
-      </ul>
-      <p class="note">Neutral language (<em>charged, alleged, testified</em>) is used throughout this tracker for
-        exactly this reason — see the banner at the top of the page.</p>
-      <div class="src" style="margin-top:6px"><a href="https://www.foxnews.com/us/husband-boston-nurse-lindsay-clancy-accused-killing-their-3-kids-says-he-wasnt-married-monster" target="_blank" rel="noopener">Fox News — "Not married to a monster"</a> · <a href="https://www.yahoo.com/news/lindsay-clancy-trial-set-2026-204143147.html" target="_blank" rel="noopener">Yahoo/AP — New Yorker statements</a></div>
-    </div>
-
-    <div class="disputed" style="margin-top:16px">
-      <span class="flag">Stripped of context</span>
-      <h3>The "Go to God" statement as a "confession"</h3>
-      <p>Clancy's reported statement that she told each child to <strong>"go to God"</strong> circulates in clips as if
-        it were a confession of murderous intent. What she is reported to have said is one thing; <strong>what it
-        means is disputed expert testimony</strong>, and part of the surrounding testimony was struck from the record:</p>
-      <ul style="font-size:.9rem">
-        <li><strong>The interpretation is the whole fight.</strong> The prosecution's rebuttal psychiatrist offered it
-          as evidence she knew her actions were wrong; the defense presents her account as evidence of a delusional,
-          psychotic state. The jury — not a viral clip — weighs which reading is right.</li>
-        <li><strong>The religious angle was excluded.</strong> When a prosecution rebuttal witness tied the statement to
-          Clancy's Catholic upbringing and the idea of "mortal sin," the defense moved for a mistrial. Judge Sullivan
-          denied the mistrial but <strong>struck the testimony</strong>, calling her religion "absolutely an
-          inappropriate area of testimony" and instructing jurors not to consider it.</li>
-      </ul>
-      <p class="note">Material that leans on the "mortal sin" / Catholic-faith framing rests on testimony the court
-        has ordered the jury to disregard. See Key Testimony for the competing expert readings.</p>
-      <div class="src" style="margin-top:6px"><a href="https://www.cbsnews.com/boston/news/lindsay-clancy-trial-watch-live-day-19-rebuttal/" target="_blank" rel="noopener">CBS Boston — Mistrial denied; religion testimony stricken</a> · <a href="https://www.cnn.com/2026/08/24/us/lindsay-clancy-trial-psychologist-rebuttal" target="_blank" rel="noopener">CNN — Rebuttal; mistrial request</a> · <a href="https://www.bostonglobe.com/2026/08/21/metro/lindsay-clancy-trial-mack-resnick/" target="_blank" rel="noopener">Boston Globe — Competing expert readings</a></div>
-    </div>
-  </section>
-
-  <!-- SOURCES -->
-  <section id="sources">
-    <h2>Sources &amp; method</h2>
-    <p class="lead">This tracker was assembled from mainstream reporting on a public court proceeding. It records
-      allegations and testimony as <em>claims made in court</em>, not findings of fact.</p>
-    <ul class="srclist">
-      <li><a href="https://www.cnn.com/2026/07/20/us/lindsay-clancy-murder-trial-massachusetts" target="_blank" rel="noopener">CNN — What to know as the trial opens</a></li>
-      <li><a href="https://www.cnn.com/2026/08/08/us/lindsay-clancy-trial-what-we-learned" target="_blank" rel="noopener">CNN — What we learned this week</a></li>
-      <li><a href="https://www.cnn.com/2026/08/21/us/lindsay-clancy-trial-defense-rests" target="_blank" rel="noopener">CNN — Defense rests, prosecution rebuttal</a></li>
-      <li><a href="https://www.cbsnews.com/news/lindsay-clancy-trial-key-moments/" target="_blank" rel="noopener">CBS News — Key moments from court</a></li>
-      <li><a href="https://abc7ny.com/post/lindsay-clancy-trial-day-18-defense-could-rest-case-friday/19713230/" target="_blank" rel="noopener">ABC7 — Defense rests after psychiatrist testimony</a></li>
-      <li><a href="https://www.npr.org/2026/08/16/nx-s1-5931964/lindsay-clancy-trial-postpartum-psychosis-diagnosis" target="_blank" rel="noopener">NPR — Gaps in understanding postpartum psychosis</a></li>
-      <li><a href="https://www.wbur.org/news/2026/08/12/massachusetts-lindsay-clancy-murder-children-delusions-maternal-care" target="_blank" rel="noopener">WBUR — Postpartum psychosis and barriers to care</a></li>
-      <li><a href="https://www.pbs.org/newshour/health/as-lindsay-clancy-goes-to-trial-heres-what-to-know-about-postpartum-psychosis" target="_blank" rel="noopener">PBS NewsHour — About postpartum psychosis</a></li>
-      <li><a href="https://www.nbcboston.com/news/local/lindsay-clancy-murder-case-judge-issues-key-ruling/3925435/" target="_blank" rel="noopener">NBC Boston — Judge's ruling on bifurcated trial</a></li>
-      <li><a href="https://www.biography.com/crime/a71603379/who-is-lindsay-clancy-duxbury-murder-trial" target="_blank" rel="noopener">Biography — Case background</a></li>
-      <li><a href="https://crimetimelines.com/crime-news/lindsay-clancy-timeline/" target="_blank" rel="noopener">Crime Timelines — Chronology</a></li>
-      <li><a href="https://www.cnn.com/2026/08/01/us/lindsay-clancy-trial-patrick-testimony" target="_blank" rel="noopener">CNN — What Patrick Clancy's testimony revealed</a></li>
-      <li><a href="https://www.wbur.org/news/2026/07/29/lindsay-clancy-patrick-clancy-testimony-911-murder-trial" target="_blank" rel="noopener">WBUR — 911 call and ex-husband's testimony</a></li>
-      <li><a href="https://www.cbsnews.com/boston/live-updates/lindsay-clancy-trial-live-updates-patrick-clancy-day-2/" target="_blank" rel="noopener">CBS Boston — Patrick Clancy testimony (day 2)</a></li>
-      <li><a href="https://www.oxygen.com/crime-news/lindsay-clancy-trial-timeline-her-patrick-clancys-day-before-kids-killed" target="_blank" rel="noopener">Oxygen — Timeline of the day before</a></li>
-      <li><a href="https://www.yahoo.com/news/lindsay-clancy-trial-set-2026-204143147.html" target="_blank" rel="noopener">Yahoo/AP — New Yorker statements dispute</a></li>
-      <li><a href="https://www.bostonglobe.com/2026/08/21/metro/lindsay-clancy-trial-mack-resnick/" target="_blank" rel="noopener">Boston Globe — Resnick &amp; Mack expert testimony</a></li>
-      <li><a href="https://www.bostonglobe.com/2026/08/21/metro/lindsay-clancy-trial-live-updates/" target="_blank" rel="noopener">Boston Globe — Dueling psychosis assessments</a></li>
-      <li><a href="https://abcnews.com/GMA/News/lindsay-clancy-defense-rest-friday-after-final-witness/story?id=135835493" target="_blank" rel="noopener">ABC News — Rebuttal psychiatrist testimony</a></li>
-      <li><a href="https://www.newsnationnow.com/crime/lindsay-clancy-possible-verdicts/" target="_blank" rel="noopener">NewsNation — What each possible verdict would mean</a></li>
-      <li><a href="https://www.tvinsider.com/1282266/when-will-lindsay-clancy-trial-end-what-happens-next-after-defense-rests/" target="_blank" rel="noopener">TV Insider — What happens next after defense rests</a></li>
-      <li><a href="https://www.mysuncoast.com/2026/08/24/legal-analyst-discusses-lindsay-clancy-murder-trial-case-nears-jury-deliberations/" target="_blank" rel="noopener">Legal analyst — case nears jury deliberations</a></li>
-      <li><a href="https://www.cnn.com/2026/08/24/us/lindsay-clancy-trial-psychologist-rebuttal" target="_blank" rel="noopener">CNN — Rebuttal witness; mistrial request denied</a></li>
-      <li><a href="https://www.cbsnews.com/boston/news/lindsay-clancy-trial-watch-live-day-19-rebuttal/" target="_blank" rel="noopener">CBS Boston — Religion testimony stricken; mistrial denied</a></li>
-      <li><a href="https://www.boston.com/news/crime/2026/08/17/lindsay-clancy-murder-trial-conspiracy-theories/" target="_blank" rel="noopener">Boston.com — Online conspiracy theories about the case</a></li>
-      <li><a href="https://www.irishexaminer.com/opinion/commentanalysis/arid-41901220.html" target="_blank" rel="noopener">Irish Examiner — Social media conspiracy theories</a></li>
-    </ul>
-    <p class="note" style="margin-top:16px">Reporting corrects and updates itself; some early details (ages, exact
-      dates, procedural specifics) vary between outlets. Where accounts differ, treat court records and the most
-      recent major-outlet reporting as authoritative, and re-check before republishing anything here.</p>
-
-    <div style="margin-top:24px;padding:16px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);font-size:.9rem">
-      <strong>If this subject is heavy for you:</strong> the case involves the deaths of children and maternal mental
-      illness. In the U.S. you can call or text <strong>988</strong> (Suicide &amp; Crisis Lifeline) any time. Postpartum
-      Support International: <strong>1-800-944-4773</strong>.
-    </div>
-  </section>
-
-  <footer>
-    Built as a private, educational reference for a live public trial. Not legal advice; not an official court record.
-    Claims are attributed to their sources; presumption of innocence applies until a verdict.
-  </footer>
-
+  <div style="font-size:11px;color:#75798c;line-height:1.5;width:100%;max-width:none"><br></div>
 </div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;period&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[0,1],&quot;default&quot;:1,&quot;tsType&quot;:&quot;0 | 1&quot;,&quot;section&quot;:&quot;Grid&quot;},&quot;labelMode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;times&quot;,&quot;codes&quot;],&quot;default&quot;:&quot;times&quot;,&quot;tsType&quot;:&quot;'times' | 'codes'&quot;,&quot;section&quot;:&quot;Grid&quot;},&quot;selectedDay&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:11,&quot;min&quot;:1,&quot;max&quot;:28,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Grid&quot;},&quot;showHours&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Grid&quot;},&quot;showCoverage&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Coverage&quot;},&quot;minDay&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:5,&quot;min&quot;:0,&quot;max&quot;:12,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Coverage&quot;},&quot;minEvening&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:2,&quot;min&quot;:0,&quot;max&quot;:8,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Coverage&quot;},&quot;minNight&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:2,&quot;min&quot;:0,&quot;max&quot;:8,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Coverage&quot;}}">
+const PERIODS = [
+  { label: 'Aug 2 – 29', title: 'August 2 – 29, 2026', start: [2026, 7, 2], sections: [
+    ['Day shift', [
+      ['Lora', '2:(7),3:(7),4:7,5:7,6:7,9:7,10:(7),11:7,12:7,13:7,16:(7),17:7,18:7,19:7,20:7,23:(7),24:7,25:7,26:7,27:7'],
+      ['Heather', '1:V,2:7a-430p,5:7a-430p,6:7a-430p,10:7a-430p,11:7a-430p,12:7a-430p,14:7a-430p,15:7a-430p,16:7a-430p,19:7a-430p,20:7a-430p,24:7a-430p,25:7a-430p,27:7a-430p,28:7a-430p'],
+      ['Dave', '1:6a-430p,3:6a-430p,4:6a-430p,5:6a-430p,6:/,9:/,10:/,13:/,14:/,15:/,17:/,18:/,19:/,23:/,24:/,27:/,28:/'],
+      ['Trista', '1:7a-430p,2:7a-430p,3:7a-430p,4:7a-430p,9:7a-430p,10:7a-430p,11:7a-430p,14:7a-430p,15:7a-430p,16:7a-430p,17:7a-430p,18:7a-430p,19:/,20:/,23:7a-430p,24:7a-430p,25:7a-430p,28:7a-430p'],
+      ['Christy', '2:V,6:V,7:V,8:V,9:7a-730p,12:7a-730p,13:7a-730p,18:7a-730p,20:7a-730p,21:7a-730p,22:7a-730p,23:7a-730p,26:7a-730p,27:/'],
+      ['Shelby (CI)', '2:8,3:8,4:8,5:8,6:8,9:8,10:8,11:8,12:8,13:8,16:8,17:8,18:8,19:8,20:8,23:8,24:8,25:8,26:8,27:8'],
+      ['Lana (SP)', '2:7a-530p,3:7a-530p,4:7a-530p,5:7a-530p,9:7a-530p,10:7a-530p,11:7a-530p,12:7a-530p,16:7a-530p,17:7a-530p,18:7a-530p,19:7a-530p,24:7a-530p,25:7a-530p,26:7a-530p,27:7a-530p'],
+      ['Rachel', '2:7a-730p,3:7a-730p,6:7,7:7a-1130p,8:3,10:7a-730p,12:7a-730p,13:7,17:7a-730p,18:7,19:7a-730p,21:7,22:3,24:7a-730p,26:7a-730p,27:7'],
+      ['Bailey', '3:7,4:7a-730p,6:7a-730p,7:7,8:7a-1130p,11:7a-730p,12:7,13:7,16:7a-730p,19:7a-730p,20:7,21:7,22:7,25:7a-730p,26:7,27:7a-730p'],
+      ['Savannah', '1:7a-530p,2:6a-530p,5:7a-530p,6:6a-430p,9:6a-430p,10:6a-430p,13:7a-530p,14:6a-430p,15:6a-430p,17:7a-530p,20:6a-430p,23:6a-430p,24:6a-430p,26:6a-430p,28:6a-430p'],
+      ['Linsey H.', '8:7,21:7,22:7'],
+    ]],
+    ['Evening shift', [
+      ['Hannah', '3:2-1130p,4:2-1130p,5:2-1130p,7:2-1130p,8:2-1130p,11:2-1130p,12:2-1130p,13:2-1130p,17:2-1130p,18:2-1130p,20:2-1130p,21:2-1130p,22:930a-6p,24:2-1130p,25:2-1130p,26:2-1130p'],
+      ['Brayden', '2:V,3:V,4:V,7:V,8:V,9:1-1130p,10:1-1130p,13:1-1130p,16:1-1130p,17:1-1130p,19:1-1130p,21:1-1130p,22:1-1130p,23:1-1130p,26:1-1130p,27:1-1130p'],
+      ['Taryn', '1:3,3:3,6:3,9:3,14:3,15:3,19:3,20:3,25:3,28:3'],
+      ['Gage', '1:930a-6p,2:3,4:11a-1130p,5:11a-1130p,9:11a-1130p,11:11a-1130p,13:3,14:930a-6p,15:930a-6p,17:3,18:11a-1130p,19:11a-1130p,23:11a-1130p,24:3,27:11a-1130p,28:930a-6p'],
+      ['Baylee V.', '1:3,2:11a-1130p,5:3,6:11a-1130p,10:11a-1130p,11:3,12:11a-1130p,14:3,15:3,16:11a-1130p,18:3,20:11a-1130p,23:11a-1130p,24:11a-1130p,27:3,28:3'],
+      ['Melea', '7:3'],
+    ]],
+    ['Midnight shift', [
+      ['Brandy', '2:9p-730a,3:9p-730a,4:9p-730a,7:9p-730a,8:9p-730a,9:9p-730a,10:9p-730a,11:9p-730a,16:9p-730a,17:9p-730a,18:9p-730a,21:9p-730a,22:9p-730a,23:9p-730a,24:9p-730a,25:9p-730a'],
+      ['Cory', '1:/,2:7p-730a,3:7p-730a,4:11,7:11,8:11,9:11,10:7p-730a,11:7p-730a,16:7p-730a,17:7p-730a,18:11,21:11,22:11,23:11,24:7p-730a,25:7p-730a'],
+      ['Dawson', '1:11,2:11,5:7p-730a,6:7p-730a,10:11,12:7p-730a,13:7p-730a,14:11,15:11,16:11,19:7p-730a,20:7p-730a,24:11,26:7p-730a,27:7p-730a,28:11'],
+      ['Jarrod', '1:11,3:11,4:11,5:11,6:11,9:11,11:11,12:11,13:11,14:11,15:11,17:11,18:11,19:11,20:11,23:11,25:11,26:11,27:11,28:11'],
+      ['Donnie', '1:11,4:3,5:7p-730a,6:7p-730a,10:3,12:7p-730a,13:7p-730a,14:11,15:11,18:V,19:V,20:V,21:V,22:V,25:3,26:7p-730a,27:7p-730a,28:11'],
+    ]],
+    ['PRN', [
+      ['Lisa (PRN)', '1:/,2:/,3:7,4:7,5:7,6:/,7:7,8:7,9:/,10:7,11:7,12:7,13:/,14:/,15:/,16:7,17:7,18:7,19:7,20:/,21:/,22:/,23:7,24:/,25:7,26:/,27:/,28:/'],
+    ]],
+  ]},
+  { label: 'Aug 30 – Sep 26', title: 'August 30 – September 26, 2026', start: [2026, 7, 30], sections: [
+    ['Day shift', [
+      ['Lora', '2:7,3:7,4:7,5:7,6:7,9:H,10:7,11:7,12:7,13:7,16:7,17:7,18:7,19:7,23:7,24:7,25:7,26:7,27:7'],
+      ['Heather', '1:7a-430p,3:/,4:7a-430p,5:7a-430p,6:7a-430p*,9:3,10:8a-430p,11:7a-430p,12:7a-430p*,14:7a-430p,15:7a-430p*,17:7a-430p,19:7a-430p*,20:7a-430p,22:7,23:7a-430p,24:7a-430p,27:7a-430p*,28:7a-430p'],
+      ['Dave', '1:/,3:/,4:/,5:/,9:/,10:/,13:/,14:/,15:/,17:/,18:/,19:/,23:/,24:/,27:/,28:/'],
+      ['Trista', '1:7a-430p,2:7a-430p,3:7a-430p,4:7a-430p*,9:H,10:7a-430p*,11:7a-430p,14:7a-430p*,15:7a-430p,16:7a-430p,17:7a-430p,18:7a-430p,23:7a-430p,24:7a-430p,25:7a-430p*,28:7a-430p'],
+      ['Christy', '2:/,3:7a-145p,4:7a-730p,5:7a-730p,7:7a-730p,8:7a-730p,9:H,12:7a-730p,13:7a-330p,18:7a-730p,19:7a-730p,21:7a-730p,22:7a-730p*,23:7a-730p,26:7a-730p'],
+      ['Shelby (CI)', '2:(8),3:8-12 TMH UC,4:(8),5:8-12 TMH UC,6:8,9:530-1130p,10:8-12 tmh,11:(8),12:8-12 tmh,13:(8),16:8,17:(8),18:(8),19:8-12 tmh,20:8,23:(8),24:(8),25:(8),26:(8),27:8'],
+      ['Lana (SP)', '2:7a-530p*,3:7a-530p,4:V,5:V,9:H,10:V,11:V,12:V,16:7a-530p*,17:7a-530p,18:7a-530p,19:V,23:V,24:7a-530p,25:7a-530p,26:7a-530p*'],
+      ['Rachel', '2:7,3:7,5:7*,6:7,7:3,8:3,10:7a-730p,11:7,12:7a-730p,13:7*,17:7a-730p,19:7a-730p,20:7*,21:V,22:V,23:7*,24:7a-730p,26:7a-730p,27:7'],
+      ['Bailey', '2:7~,4:7a-730p,6:7a-730p,7:7,8:7*,9:7,11:7a-730p,12:7,13:7,16:7a-730p,19:7a-730p,20:7,21:7*,22:7,25:7a-730p,26:7,27:7a-730p'],
+      ['Savannah', '1:6a-430p*,3:6a-430p~,4:6a-230p,5:6a-430p,6:6a-430p,9:6a-430p*,10:6a-430p,12:6a-230p,13:6a-430p,14:6a-430p,15:6a-430p,17:6a-430p*,18:6a-430p,19:6a-230p,20:6a-430p,23:/,24:6a-430p*,25:6a-430p,26:6a-430p,28:6a-430p*'],
+      ['Linsey H.', '6:7,7:7,8:7,13:7a-930p,21:7,27:7-230'],
+      ['Krista (SF)', '9:7'],
+      ['Melea', '5:8a-3p'],
+    ]],
+    ['Evening shift', [
+      ['Hannah', '3:2-1130p*,4:2-1130p,5:2-1130p*,7:2-1130p,8:2-1130p*,9:H,12:2-1130p*,13:2-1130p,17:2-1130p,18:2-1130p,20:2-1130p,21:2-1130p*,22:2-1130p,24:2-1130p,25:2-1130p*,26:2-1130p'],
+      ['Brayden', '2:1-1130p,3:1-1130p,4:1-1130p*,7:1-1130p*,8:1-1130p,9:H,10:11a-1130p,13:1-1130p,16:1-1130p*,17:1-1130p,19:1-1130p*,21:1-1130p,22:1-1130p*,23:1-1130p*,25:1-1130p,27:1-1130p'],
+      ['Taryn', '1:3*,3:3,4:/,6:3,9:H,10:3*,11:/,14:V,15:V,18:/,19:3,20:3*,25:/,26:3*,28:3'],
+      ['Gage', '1:930a-6p,2:3*,4:11a-1130p,5:11a-1130p,8:11,12:11a-1130p,13:3*,14:3,15:3,17:3,18:11a-1130p,19:11a-1130p,23:11a-1130p,24:3*,27:11a-1130p,28:930a-6p*'],
+      ['Baylee V.', '1:3,2:11a-1130p,5:11a-1130p,6:3*,9:3,11:11a-1130p*,13:11a-1130p,14:3,15:3*,16:11a-1130p,18:3,19:11a-1130p,20:/,23:11a-1130p,24:11a-1130p,27:3*,28:3'],
+      ['Barb (SF)', '9:SF 8-12'],
+    ]],
+    ['Midnight shift', [
+      ['Brandy', '2:9p-730a,3:9p-730a,6:9p-730a~,7:9p-730a,8:H,9:9p-730a,10:9p-730a,11:9p-730a,16:9p-730a,17:9p-730a,18:9p-730a,21:9p-730a,22:9p-730a,23:9p-730a,24:9p-730a,25:9p-730a'],
+      ['Cory', '2:V,3:V,7:V,8:H,9:11,10:7p-730a,11:7p-730a,16:7p-730a,17:7p-730a,20:11,21:11,22:11,23:11,24:7p-730a,25:7p-730a'],
+      ['Dawson', '1:11,2:11,4:7p-730a~,5:7p-730a,7:/,8:11,12:7p-730a,13:7p-730a,14:11,15:11,18:3*,19:7p-730a,20:7p-730a,24:11,26:7p-730a,27:7p-730a,28:11'],
+      ['Jarrod', '1:11,3:11,4:11,5:11,6:11,9:11,11:11,12:11,13:11,14:11,15:11,17:3*,18:11,19:11,20:11,23:11,25:11,26:11,27:11,28:11'],
+      ['Donnie (traveler)', '1:6p-230a,2:3,3:3,6:3,7:11,10:3,11:3,12:3,13:3,14:3', 'Contract ends after 9/12'],
+    ]],
+    ['PRN', [
+      ['Lisa (PRN)', '1:/,2:7,3:/,4:7,5:/,6:/,7:7*,8:7,9:/,10:/,11:7*,12:/,13:/,14:/,15:/,16:7,17:/,18:7*,19:/,20:/,21:7,22:7,23:7,24:/,25:7,26:/,27:/,28:/'],
+    ]],
+  ]},
+];
+const CODES = { '7': '7a-730p', '(7)': '7a-730p', '8': '8a-430p', '(8)': '8a-430p', '3': '3p-1130p', '11': '11p-730a' };
+const TYPES = {
+  day:   { name: 'Day',     dot: 'oklch(0.73 0.125 75)',  bg: 'oklch(0.36 0.07 75)',  fg: 'oklch(0.92 0.06 75)' },
+  eve:   { name: 'Evening', dot: 'oklch(0.73 0.125 289)', bg: 'oklch(0.36 0.07 289)', fg: 'oklch(0.92 0.05 289)' },
+  night: { name: 'Night',   dot: 'oklch(0.73 0.125 205)', bg: 'oklch(0.36 0.07 205)', fg: 'oklch(0.92 0.05 205)' },
+};
+const OFFS = Array.from({ length: 28 }, (_, i) => i + 1);
+const WD = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+const WDL = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const weekOf = o => Math.floor((o - 1) / 7);
+const toMin = (h, m, mer) => ((h % 12) + (mer === 'p' ? 12 : 0)) * 60 + m;
+const fmt = m => { m %= 1440; const h = Math.floor(m / 60), mm = m % 60, s = h >= 12 ? 'p' : 'a'; return (h % 12 || 12) + (mm ? ':' + String(mm).padStart(2, '0') : '') + s; };
+function parseShift(raw) {
+  const red = raw.includes('*'), pen = raw.includes('~');
+  const code = raw.replace(/[*~]/g, '').trim();
+  const meta = { code, red, pen };
+  if (code === '/') return { ...meta, kind: 'off' };
+  if (code === 'V') return { ...meta, kind: 'vac' };
+  if (code === 'H') return { ...meta, kind: 'hol' };
+  const flagged = /^\(\d\)$/.test(code);
+  const note = flagged ? '' : code.replace(/^SF\s+/, '').replace(/^[\d:apm()-]+\s*/i, '').trim();
+  const rangeStr = (CODES[code] || code).replace(/^SF\s+/, '').split(/\s+/)[0];
+  const m = rangeStr.match(/^(\d{1,2})(\d{2})?([ap])?-(\d{1,2})(\d{2})?([ap])?$/);
+  if (!m) return { ...meta, kind: 'off' };
+  const sh = +m[1], eh = +m[4];
+  let endMer = m[6], startMer = m[3];
+  if (!endMer) endMer = (!startMer && (eh < sh || eh === 12)) ? 'p' : (startMer || 'a');
+  if (!startMer) startMer = m[6] ? endMer : 'a';
+  const start = toMin(sh, +(m[2] || 0), startMer), end = toMin(eh, +(m[5] || 0), endMer);
+  let dur = end - start; if (dur <= 0) dur += 1440;
+  const type = start < 600 ? 'day' : start < 1080 ? 'eve' : 'night';
+  return { ...meta, kind: 'shift', start, end, hours: dur / 60, type, flagged, note };
+}
+function parseRow(str) {
+  const map = {};
+  str.split(',').forEach(tok => { if (!tok) return; const i = tok.indexOf(':'); map[+tok.slice(0, i)] = parseShift(tok.slice(i + 1)); });
+  return map;
+}
+const DATA = PERIODS.map(p => ({ ...p, sections: p.sections.map(([section, people]) => ({ section, people: people.map(([name, s, pnote]) => ({ name, shifts: parseRow(s), pnote: pnote || '' })) })) }));
+const hrs = n => Number.isInteger(n) ? String(n) : n.toFixed(1).replace('.0', '');
 
-<script>
-  const tabs = document.querySelectorAll('.tab');
-  const secs = document.querySelectorAll('section');
-  function show(id){
-    tabs.forEach(t=>t.setAttribute('aria-selected', String(t.dataset.tab===id)));
-    secs.forEach(s=>s.classList.toggle('active', s.id===id));
-    try{ localStorage.setItem('clancy-tab', id); }catch(e){}
+class Component extends DCLogic {
+  state = { selected: null, period: null, people: [], hoursOpen: null };
+  renderVals() {
+    const labelMode = this.props.labelMode ?? 'times';
+    const mins = { day: this.props.minDay ?? 5, eve: this.props.minEvening ?? 2, night: this.props.minNight ?? 2 };
+    const pi = this.state.period ?? this.props.period ?? 1;
+    const P = DATA[pi];
+    const sel = this.state.selected ?? this.props.selectedDay ?? 11;
+    const dateOf = o => new Date(P.start[0], P.start[1], P.start[2] + o - 1);
+    const sepColor = o => weekOf(o) > 0 && (o - 1) % 7 === 0 ? '#3f424d' : 'transparent';
+    const colBg = o => o === sel ? '#2b2741' : 'transparent';
+    const days = OFFS.map(o => {
+      const dt = dateOf(o);
+      return {
+        num: dt.getDate(), wd: WD[dt.getDay()], mon: (o === 1 || dt.getDate() === 1) ? MON[dt.getMonth()] : '', sepColor: sepColor(o), colBg: colBg(o),
+        wdColor: o === sel ? '#d2cefd' : '#75798c', numColor: o === sel ? '#e7e5fe' : '#b2b6ca',
+        select: () => this.setState({ selected: o }),
+      };
+    });
+    const counts = {}; OFFS.forEach(o => counts[o] = { day: 0, eve: 0, night: 0 });
+    const onLists = { day: [], eve: [], night: [] };
+    const rows = [];
+    P.sections.forEach(({ section, people }) => {
+      rows.push({ isSection: true, isPerson: false, name: section });
+      people.forEach(p => {
+        const picked = this.state.people; const anyPick = picked.length > 0;
+        const hl = picked.includes(p.name);
+        const wk = [0, 0, 0, 0]; const byType = { day: 0, eve: 0, night: 0 };
+        const cells = OFFS.map(o => {
+          const s = p.shifts[o]; const dt = dateOf(o);
+          const base = { sepColor: sepColor(o), colBg: colBg(o), bg: 'rgba(233,233,237,0.035)', fg: '#75798c', border: 'transparent', borderStyle: 'solid', label: '', markBg: 'transparent', title: p.name + ' · ' + MON[dt.getMonth()] + ' ' + dt.getDate() };
+          if (!s) return base;
+          const NOTES = { TMH: 'Thomas Memorial Hospital (main campus)', SF: 'St. Francis / Thomas Orthopedic Hospital', UC: 'University of Charleston (classroom, clinical instructor)' };
+          const extra = (s.red ? ' · ON CALL (stays over if a call comes in)' : '') + (s.pen ? ' · pen edit on original' : '');
+          const mark = { markBg: 'transparent', border: s.pen ? '#b5abfc' : 'transparent' };
+          const ON = { bg: 'oklch(0.48 0.16 25)', fg: 'oklch(0.97 0.02 25)' };
+          if (s.kind === 'off') return { ...base, ...mark, label: '–', title: base.title + ' · requested off' + extra };
+          if (s.kind === 'hol') return { ...base, ...mark, bg: 'transparent', fg: '#9397ab', label: 'H', title: base.title + ' · holiday' + extra };
+          if (s.kind === 'vac') return { ...base, ...mark, bg: 'transparent', border: s.pen ? '#b5abfc' : '#75798c', borderStyle: 'dashed', fg: '#b2b6ca', label: 'V', title: base.title + ' · vacation' + extra };
+          const t = TYPES[s.type];
+          wk[weekOf(o)] += s.hours; byType[s.type] += s.hours; counts[o][s.type]++;
+          const time = fmt(s.start) + '–' + fmt(s.end);
+          if (o === sel) onLists[s.type].push({ name: p.name, time: time + (s.note ? ' ' + s.note : ''), bg: s.red ? ON.bg : TYPES[s.type].bg, fg: s.red ? ON.fg : TYPES[s.type].fg, tag: s.red ? 'on call' : '' });
+          return { ...base, ...mark, bg: s.red ? ON.bg : t.bg, fg: s.red ? ON.fg : t.fg, label: labelMode === 'codes' ? s.code : fmt(s.start) + '\n' + fmt(s.end) + (s.note ? '\n' + s.note : ''), title: base.title + ' · ' + time + ' · ' + hrs(s.hours) + 'h' + (s.note ? ' · ' + s.note.split(/\s+/).map(w => NOTES[w.toUpperCase()] || w).join(', ') : '') + (s.flagged ? ' · in parentheses on original' : '') + extra };
+        });
+        const total = wk.reduce((a, b) => a + b, 0);
+        rows.push({
+          isSection: false, isPerson: true, name: p.name, pnote: p.pnote, cells,
+          rowBg: hl ? 'rgba(145,132,217,0.10)' : 'transparent', nameBg: hl ? '#2b2741' : '#161826', nameBar: hl ? '#9184d9' : 'transparent',
+          rowOpacity: anyPick && !hl ? 0.28 : 1, rowBlur: anyPick && !hl ? 'blur(1.2px)' : 'none',
+          select: e => this.setState(st => {
+            const multi = e && (e.ctrlKey || e.metaKey || e.shiftKey);
+            if (!multi) return { people: st.people.length === 1 && st.people[0] === p.name ? [] : [p.name] };
+            return { people: st.people.includes(p.name) ? st.people.filter(n => n !== p.name) : [...st.people, p.name] };
+          }),
+          weekHours: wk.map(h => ({ text: h ? hrs(h) : '·', color: h ? '#cfd3e5' : '#595d6c' })),
+          totalHours: hrs(total), dayH: byType.day || 0, eveH: byType.eve || 0, nightH: byType.night || 0,
+        });
+      });
+    });
+    const coverage = ['day', 'eve', 'night'].map(k => {
+      let gaps = 0;
+      const cells = OFFS.map(o => {
+        const n = counts[o][k], low = n < mins[k]; if (low) gaps++;
+        return { n, sepColor: sepColor(o), colBg: colBg(o), bg: low ? 'oklch(0.42 0.1 25)' : 'transparent', fg: low ? 'oklch(0.95 0.03 25)' : n ? '#cfd3e5' : '#595d6c' };
+      });
+      return { name: TYPES[k].name, dot: TYPES[k].dot, min: mins[k], cells, gaps: gaps ? gaps + ' short' : 'covered', gapsColor: gaps ? 'oklch(0.75 0.14 25)' : '#75798c' };
+    });
+    const c = counts[sel]; const sd = dateOf(sel);
+    const hoursOpen = this.state.hoursOpen ?? (this.props.showHours ?? true);
+    return {
+      days, rows, coverage, showCoverage: this.props.showCoverage ?? true,
+      hoursOpen, hoursCols: hoursOpen ? 'repeat(4,44px) 54px 22px' : '22px',
+      toggleHours: () => this.setState({ hoursOpen: !hoursOpen }),
+      hoursToggleLabel: hoursOpen ? 'hide hours ▸' : '◂ hours',
+      hoursToggleTitle: hoursOpen ? 'Collapse hours' : 'Show hours per week',
+      periodTitle: P.title,
+      periodTabs: DATA.map((p, i) => ({ label: p.label, bg: i === pi ? '#2b2741' : 'transparent', fg: i === pi ? '#e7e5fe' : '#9397ab', select: () => this.setState({ period: i }) })),
+      selDateLabel: WDL[sd.getDay()] + ', ' + MON[sd.getMonth()] + ' ' + sd.getDate(),
+      selCounts: (c.day + c.eve + c.night) + ' on shift',
+      onGroups: ['day', 'eve', 'night'].map(k => ({ name: TYPES[k].name, dot: TYPES[k].dot, bg: TYPES[k].bg, fg: TYPES[k].fg, count: c[k], people: onLists[k].sort((a, b) => a.time.localeCompare(b.time)) })),
+    };
   }
-  tabs.forEach(t=>t.addEventListener('click',()=>show(t.dataset.tab)));
-  try{
-    const saved = localStorage.getItem('clancy-tab');
-    if(saved && document.getElementById(saved)) show(saved);
-  }catch(e){}
+}
 </script>
 </body>
 </html>
