@@ -5,10 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script>(function(){try{var q=location.search;if(/[?&]desktop/.test(q)){sessionStorage.setItem('tmh-desktop','1');return;}if(sessionStorage.getItem('tmh-desktop'))return;var phone=window.matchMedia('(max-width: 820px) and (pointer: coarse)').matches||/iPhone|Android.+Mobile/i.test(navigator.userAgent);if(phone)location.replace('mobile.html');}catch(e){}})();</script>
 <script src="./support.js"></script>
-<script>
-  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
-</script>
-<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <x-dc>
@@ -181,7 +177,33 @@ button:focus-visible{outline:2px solid #9184d9;outline-offset:2px}
     </div>
   </div>
 
-    <div style="display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;font-size:16.5px;color:#b2b6ca;padding-top:6px">
+  <button onClick="{{ openChat }}" title="Comments &amp; requests" style="position:fixed;right:24px;bottom:24px;z-index:40;width:52px;height:52px;border-radius:50%;border:1px solid #9184d9;background:#232532;color:#b5abfc;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(0,0,0,0.45), 0 0 0 1px rgba(145,132,217,0.25)" style-hover="background:#2b2741;color:#e7e5fe">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H9l-4.2 3.4A.5.5 0 0 1 4 19V5.5z"></path><line x1="8" y1="8" x2="16" y2="8"></line><line x1="8" y1="11.5" x2="13" y2="11.5"></line></svg>
+      </button>
+  <sc-if value="{{ chatOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeChat }}" style="position:fixed;inset:0;z-index:50;background:rgba(22,24,38,0.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:24px">
+      <div onClick="{{ stopClick }}" style="background:#232532;border-radius:10px;box-shadow:0 0 0 1px #595d6c, 0 24px 60px rgba(0,0,0,0.6);padding:18px 20px;display:flex;flex-direction:column;gap:14px;width:min(640px, calc(100vw - 48px));max-height:calc(100vh - 64px);overflow:auto">
+    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px">
+      <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#9397ab;font-weight:500">Comments &amp; requests</div>
+      <div style="display:flex;align-items:center;gap:12px"><span style="font-size:11.5px;color:#75798c">{{ helperText }}</span><button onClick="{{ closeChat }}" title="Close" style="border:0;cursor:pointer;font:inherit;background:transparent;color:#9397ab;font-size:18px;line-height:1;width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center" style-hover="background:#292b31;color:#e7e5fe">×</button></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <textarea value="{{ draft }}" onChange="{{ setDraft }}" onKeyDown="{{ draftKey }}" placeholder="Corrections to the schedule, Suggested Changes..." rows="3" style="width:100%;resize:vertical;font:inherit;font-size:13px;line-height:1.45;color:#e9e9ed;background:#161826;border:1px solid #3f424d;border-radius:6px;padding:9px 11px;outline:none" style-focus="border-color:#9184d9"></textarea>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <input value="{{ author }}" onChange="{{ setAuthor }}" placeholder="Your name" style="flex:1 1 140px;min-width:0;font:inherit;font-size:13px;color:#e9e9ed;background:#161826;border:1px solid #3f424d;border-radius:6px;padding:7px 11px;height:34px;outline:none" style-focus="border-color:#9184d9">
+        <span style="font-size:11px;color:#75798c;flex:1 1 auto">re: {{ selDateShort }} · ⌘/Ctrl+Enter to send</span>
+        <button onClick="{{ submitComment }}" disabled="{{ submitDisabled }}" style="border:1px solid #9184d9;cursor:pointer;font:inherit;font-size:13px;font-weight:500;height:34px;padding:0 14px;border-radius:6px;background:transparent;color:#b5abfc;opacity:{{ submitOpacity }}" style-hover="background:#2b2741;color:#e7e5fe">{{ sendLabel }}</button>
+      </div>
+      <div style="font-size:12px;color:{{ sendStatusColor }};min-height:14px">{{ sendStatus }}</div>
+      <div style="display:none">
+      </div>
+    </div>
+  </div>
+
+    </div>
+  </sc-if>
+
+  <div style="display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;font-size:16.5px;color:#b2b6ca;padding-top:6px">
       <div style="display:flex;align-items:center;gap:8px"><span style="width:14px;height:14px;border-radius:3px;background:oklch(0.73 0.125 75)"></span>Day</div>
       <div style="display:flex;align-items:center;gap:8px"><span style="width:14px;height:14px;border-radius:3px;background:oklch(0.73 0.125 289)"></span>Evening</div>
       <div style="display:flex;align-items:center;gap:8px"><span style="width:14px;height:14px;border-radius:3px;background:oklch(0.73 0.125 205)"></span>Night</div>
@@ -194,7 +216,7 @@ button:focus-visible{outline:2px solid #9184d9;outline-offset:2px}
     </div>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;period&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[0,1],&quot;default&quot;:1,&quot;tsType&quot;:&quot;0 | 1&quot;,&quot;section&quot;:&quot;Grid&quot;},&quot;labelMode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;times&quot;,&quot;codes&quot;],&quot;default&quot;:&quot;times&quot;,&quot;tsType&quot;:&quot;'times' | 'codes'&quot;,&quot;section&quot;:&quot;Grid&quot;},&quot;selectedDay&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:11,&quot;min&quot;:1,&quot;max&quot;:28,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Grid&quot;},&quot;showHours&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Grid&quot;},&quot;showCoverage&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Coverage&quot;},&quot;minDay&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:5,&quot;min&quot;:0,&quot;max&quot;:12,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Coverage&quot;},&quot;minEvening&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:2,&quot;min&quot;:0,&quot;max&quot;:8,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Coverage&quot;},&quot;minNight&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:2,&quot;min&quot;:0,&quot;max&quot;:8,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Coverage&quot;}}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;period&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[0,1],&quot;default&quot;:1,&quot;tsType&quot;:&quot;0 | 1&quot;,&quot;section&quot;:&quot;Grid&quot;},&quot;formspreeId&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;moeqkzvq&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Comments&quot;},&quot;commentEmail&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;gage.a.bass@gmail.com&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Comments&quot;},&quot;labelMode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;times&quot;,&quot;codes&quot;],&quot;default&quot;:&quot;times&quot;,&quot;tsType&quot;:&quot;'times' | 'codes'&quot;,&quot;section&quot;:&quot;Grid&quot;},&quot;selectedDay&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:11,&quot;min&quot;:1,&quot;max&quot;:28,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Grid&quot;},&quot;showHours&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Grid&quot;},&quot;showCoverage&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Coverage&quot;},&quot;minDay&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:5,&quot;min&quot;:0,&quot;max&quot;:12,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Coverage&quot;},&quot;minEvening&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:2,&quot;min&quot;:0,&quot;max&quot;:8,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Coverage&quot;},&quot;minNight&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:2,&quot;min&quot;:0,&quot;max&quot;:8,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Coverage&quot;}}">
 const CODES = { '7': '7a-730p', '(7)': '7a-730p', '8': '8a-430p', '(8)': '8a-430p', '3': '3p-1130p', '11': '11p-730a' };
 const TYPES = {
   day:   { name: 'Day',     dot: 'oklch(0.73 0.125 75)',  bg: 'oklch(0.36 0.07 75)',  fg: 'oklch(0.92 0.06 75)' },
@@ -240,7 +262,7 @@ const hrs = n => Number.isInteger(n) ? String(n) : n.toFixed(1).replace('.0', ''
 const dayOffset = (P, d) => { const s = new Date(P.start[0], P.start[1], P.start[2]); const o = Math.round((new Date(d.getFullYear(), d.getMonth(), d.getDate()) - s) / 86400000) + 1; return o >= 1 && o <= 28 ? o : null; };
 const todayInfo = DATA => { const now = new Date(); for (let i = 0; i < DATA.length; i++) { const o = dayOffset(DATA[i], now); if (o) return { period: i, offset: o }; } return null; };
 class Component extends DCLogic {
-  state = { selected: null, period: null, people: [], hoursOpen: null, menuOpen: false, coverageOpen: false, dimPast: true, data: null };
+  state = { selected: null, period: null, people: [], hoursOpen: null, menuOpen: false, coverageOpen: false, dimPast: true, data: null, chatOpen: false, sending: false, sendStatus: '', draft: '', author: (() => { try { return localStorage.getItem('tmh-comment-author') || ''; } catch (e) { return ''; } })() };
   componentDidMount() { import('./schedule-data.js').then(m => this.setState({ data: buildData(m.PERIODS) })); }
   renderVals() {
     const DATA = this.state.data;
@@ -317,6 +339,17 @@ class Component extends DCLogic {
       return { name: TYPES[k].name, dot: TYPES[k].dot, min: mins[k], cells, gapCount: gaps, gaps: gaps ? '⚠ ' + gaps : '✓', gapsColor: gaps ? 'oklch(0.8 0.15 70)' : 'oklch(0.75 0.15 150)', gapsTitle: gaps ? gaps + ' day' + (gaps > 1 ? 's' : '') + ' below minimum' : 'All days covered' };
     });
     const c = counts[sel]; const sd = dateOf(sel);
+    const submit = () => {
+      const text = this.state.draft.trim(); if (!text || this.state.sending) return;
+      const who = this.state.author.trim() || 'Anonymous'; const re = MON[sd.getMonth()] + ' ' + sd.getDate();
+      const to = this.props.commentEmail ?? 'gage.a.bass@gmail.com'; const formId = (this.props.formspreeId ?? 'moeqkzvq').trim();
+      const subject = 'Schedule comment from ' + who + ' (re: ' + re + ')';
+      if (!formId) { window.location.href = 'mailto:' + to + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(text + '\n\n— ' + who + '\nRe: ' + P.title + ', ' + re); this.setState({ draft: '', chatOpen: false }); return; }
+      this.setState({ sending: true, sendStatus: '' });
+      fetch('https://formspree.io/f/' + formId, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ name: who, message: text, regarding: P.title + ', ' + re, _subject: subject }) })
+        .then(r => { if (!r.ok) throw new Error(); this.setState({ sending: false, draft: '', sendStatus: 'Sent — thank you.' }); setTimeout(() => this.setState({ chatOpen: false, sendStatus: '' }), 1400); })
+        .catch(() => this.setState({ sending: false, sendStatus: 'Could not send. Check your connection and try again.' }));
+    };
     const hoursOpen = this.state.hoursOpen ?? (this.props.showHours ?? false);
     const coverageOpen = this.state.coverageOpen;
     const totalGaps = coverage.reduce((a, cv) => a + cv.gapCount, 0);
@@ -335,6 +368,14 @@ class Component extends DCLogic {
       prevDay: () => this.setState({ selected: Math.max(1, sel - 1) }), nextDay: () => this.setState({ selected: Math.min(28, sel + 1) }),
       goToday: () => today ? this.setState({ period: today.period, selected: null }) : null, todayVisible: !!today && (sel !== todayOff || today.period !== pi), todayTag: todayOff === sel ? 'Today' : '',
       selCounts: (c.day + c.eve + c.night),
+      draft: this.state.draft, author: this.state.author,
+      chatOpen: this.state.chatOpen, openChat: () => this.setState({ chatOpen: true }), closeChat: () => this.setState({ chatOpen: false }), stopClick: e => e.stopPropagation(),
+      setDraft: e => this.setState({ draft: e.target.value }),
+      setAuthor: e => { const v = e.target.value; try { localStorage.setItem('tmh-comment-author', v); } catch (x) {} this.setState({ author: v }); },
+      draftKey: e => { if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') submit(); if (e.key === 'Escape') this.setState({ chatOpen: false }); },
+      submitComment: submit, submitDisabled: !this.state.draft.trim() || this.state.sending, submitOpacity: this.state.draft.trim() && !this.state.sending ? 1 : 0.45,
+      sendLabel: this.state.sending ? 'Sending…' : 'Send', sendStatus: this.state.sendStatus, sendStatusColor: /^Sent/.test(this.state.sendStatus) ? 'oklch(0.75 0.15 150)' : 'oklch(0.8 0.15 70)', helperText: (this.props.formspreeId ?? 'moeqkzvq').trim() ? 'Goes straight to the scheduler' : 'Sent by email to the scheduler',
+      selDateShort: MON[sd.getMonth()] + ' ' + sd.getDate(),
       toggleDim: () => this.setState({ dimPast: !dimPast }), dimTrack: dimPast ? '#5d5294' : '#292b31', dimKnob: dimPast ? '#e7e5fe' : '#75798c', dimKnobLeft: dimPast ? '23px' : '3px',
       onGroups: ['day', 'eve', 'night'].map(k => ({ name: TYPES[k].name, dot: TYPES[k].dot, bg: TYPES[k].bg, fg: TYPES[k].fg, count: c[k], people: onLists[k].sort((a, b) => a.time.localeCompare(b.time)), empty: c[k] ? '' : 'No one scheduled' })),
     };
