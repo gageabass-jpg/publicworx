@@ -1,6 +1,6 @@
 # TMH Radiology staff schedule
 
-Static site. No build step. The `main` branch deploys to Vercel and to GitHub Pages.
+Static site. No build step. The `main` branch deploys to Vercel.
 
 - `index.html` — desktop grid. Phones are redirected to `mobile.html` (add `?desktop=1` to force the desktop view).
 - `mobile.html` — phone layout.
@@ -33,8 +33,6 @@ The console talks to `api/schedule.js`, a Vercel serverless function. The GitHub
    Optional: `GITHUB_REPO` (`owner/name`), `GITHUB_BRANCH` (default `main`), `SCHEDULE_DATA_PATH`, `DESKTOP_PAGE_PATH`, `MOBILE_PAGE_PATH`.
 3. Redeploy. Open `/admin` and sign in.
 4. Enable Web Analytics in the Vercel dashboard (project → Analytics → Enable). The pages already carry the script tag.
-
-GitHub Pages serves the same files but has no serverless functions, so the console cannot publish from there.
 
 ## Editing the schedule by hand
 
