@@ -36,6 +36,9 @@ function config() {
     },
     token: process.env.GITHUB_TOKEN || '',
     password: process.env.ADMIN_PASSWORD || '',
+    // Hide commits before the schedule project began (the repo's earlier life as the
+    // Clancy Trial Tracker). Override with HISTORY_SINCE (ISO date) if ever needed.
+    historySince: process.env.HISTORY_SINCE || '2026-09-01T00:00:00Z',
   };
 }
 
@@ -103,7 +106,8 @@ async function readFile(cfg, path, ref) {
 }
 
 async function commitsFor(cfg, path) {
-  const list = await gh(cfg, 'GET', `/repos/${cfg.repo}/commits?path=${encodeURIComponent(path)}&sha=${encodeURIComponent(cfg.branch)}&per_page=${HISTORY_LIMIT}`);
+  const since = cfg.historySince ? `&since=${encodeURIComponent(cfg.historySince)}` : '';
+  const list = await gh(cfg, 'GET', `/repos/${cfg.repo}/commits?path=${encodeURIComponent(path)}&sha=${encodeURIComponent(cfg.branch)}&per_page=${HISTORY_LIMIT}${since}`);
   return Array.isArray(list) ? list : [];
 }
 
