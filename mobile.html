@@ -4,10 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="./support.js"></script>
-<script>
-  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
-</script>
-<script defer src="/_vercel/insights/script.js"></script>
 </head>
 <body>
 <x-dc>
@@ -155,6 +151,26 @@ button:focus-visible{outline:2px solid #9184d9;outline-offset:2px}
     </div>
   </sc-if>
 
+  <button class="press" onClick="{{ openChat }}" title="Comments &amp; requests" style="position:fixed;right:20px;bottom:calc(84px + env(safe-area-inset-bottom));z-index:40;width:52px;height:52px;border-radius:50%;border:0;background:#9184d9;color:#12131c;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(0,0,0,0.45)">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H9l-4.2 3.4A.5.5 0 0 1 4 19V5.5z"></path><line x1="8" y1="8" x2="16" y2="8"></line><line x1="8" y1="11.5" x2="13" y2="11.5"></line></svg>
+  </button>
+  <sc-if value="{{ chatOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeChat }}" style="position:fixed;inset:0;z-index:50;background:rgba(18,19,28,0.55);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;align-items:flex-end;justify-content:center">
+      <div onClick="{{ stopClick }}" style="background:rgba(44,44,52,0.98);border-radius:22px 22px 0 0;box-shadow:0 -12px 40px rgba(0,0,0,0.5), 0 0 0 0.5px rgba(255,255,255,0.12);padding:14px 20px calc(20px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:14px;width:100%;max-width:560px;max-height:85vh;overflow:auto">
+        <div style="width:36px;height:5px;border-radius:3px;background:rgba(255,255,255,0.2);align-self:center"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+          <div style="font-size:20px;font-weight:700;letter-spacing:-0.02em">Comments &amp; requests</div>
+          <button class="press" onClick="{{ closeChat }}" style="border:0;cursor:pointer;font:inherit;background:rgba(255,255,255,0.1);color:#f2f2f7;font-size:16px;line-height:1;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center">×</button>
+        </div>
+        <div style="font-size:13px;color:#8e8e93">{{ helperText }} · re: {{ selDateShort }}</div>
+        <textarea value="{{ draft }}" onChange="{{ setDraft }}" placeholder="Corrections to the schedule, suggested changes…" rows="4" style="width:100%;resize:none;font:inherit;font-size:16px;line-height:1.45;color:#f2f2f7;background:rgba(255,255,255,0.08);border:0;border-radius:14px;padding:12px 14px;outline:none"></textarea>
+        <input value="{{ author }}" onChange="{{ setAuthor }}" placeholder="Your name (optional)" style="width:100%;font:inherit;font-size:16px;color:#f2f2f7;background:rgba(255,255,255,0.08);border:0;border-radius:14px;padding:0 14px;height:48px;outline:none">
+        <div style="font-size:13px;color:{{ sendStatusColor }};min-height:16px">{{ sendStatus }}</div>
+        <button class="press" onClick="{{ submitComment }}" disabled="{{ submitDisabled }}" style="border:0;cursor:pointer;font:inherit;font-size:16px;font-weight:600;height:50px;border-radius:14px;background:#9184d9;color:#12131c;opacity:{{ submitOpacity }}">{{ sendLabel }}</button>
+      </div>
+    </div>
+  </sc-if>
+
   <div style="position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:center;background:rgba(18,19,28,0.72);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border-top:0.5px solid rgba(255,255,255,0.08);padding:10px 20px calc(10px + env(safe-area-inset-bottom));z-index:6">
     <div style="display:flex;gap:2px;padding:3px;border-radius:12px;background:rgba(255,255,255,0.08);width:100%;max-width:520px">
       <button class="press" onClick="{{ viewDay }}" style="flex:1;border:0;cursor:pointer;font:inherit;min-height:40px;border-radius:9px;font-size:15px;font-weight:600;background:{{ dayTabBg }};color:{{ dayTabFg }};box-shadow:{{ dayTabShadow }};transition:background 0.2s">Day</button>
@@ -163,7 +179,7 @@ button:focus-visible{outline:2px solid #9184d9;outline-offset:2px}
   </div>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:844},&quot;minDay&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:5,&quot;min&quot;:0,&quot;max&quot;:12,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Coverage&quot;},&quot;minEvening&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:2,&quot;min&quot;:0,&quot;max&quot;:8,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Coverage&quot;},&quot;minNight&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:2,&quot;min&quot;:0,&quot;max&quot;:8,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Coverage&quot;}}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:390,&quot;height&quot;:844},&quot;formspreeId&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;moeqkzvq&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Comments&quot;},&quot;commentEmail&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;gage.a.bass@gmail.com&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Comments&quot;},&quot;minDay&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:5,&quot;min&quot;:0,&quot;max&quot;:12,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Coverage&quot;},&quot;minEvening&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:2,&quot;min&quot;:0,&quot;max&quot;:8,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Coverage&quot;},&quot;minNight&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:2,&quot;min&quot;:0,&quot;max&quot;:8,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Coverage&quot;}}">
 const CODES = { '7': '7a-730p', '(7)': '7a-730p', '8': '8a-430p', '(8)': '8a-430p', '3': '3p-1130p', '11': '11p-730a' };
 const TYPES = {
   day:   { name: 'Day',     dot: 'oklch(0.73 0.125 75)',  bg: 'oklch(0.36 0.07 75)',  fg: 'oklch(0.92 0.06 75)' },
@@ -206,7 +222,7 @@ const dayOffset = (P, d) => { const s = new Date(P.start[0], P.start[1], P.start
 const todayInfo = DATA => { const now = new Date(); for (let i = 0; i < DATA.length; i++) { const o = dayOffset(DATA[i], now); if (o) return { period: i, offset: o }; } return null; };
 
 class Component extends DCLogic {
-  state = { data: null, selected: null, period: null, view: 'day', menuOpen: false, open: null, card: 0 };
+  state = { data: null, selected: null, period: null, view: 'day', menuOpen: false, open: null, card: 0, chatOpen: false, sending: false, sendStatus: '', draft: '', author: (() => { try { return localStorage.getItem('tmh-comment-author') || ''; } catch (e) { return ''; } })() };
   componentDidMount() { import('./schedule-data.js').then(m => this.setState({ data: buildData(m.PERIODS) })); }
   renderVals() {
     const DATA = this.state.data;
@@ -263,6 +279,17 @@ class Component extends DCLogic {
     });
     const sd = dateOf(sel);
     const view = this.state.view;
+    const submit = () => {
+      const text = this.state.draft.trim(); if (!text || this.state.sending) return;
+      const who = this.state.author.trim() || 'Anonymous'; const re = MON[sd.getMonth()] + ' ' + sd.getDate();
+      const to = this.props.commentEmail ?? 'gage.a.bass@gmail.com'; const formId = (this.props.formspreeId ?? 'moeqkzvq').trim();
+      const subject = 'Schedule comment from ' + who + ' (re: ' + re + ')';
+      if (!formId) { window.location.href = 'mailto:' + to + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(text + '\n\n— ' + who + '\nRe: ' + P.title + ', ' + re); this.setState({ draft: '', chatOpen: false }); return; }
+      this.setState({ sending: true, sendStatus: '' });
+      fetch('https://formspree.io/f/' + formId, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ name: who, message: text, regarding: P.title + ', ' + re, _subject: subject, source: 'mobile' }) })
+        .then(r => { if (!r.ok) throw new Error(); this.setState({ sending: false, draft: '', sendStatus: 'Sent — thank you.' }); setTimeout(() => this.setState({ chatOpen: false, sendStatus: '' }), 1400); })
+        .catch(() => this.setState({ sending: false, sendStatus: 'Could not send. Check your connection and try again.' }));
+    };
     return {
       periodTitle: P.title, menuOpen: this.state.menuOpen, toggleMenu: () => this.setState(s => ({ menuOpen: !s.menuOpen })), chevronRot: this.state.menuOpen ? 'rotate(180deg)' : 'rotate(0deg)',
       periodTabs: DATA.map((p, i) => ({ title: p.title, check: i === pi ? '✓' : '', bg: i === pi ? 'rgba(255,255,255,0.08)' : 'transparent', fg: '#f2f2f7', select: () => this.setState({ period: i, selected: null, menuOpen: false }) })),
@@ -270,6 +297,12 @@ class Component extends DCLogic {
       todayVisible: !!today && (sel !== todayOff || today.period !== pi), goToday: () => today && this.setState({ period: today.period, selected: null }),
       onGroups: ['day', 'eve', 'night'].map(k => { const low = counts[k] < mins[k]; return { name: TYPES[k].name, dot: TYPES[k].dot, count: counts[k], people: onLists[k].sort((a, b) => a.start - b.start), empty: counts[k] ? '' : 'No one scheduled', warn: low ? '⚠ below min ' + mins[k] : '', warnColor: 'oklch(0.8 0.15 70)' }; }),
       staff, showDay: view === 'day', showStaff: view === 'staff',
+      chatOpen: this.state.chatOpen, openChat: () => this.setState({ chatOpen: true }), closeChat: () => this.setState({ chatOpen: false }), stopClick: e => e.stopPropagation(),
+      draft: this.state.draft, author: this.state.author, setDraft: e => this.setState({ draft: e.target.value }),
+      setAuthor: e => { const v = e.target.value; try { localStorage.setItem('tmh-comment-author', v); } catch (x) {} this.setState({ author: v }); },
+      submitComment: submit, submitDisabled: !this.state.draft.trim() || this.state.sending, submitOpacity: this.state.draft.trim() && !this.state.sending ? 1 : 0.45,
+      sendLabel: this.state.sending ? 'Sending…' : 'Send', sendStatus: this.state.sendStatus, sendStatusColor: /^Sent/.test(this.state.sendStatus) ? 'oklch(0.75 0.15 150)' : 'oklch(0.8 0.15 70)',
+      helperText: (this.props.formspreeId ?? 'moeqkzvq').trim() ? 'Goes straight to the scheduler' : 'Sent by email to the scheduler', selDateShort: MON[sd.getMonth()] + ' ' + sd.getDate(),
       onCardsScroll: e => { const el = e.currentTarget; const w = el.clientWidth; const i = Math.round(el.scrollLeft / (w + 12 - 40)); if (i !== this.state.card) this.setState({ card: Math.max(0, Math.min(2, i)) }); },
       cardDots: ['Day', 'Evening', 'Night'].map((name, i) => ({ name, w: i === this.state.card ? '22px' : '7px', bg: i === this.state.card ? '#b5abfc' : 'rgba(255,255,255,0.18)', go: () => { const el = document.querySelector('[data-cards]'); if (el) el.scrollTo({ left: i * (el.clientWidth - 40 + 12), behavior: 'smooth' }); } })),
       viewDay: () => this.setState({ view: 'day' }), viewStaff: () => this.setState({ view: 'staff' }),
