@@ -1,22 +1,28 @@
 # TMH Radiology staff schedule
 
-Static site. No build step. `index.html` is the schedule page exported from Claude Design. `support.js` and `_ds/` are its runtime. The site deploys from the `main` branch to Vercel and to GitHub Pages.
+Static site. No build step. The `main` branch deploys to Vercel and to GitHub Pages.
 
-Schedule data lives in the `PERIODS` array inside `index.html`.
+- `index.html` — desktop grid. Phones are redirected to `mobile.html` (add `?desktop=1` to force the desktop view).
+- `mobile.html` — phone layout.
+- `schedule-data.js` — the schedule itself. Both pages import it. This is the only file that changes for a new schedule.
+- `support.js`, `_ds/` — runtime and design-system styles.
+- `admin/` + `api/schedule.js` — the publishing console (below).
+- `HANDOFF.md` — design handoff notes: data model, screens, tokens.
 
-## Publishing a new copy of the schedule
+## Publishing a new schedule
 
-Open `/admin` on the Vercel site. The console lets you:
+Open `/admin` on the Vercel site and sign in. Drop in:
 
-- drop in a new export (`X-ray Schedule.dc.html` or `index.html`), see which periods it holds, and preview it;
-- publish it. The console commits the file as `index.html` on `main`. Vercel deploys the commit in about a minute;
-- restore any earlier copy from the history list.
+- `schedule-data.js` for a new schedule period. The console runs the file, checks every cell code and date, and lists the periods it found.
+- `X-ray Schedule.dc.html` or `X-ray Schedule Mobile.dc.html` (raw exports from Claude Design) for a design change. The console fixes the cross-links and adds the analytics and phone-redirect scripts, the same as the deploy copies.
 
-The console talks to `api/schedule.js`, a Vercel serverless function. The function checks the file and writes it to GitHub. The GitHub token never reaches the browser.
+Preview shows the uploaded files with the runtime already on the site. Publish commits all staged files to `main` in one commit. Vercel deploys in about a minute. History lists recent commits and can restore every schedule file to an earlier commit.
+
+The console talks to `api/schedule.js`, a Vercel serverless function. The GitHub token never reaches the browser.
 
 ### One-time setup
 
-1. In GitHub, create a fine-grained personal access token. Scope it to this repository with **Contents: Read and write**.
+1. In GitHub, create a fine-grained personal access token scoped to this repository with **Contents: Read and write**.
 2. In the Vercel project, open **Settings → Environment Variables** and add:
 
    | Name | Value |
@@ -24,15 +30,12 @@ The console talks to `api/schedule.js`, a Vercel serverless function. The functi
    | `ADMIN_PASSWORD` | the password the console asks for |
    | `GITHUB_TOKEN` | the token from step 1 |
 
-   Optional: `GITHUB_REPO` (`owner/name`), `GITHUB_BRANCH` (default `main`), `SCHEDULE_PATH` (default `index.html`). The defaults come from the repository Vercel is linked to.
-3. Redeploy the project. Open `/admin` and sign in.
+   Optional: `GITHUB_REPO` (`owner/name`), `GITHUB_BRANCH` (default `main`), `SCHEDULE_DATA_PATH`, `DESKTOP_PAGE_PATH`, `MOBILE_PAGE_PATH`.
+3. Redeploy. Open `/admin` and sign in.
+4. Enable Web Analytics in the Vercel dashboard (project → Analytics → Enable). The pages already carry the script tag.
 
 GitHub Pages serves the same files but has no serverless functions, so the console cannot publish from there.
 
-## Local check
+## Editing the schedule by hand
 
-```
-node -e "require('./api/schedule.js')"   # loads the function
-```
-
-Open `index.html` directly or serve the folder with any static server.
+`schedule-data.js` exports `PERIODS`. Each period is 28 days from a Sunday. Cells are `offset:code` pairs; see the comment at the top of the file and `HANDOFF.md` for the code table. Commit to `main` or publish through the console.

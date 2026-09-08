@@ -3,6 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
+<script>(function(){try{var q=location.search;if(/[?&]desktop/.test(q)){sessionStorage.setItem('tmh-desktop','1');return;}if(sessionStorage.getItem('tmh-desktop'))return;var phone=window.matchMedia('(max-width: 820px) and (pointer: coarse)').matches||/iPhone|Android.+Mobile/i.test(navigator.userAgent);if(phone)location.replace('mobile.html');}catch(e){}})();</script>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -25,6 +28,7 @@ button:focus-visible{outline:2px solid #9184d9;outline-offset:2px}
 </style>
 </helmet>
 <div style="min-height:100vh;background:#161826;color:#e9e9ed;font-family:'Inter',system-ui,sans-serif;font-size:13px;padding:22px 24px 40px;display:flex;flex-direction:column;gap:16px">
+  <a href="mobile.html" title="Mobile view" style="position:absolute;top:18px;right:20px;width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#9397ab;box-shadow:0 0 0 1px #3f424d;background:#161826" style-hover="color:#d2cefd;background:#292b31"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="4" y="1.5" width="8" height="13" rx="1.8"></rect><line x1="7" y1="12.2" x2="9" y2="12.2"></line></svg></a>
 
   <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px">
     <div style="display:flex;flex-direction:column;gap:6px">
@@ -175,7 +179,33 @@ button:focus-visible{outline:2px solid #9184d9;outline-offset:2px}
     </div>
   </div>
 
-    <div style="display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;font-size:16.5px;color:#b2b6ca;padding-top:6px">
+  <button onClick="{{ openChat }}" title="Comments &amp; requests" style="position:fixed;right:24px;bottom:24px;z-index:40;width:52px;height:52px;border-radius:50%;border:1px solid #9184d9;background:#232532;color:#b5abfc;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(0,0,0,0.45), 0 0 0 1px rgba(145,132,217,0.25)" style-hover="background:#2b2741;color:#e7e5fe">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H9l-4.2 3.4A.5.5 0 0 1 4 19V5.5z"></path><line x1="8" y1="8" x2="16" y2="8"></line><line x1="8" y1="11.5" x2="13" y2="11.5"></line></svg>
+      </button>
+  <sc-if value="{{ chatOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeChat }}" style="position:fixed;inset:0;z-index:50;background:rgba(22,24,38,0.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:24px">
+      <div onClick="{{ stopClick }}" style="background:#232532;border-radius:10px;box-shadow:0 0 0 1px #595d6c, 0 24px 60px rgba(0,0,0,0.6);padding:18px 20px;display:flex;flex-direction:column;gap:14px;width:min(640px, calc(100vw - 48px));max-height:calc(100vh - 64px);overflow:auto">
+    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px">
+      <div style="font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:#9397ab;font-weight:500">Comments &amp; requests</div>
+      <div style="display:flex;align-items:center;gap:12px"><button onClick="{{ closeChat }}" title="Close" style="border:0;cursor:pointer;font:inherit;background:transparent;color:#9397ab;font-size:18px;line-height:1;width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center" style-hover="background:#292b31;color:#e7e5fe">×</button></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <textarea value="{{ draft }}" onChange="{{ setDraft }}" onKeyDown="{{ draftKey }}" placeholder="Corrections to the schedule, Suggested Changes..." rows="3" style="width:100%;resize:vertical;font:inherit;font-size:13px;line-height:1.45;color:#e9e9ed;background:#161826;border:1px solid #3f424d;border-radius:6px;padding:9px 11px;outline:none" style-focus="border-color:#9184d9"></textarea>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <input value="{{ author }}" onChange="{{ setAuthor }}" placeholder="Your name" style="flex:1 1 140px;min-width:0;font:inherit;font-size:13px;color:#e9e9ed;background:#161826;border:1px solid #3f424d;border-radius:6px;padding:7px 11px;height:34px;outline:none" style-focus="border-color:#9184d9">
+        <span style="font-size:11px;color:#75798c;flex:1 1 auto">re: {{ selDateShort }} · ⌘/Ctrl+Enter to send</span>
+        <button onClick="{{ submitComment }}" disabled="{{ submitDisabled }}" style="border:1px solid #9184d9;cursor:pointer;font:inherit;font-size:13px;font-weight:500;height:34px;padding:0 14px;border-radius:6px;background:transparent;color:#b5abfc;opacity:{{ submitOpacity }}" style-hover="background:#2b2741;color:#e7e5fe">{{ sendLabel }}</button>
+      </div>
+      <div style="font-size:12px;color:{{ sendStatusColor }};min-height:14px">{{ sendStatus }}</div>
+      <div style="display:none">
+      </div>
+    </div>
+  </div>
+
+    </div>
+  </sc-if>
+
+  <div style="display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center;font-size:16.5px;color:#b2b6ca;padding-top:6px">
       <div style="display:flex;align-items:center;gap:8px"><span style="width:14px;height:14px;border-radius:3px;background:oklch(0.73 0.125 75)"></span>Day</div>
       <div style="display:flex;align-items:center;gap:8px"><span style="width:14px;height:14px;border-radius:3px;background:oklch(0.73 0.125 289)"></span>Evening</div>
       <div style="display:flex;align-items:center;gap:8px"><span style="width:14px;height:14px;border-radius:3px;background:oklch(0.73 0.125 205)"></span>Night</div>
@@ -188,77 +218,7 @@ button:focus-visible{outline:2px solid #9184d9;outline-offset:2px}
     </div>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;period&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[0,1],&quot;default&quot;:1,&quot;tsType&quot;:&quot;0 | 1&quot;,&quot;section&quot;:&quot;Grid&quot;},&quot;labelMode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;times&quot;,&quot;codes&quot;],&quot;default&quot;:&quot;times&quot;,&quot;tsType&quot;:&quot;'times' | 'codes'&quot;,&quot;section&quot;:&quot;Grid&quot;},&quot;selectedDay&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:11,&quot;min&quot;:1,&quot;max&quot;:28,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Grid&quot;},&quot;showHours&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Grid&quot;},&quot;showCoverage&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Coverage&quot;},&quot;minDay&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:5,&quot;min&quot;:0,&quot;max&quot;:12,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Coverage&quot;},&quot;minEvening&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:2,&quot;min&quot;:0,&quot;max&quot;:8,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Coverage&quot;},&quot;minNight&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:2,&quot;min&quot;:0,&quot;max&quot;:8,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Coverage&quot;}}">
-const PERIODS = [
-  { label: 'Aug 2 – 29', title: 'August 2 – 29, 2026', start: [2026, 7, 2], sections: [
-    ['Day shift', [
-      ['Lora', '2:(7),3:(7),4:7,5:7,6:7,9:7,10:(7),11:7,12:7,13:7,16:(7),17:7,18:7,19:7,20:7,23:(7),24:7,25:7,26:7,27:7'],
-      ['Heather', '1:V,2:7a-430p,5:7a-430p,6:7a-430p,10:7a-430p,11:7a-430p,12:7a-430p,14:7a-430p,15:7a-430p,16:7a-430p,19:7a-430p,20:7a-430p,24:7a-430p,25:7a-430p,27:7a-430p,28:7a-430p'],
-      ['Dave', '1:6a-430p,3:6a-430p,4:6a-430p,5:6a-430p,6:/,9:/,10:/,13:/,14:/,15:/,17:/,18:/,19:/,23:/,24:/,27:/,28:/'],
-      ['Trista', '1:7a-430p,2:7a-430p,3:7a-430p,4:7a-430p,9:7a-430p,10:7a-430p,11:7a-430p,14:7a-430p,15:7a-430p,16:7a-430p,17:7a-430p,18:7a-430p,19:/,20:/,23:7a-430p,24:7a-430p,25:7a-430p,28:7a-430p'],
-      ['Christy', '2:V,6:V,7:V,8:V,9:7a-730p,12:7a-730p,13:7a-730p,18:7a-730p,20:7a-730p,21:7a-730p,22:7a-730p,23:7a-730p,26:7a-730p,27:/'],
-      ['Shelby (CI)', '2:8,3:8,4:8,5:8,6:8,9:8,10:8,11:8,12:8,13:8,16:8,17:8,18:8,19:8,20:8,23:8,24:8,25:8,26:8,27:8'],
-      ['Lana (SP)', '2:7a-530p,3:7a-530p,4:7a-530p,5:7a-530p,9:7a-530p,10:7a-530p,11:7a-530p,12:7a-530p,16:7a-530p,17:7a-530p,18:7a-530p,19:7a-530p,24:7a-530p,25:7a-530p,26:7a-530p,27:7a-530p'],
-      ['Rachel', '2:7a-730p,3:7a-730p,6:7,7:7a-1130p,8:3,10:7a-730p,12:7a-730p,13:7,17:7a-730p,18:7,19:7a-730p,21:7,22:3,24:7a-730p,26:7a-730p,27:7'],
-      ['Bailey', '3:7,4:7a-730p,6:7a-730p,7:7,8:7a-1130p,11:7a-730p,12:7,13:7,16:7a-730p,19:7a-730p,20:7,21:7,22:7,25:7a-730p,26:7,27:7a-730p'],
-      ['Savannah', '1:7a-530p,2:6a-530p,5:7a-530p,6:6a-430p,9:6a-430p,10:6a-430p,13:7a-530p,14:6a-430p,15:6a-430p,17:7a-530p,20:6a-430p,23:6a-430p,24:6a-430p,26:6a-430p,28:6a-430p'],
-      ['Linsey H.', '8:7,21:7,22:7'],
-    ]],
-    ['Evening shift', [
-      ['Hannah', '3:2-1130p,4:2-1130p,5:2-1130p,7:2-1130p,8:2-1130p,11:2-1130p,12:2-1130p,13:2-1130p,17:2-1130p,18:2-1130p,20:2-1130p,21:2-1130p,22:930a-6p,24:2-1130p,25:2-1130p,26:2-1130p'],
-      ['Brayden', '2:V,3:V,4:V,7:V,8:V,9:1-1130p,10:1-1130p,13:1-1130p,16:1-1130p,17:1-1130p,19:1-1130p,21:1-1130p,22:1-1130p,23:1-1130p,26:1-1130p,27:1-1130p'],
-      ['Taryn', '1:3,3:3,6:3,9:3,14:3,15:3,19:3,20:3,25:3,28:3'],
-      ['Gage', '1:930a-6p,2:3,4:11a-1130p,5:11a-1130p,9:11a-1130p,11:11a-1130p,13:3,14:930a-6p,15:930a-6p,17:3,18:11a-1130p,19:11a-1130p,23:11a-1130p,24:3,27:11a-1130p,28:930a-6p'],
-      ['Baylee V.', '1:3,2:11a-1130p,5:3,6:11a-1130p,10:11a-1130p,11:3,12:11a-1130p,14:3,15:3,16:11a-1130p,18:3,20:11a-1130p,23:11a-1130p,24:11a-1130p,27:3,28:3'],
-      ['Melea', '7:3'],
-    ]],
-    ['Midnight shift', [
-      ['Brandy', '2:9p-730a,3:9p-730a,4:9p-730a,7:9p-730a,8:9p-730a,9:9p-730a,10:9p-730a,11:9p-730a,16:9p-730a,17:9p-730a,18:9p-730a,21:9p-730a,22:9p-730a,23:9p-730a,24:9p-730a,25:9p-730a'],
-      ['Cory', '1:/,2:7p-730a,3:7p-730a,4:11,7:11,8:11,9:11,10:7p-730a,11:7p-730a,16:7p-730a,17:7p-730a,18:11,21:11,22:11,23:11,24:7p-730a,25:7p-730a'],
-      ['Dawson', '1:11,2:11,5:7p-730a,6:7p-730a,10:11,12:7p-730a,13:7p-730a,14:11,15:11,16:11,19:7p-730a,20:7p-730a,24:11,26:7p-730a,27:7p-730a,28:11'],
-      ['Jarrod', '1:11,3:11,4:11,5:11,6:11,9:11,11:11,12:11,13:11,14:11,15:11,17:11,18:11,19:11,20:11,23:11,25:11,26:11,27:11,28:11'],
-      ['Donnie', '1:11,4:3,5:7p-730a,6:7p-730a,10:3,12:7p-730a,13:7p-730a,14:11,15:11,18:V,19:V,20:V,21:V,22:V,25:3,26:7p-730a,27:7p-730a,28:11'],
-    ]],
-    ['PRN', [
-      ['Lisa (PRN)', '1:/,2:/,3:7,4:7,5:7,6:/,7:7,8:7,9:/,10:7,11:7,12:7,13:/,14:/,15:/,16:7,17:7,18:7,19:7,20:/,21:/,22:/,23:7,24:/,25:7,26:/,27:/,28:/'],
-    ]],
-  ]},
-  { label: 'Aug 30 – Sep 26', title: 'August 30 – September 26, 2026', start: [2026, 7, 30], sections: [
-    ['Day shift', [
-      ['Lora', '2:7,3:7,4:7,5:7,6:7,9:H,10:7,11:7,12:7,13:7,16:7,17:7,18:7,19:7,23:7,24:7,25:7,26:7,27:7'],
-      ['Heather', '1:7a-430p,3:/,4:7a-430p,5:7a-430p,6:7a-430p*,9:3,10:8a-430p,11:7a-430p,12:7a-430p*,14:7a-430p,15:7a-430p*,17:7a-430p,19:7a-430p*,20:7a-430p,22:7,23:7a-430p,24:7a-430p,27:7a-430p*,28:7a-430p'],
-      ['Dave', '1:/,3:/,4:/,5:/,9:/,10:/,13:/,14:/,15:/,17:/,18:/,19:/,23:/,24:/,27:/,28:/'],
-      ['Trista', '1:7a-430p,2:7a-430p,3:7a-430p,4:7a-430p*,9:H,10:7a-430p*,11:7a-430p,14:7a-430p*,15:7a-430p,16:7a-430p,17:7a-430p,18:7a-430p,23:7a-430p,24:7a-430p,25:7a-430p*,28:7a-430p'],
-      ['Christy', '2:/,3:7a-145p,4:7a-730p,5:7a-730p,7:7a-730p,8:7a-730p,9:H,12:7a-730p,13:7a-330p,18:7a-730p,19:7a-730p,21:7a-730p,22:7a-730p*,23:7a-730p,26:7a-730p'],
-      ['Shelby (CI)', '2:(8),3:8-12 TMH UC,4:(8),5:8-12 TMH UC,6:8,9:530-1130p,10:8-12 TMH,11:(8),12:8-12 TMH,13:(8),16:8,17:(8),18:(8),19:8-12 TMH,20:8,23:(8),24:(8),25:(8),26:(8),27:8'],
-      ['Lana (SP)', '2:7a-530p*,3:7a-530p,4:V,5:V,9:H,10:V,11:V,12:V,16:7a-530p*,17:7a-530p,18:7a-530p,19:V,23:V,24:7a-530p,25:7a-530p,26:7a-530p*'],
-      ['Rachel', '2:7,3:7,5:7*,6:7,7:3,8:3,10:7a-730p,11:7,12:7a-730p,13:7*,17:7a-730p,19:7a-730p,20:7*,21:V,22:V,23:7*,24:7a-730p,26:7a-730p,27:7'],
-      ['Bailey', '2:7~,4:7a-730p,6:7a-730p,7:7,8:7*,9:7,11:7a-730p,12:7,13:7,16:7a-730p,19:7a-730p,20:7,21:7*,22:7,25:7a-730p,26:7,27:7a-730p'],
-      ['Savannah', '1:6a-430p*,3:6a-430p~,4:6a-230p,5:6a-430p,6:6a-430p,9:6a-430p*,10:6a-430p,12:6a-230p,13:6a-430p,14:6a-430p,15:6a-430p,17:6a-430p*,18:6a-430p,19:6a-230p,20:6a-430p,23:/,24:6a-430p*,25:6a-430p,26:6a-430p,28:6a-430p*'],
-      ['Linsey H.', '6:7,7:7,8:7,13:7a-930p,21:7,27:7-230'],
-      ['Krista (SF)', '9:7'],
-      ['Melea', '5:8a-3p'],
-    ]],
-    ['Evening shift', [
-      ['Hannah', '3:2-1130p*,4:2-1130p,5:2-1130p*,7:2-1130p,8:2-1130p*,9:H,12:2-1130p*,13:2-1130p,17:2-1130p,18:2-1130p,20:2-1130p,21:2-1130p*,22:2-1130p,24:2-1130p,25:2-1130p*,26:2-1130p'],
-      ['Brayden', '2:1-1130p,3:1-1130p,4:1-1130p*,7:1-1130p*,8:1-1130p,9:H,10:11a-1130p,13:1-1130p,16:1-1130p*,17:1-1130p,19:1-1130p*,21:1-1130p,22:1-1130p*,23:1-1130p*,25:1-1130p,27:1-1130p'],
-      ['Taryn', '1:3*,3:3,4:/,6:3,9:H,10:3*,11:/,14:V,15:V,18:/,19:3,20:3*,25:/,26:3*,28:3'],
-      ['Gage', '1:930a-6p,2:3*,4:11a-1130p,5:11a-1130p,8:11,12:11a-1130p,13:3*,14:3,15:3,17:3,18:11a-1130p,19:11a-1130p,23:11a-1130p,24:3*,27:11a-1130p,28:930a-6p*'],
-      ['Baylee V.', '1:3,2:11a-1130p,5:11a-1130p,6:3*,9:3,11:11a-1130p*,13:11a-1130p,14:3,15:3*,16:11a-1130p,18:3,19:11a-1130p,20:/,23:11a-1130p,24:11a-1130p,27:3*,28:3'],
-      ['Barb (SF)', '9:SF 8-12'],
-    ]],
-    ['Midnight shift', [
-      ['Brandy', '2:9p-730a,3:9p-730a,6:9p-730a~,7:9p-730a,8:H,9:9p-730a,10:9p-730a,11:9p-730a,16:9p-730a,17:9p-730a,18:9p-730a,21:9p-730a,22:9p-730a,23:9p-730a,24:9p-730a,25:9p-730a'],
-      ['Cory', '2:V,3:V,7:V,8:H,9:11,10:7p-730a,11:7p-730a,16:7p-730a,17:7p-730a,20:11,21:11,22:11,23:11,24:7p-730a,25:7p-730a'],
-      ['Dawson', '1:11,2:11,4:7p-730a~,5:7p-730a,7:/,8:11,12:7p-730a,13:7p-730a,14:11,15:11,18:3*,19:7p-730a,20:7p-730a,24:11,26:7p-730a,27:7p-730a,28:11'],
-      ['Jarrod', '1:11,3:11,4:11,5:11,6:11,9:11,11:11,12:11,13:11,14:11,15:11,17:3*,18:11,19:11,20:11,23:11,25:11,26:11,27:11,28:11'],
-      ['Donnie (traveler)', '1:6p-230a,2:3,3:3,6:3,7:11,10:3,11:3,12:3,13:3,14:3', 'Contract ends after 9/12'],
-    ]],
-    ['PRN', [
-      ['Lisa (PRN)', '1:/,2:7,3:/,4:7,5:/,6:/,7:7*,8:7,9:/,10:/,11:7*,12:/,13:/,14:/,15:/,16:7,17:/,18:7*,19:/,20:/,21:7,22:7,23:7,24:/,25:7,26:/,27:/,28:/'],
-    ]],
-  ]},
-];
+<script type="text/x-dc" data-dc-script data-props="{&quot;period&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[0,1],&quot;default&quot;:1,&quot;tsType&quot;:&quot;0 | 1&quot;,&quot;section&quot;:&quot;Grid&quot;},&quot;formspreeId&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;moeqkzvq&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Comments&quot;},&quot;commentEmail&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;gage.a.bass@gmail.com&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Comments&quot;},&quot;labelMode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;times&quot;,&quot;codes&quot;],&quot;default&quot;:&quot;times&quot;,&quot;tsType&quot;:&quot;'times' | 'codes'&quot;,&quot;section&quot;:&quot;Grid&quot;},&quot;selectedDay&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:11,&quot;min&quot;:1,&quot;max&quot;:28,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Grid&quot;},&quot;showHours&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Grid&quot;},&quot;showCoverage&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Coverage&quot;},&quot;minDay&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:5,&quot;min&quot;:0,&quot;max&quot;:12,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Coverage&quot;},&quot;minEvening&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:2,&quot;min&quot;:0,&quot;max&quot;:8,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Coverage&quot;},&quot;minNight&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:2,&quot;min&quot;:0,&quot;max&quot;:8,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Coverage&quot;}}">
 const CODES = { '7': '7a-730p', '(7)': '7a-730p', '8': '8a-430p', '(8)': '8a-430p', '3': '3p-1130p', '11': '11p-730a' };
 const TYPES = {
   day:   { name: 'Day',     dot: 'oklch(0.73 0.125 75)',  bg: 'oklch(0.36 0.07 75)',  fg: 'oklch(0.92 0.06 75)' },
@@ -298,17 +258,20 @@ function parseRow(str) {
   str.split(',').forEach(tok => { if (!tok) return; const i = tok.indexOf(':'); map[+tok.slice(0, i)] = parseShift(tok.slice(i + 1)); });
   return map;
 }
-const DATA = PERIODS.map(p => ({ ...p, sections: p.sections.map(([section, people]) => ({ section, people: people.map(([name, s, pnote]) => ({ name, shifts: parseRow(s), pnote: pnote || '' })) })) }));
+const buildData = periods => periods.map(p => ({ ...p, sections: p.sections.map(([section, people]) => ({ section, people: people.map(([name, s, pnote]) => ({ name, shifts: parseRow(s), pnote: pnote || '' })) })) }));
 const hrs = n => Number.isInteger(n) ? String(n) : n.toFixed(1).replace('.0', '');
 
 const dayOffset = (P, d) => { const s = new Date(P.start[0], P.start[1], P.start[2]); const o = Math.round((new Date(d.getFullYear(), d.getMonth(), d.getDate()) - s) / 86400000) + 1; return o >= 1 && o <= 28 ? o : null; };
-const todayInfo = () => { const now = new Date(); for (let i = 0; i < DATA.length; i++) { const o = dayOffset(DATA[i], now); if (o) return { period: i, offset: o }; } return null; };
+const todayInfo = DATA => { const now = new Date(); for (let i = 0; i < DATA.length; i++) { const o = dayOffset(DATA[i], now); if (o) return { period: i, offset: o }; } return null; };
 class Component extends DCLogic {
-  state = { selected: null, period: null, people: [], hoursOpen: null, menuOpen: false, coverageOpen: false, dimPast: true };
+  state = { selected: null, period: null, people: [], hoursOpen: null, menuOpen: false, coverageOpen: false, dimPast: true, data: null, chatOpen: false, sending: false, sendStatus: '', draft: '', author: (() => { try { return localStorage.getItem('tmh-comment-author') || ''; } catch (e) { return ''; } })() };
+  componentDidMount() { import('./schedule-data.js').then(m => this.setState({ data: buildData(m.PERIODS) })); }
   renderVals() {
+    const DATA = this.state.data;
+    if (!DATA) return { periodTitle: 'Loading…', days: [], rows: [], coverageRows: [], onGroups: [], periodTabs: [], hoursCols: '0px 0px' };
     const labelMode = this.props.labelMode ?? 'times';
     const mins = { day: this.props.minDay ?? 5, eve: this.props.minEvening ?? 2, night: this.props.minNight ?? 2 };
-    const today = todayInfo();
+    const today = todayInfo(DATA);
     const pi = this.state.period ?? (today ? today.period : (this.props.period ?? DATA.length - 1));
     const P = DATA[pi];
     const todayOff = today && today.period === pi ? today.offset : null;
@@ -378,6 +341,17 @@ class Component extends DCLogic {
       return { name: TYPES[k].name, dot: TYPES[k].dot, min: mins[k], cells, gapCount: gaps, gaps: gaps ? '⚠ ' + gaps : '✓', gapsColor: gaps ? 'oklch(0.8 0.15 70)' : 'oklch(0.75 0.15 150)', gapsTitle: gaps ? gaps + ' day' + (gaps > 1 ? 's' : '') + ' below minimum' : 'All days covered' };
     });
     const c = counts[sel]; const sd = dateOf(sel);
+    const submit = () => {
+      const text = this.state.draft.trim(); if (!text || this.state.sending) return;
+      const who = this.state.author.trim() || 'Anonymous'; const re = MON[sd.getMonth()] + ' ' + sd.getDate();
+      const to = this.props.commentEmail ?? 'gage.a.bass@gmail.com'; const formId = (this.props.formspreeId ?? 'moeqkzvq').trim();
+      const subject = 'Schedule comment from ' + who + ' (re: ' + re + ')';
+      if (!formId) { window.location.href = 'mailto:' + to + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(text + '\n\n— ' + who + '\nRe: ' + P.title + ', ' + re); this.setState({ draft: '', chatOpen: false }); return; }
+      this.setState({ sending: true, sendStatus: '' });
+      fetch('https://formspree.io/f/' + formId, { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ name: who, message: text, regarding: P.title + ', ' + re, _subject: subject }) })
+        .then(r => { if (!r.ok) throw new Error(); this.setState({ sending: false, draft: '', sendStatus: 'Sent — thank you.' }); setTimeout(() => this.setState({ chatOpen: false, sendStatus: '' }), 1400); })
+        .catch(() => this.setState({ sending: false, sendStatus: 'Could not send. Check your connection and try again.' }));
+    };
     const hoursOpen = this.state.hoursOpen ?? (this.props.showHours ?? false);
     const coverageOpen = this.state.coverageOpen;
     const totalGaps = coverage.reduce((a, cv) => a + cv.gapCount, 0);
@@ -396,6 +370,14 @@ class Component extends DCLogic {
       prevDay: () => this.setState({ selected: Math.max(1, sel - 1) }), nextDay: () => this.setState({ selected: Math.min(28, sel + 1) }),
       goToday: () => today ? this.setState({ period: today.period, selected: null }) : null, todayVisible: !!today && (sel !== todayOff || today.period !== pi), todayTag: todayOff === sel ? 'Today' : '',
       selCounts: (c.day + c.eve + c.night),
+      draft: this.state.draft, author: this.state.author,
+      chatOpen: this.state.chatOpen, openChat: () => this.setState({ chatOpen: true }), closeChat: () => this.setState({ chatOpen: false }), stopClick: e => e.stopPropagation(),
+      setDraft: e => this.setState({ draft: e.target.value }),
+      setAuthor: e => { const v = e.target.value; try { localStorage.setItem('tmh-comment-author', v); } catch (x) {} this.setState({ author: v }); },
+      draftKey: e => { if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') submit(); if (e.key === 'Escape') this.setState({ chatOpen: false }); },
+      submitComment: submit, submitDisabled: !this.state.draft.trim() || this.state.sending, submitOpacity: this.state.draft.trim() && !this.state.sending ? 1 : 0.45,
+      sendLabel: this.state.sending ? 'Sending…' : 'Send', sendStatus: this.state.sendStatus, sendStatusColor: /^Sent/.test(this.state.sendStatus) ? 'oklch(0.75 0.15 150)' : 'oklch(0.8 0.15 70)', helperText: (this.props.formspreeId ?? 'moeqkzvq').trim() ? 'Goes straight to the scheduler' : 'Sent by email to the scheduler',
+      selDateShort: MON[sd.getMonth()] + ' ' + sd.getDate(),
       toggleDim: () => this.setState({ dimPast: !dimPast }), dimTrack: dimPast ? '#5d5294' : '#292b31', dimKnob: dimPast ? '#e7e5fe' : '#75798c', dimKnobLeft: dimPast ? '23px' : '3px',
       onGroups: ['day', 'eve', 'night'].map(k => ({ name: TYPES[k].name, dot: TYPES[k].dot, bg: TYPES[k].bg, fg: TYPES[k].fg, count: c[k], people: onLists[k].sort((a, b) => a.time.localeCompare(b.time)), empty: c[k] ? '' : 'No one scheduled' })),
     };

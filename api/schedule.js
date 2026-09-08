@@ -1,23 +1,27 @@
-// Vercel serverless function: publishes new copies of the schedule page.
+// Vercel serverless function behind the schedule console at /admin.
 //
-// The console at /admin posts the exported schedule HTML here. This function
-// checks the file, then commits it to the GitHub repository. Vercel (and the
+// The console posts new copies of the schedule files here. This function checks
+// them, then commits them to the GitHub repository in one commit. Vercel (and the
 // GitHub Pages workflow) deploy the new commit automatically.
 //
 // Environment variables (set them in the Vercel project settings):
-//   ADMIN_PASSWORD   required. The console asks for this password.
-//   GITHUB_TOKEN     required. Fine-grained token with "Contents: read and write"
-//                    on the repository.
-//   GITHUB_REPO      optional. "owner/name". Defaults to the linked Vercel repo.
-//   GITHUB_BRANCH    optional. Defaults to the production branch ("main").
-//   SCHEDULE_PATH    optional. File to replace. Defaults to "index.html".
+//   ADMIN_PASSWORD      required. The console asks for this password.
+//   GITHUB_TOKEN        required. Fine-grained token with "Contents: read and write"
+//                       on the repository.
+//   GITHUB_REPO         optional. "owner/name". Defaults to the linked Vercel repo.
+//   GITHUB_BRANCH       optional. Defaults to "main".
+//   SCHEDULE_DATA_PATH  optional. Defaults to "schedule-data.js".
+//   DESKTOP_PAGE_PATH   optional. Defaults to "index.html".
+//   MOBILE_PAGE_PATH    optional. Defaults to "mobile.html".
 
 'use strict';
 
 const crypto = require('crypto');
+const vm = require('vm');
+const inspect = require('../admin/inspect.js');
 
-const MAX_BYTES = 2 * 1024 * 1024;
 const HISTORY_LIMIT = 12;
+const ROLES = ['data', 'desktop', 'mobile'];
 
 function config() {
   const owner = process.env.VERCEL_GIT_REPO_OWNER || 'gageabass-jpg';
@@ -25,55 +29,19 @@ function config() {
   return {
     repo: process.env.GITHUB_REPO || `${owner}/${slug}`,
     branch: process.env.GITHUB_BRANCH || 'main',
-    path: process.env.SCHEDULE_PATH || 'index.html',
+    paths: {
+      data: process.env.SCHEDULE_DATA_PATH || 'schedule-data.js',
+      desktop: process.env.DESKTOP_PAGE_PATH || 'index.html',
+      mobile: process.env.MOBILE_PAGE_PATH || 'mobile.html',
+    },
     token: process.env.GITHUB_TOKEN || '',
     password: process.env.ADMIN_PASSWORD || '',
   };
 }
 
-// Reads the PERIODS array out of an exported schedule page and reports what it
-// finds. Returns { ok, errors, warnings, periods, bytes }.
-function inspectSchedule(html) {
-  const errors = [];
-  const warnings = [];
-  const periods = [];
-  if (typeof html !== 'string' || !html.length) {
-    return { ok: false, errors: ['The file is empty.'], warnings, periods, bytes: 0 };
-  }
-  const bytes = Buffer.byteLength(html, 'utf8');
-  if (bytes > MAX_BYTES) errors.push(`The file is ${(bytes / 1048576).toFixed(1)} MB. The limit is 2 MB.`);
-  if (!/<x-dc[\s>]/.test(html) || !html.includes('</x-dc>')) errors.push('No <x-dc> block. This is not an exported schedule page.');
-  if (!/data-dc-script/.test(html)) errors.push('No data-dc-script block. The page has no logic script.');
-
-  const startIdx = html.indexOf('const PERIODS = [');
-  if (startIdx === -1) {
-    errors.push('No PERIODS array. The page has no schedule data.');
-  } else {
-    const endIdx = html.indexOf('\n];', startIdx);
-    const block = html.slice(startIdx, endIdx === -1 ? undefined : endIdx);
-    const re = /\{\s*label:\s*'((?:[^'\\]|\\.)*)'\s*,\s*title:\s*'((?:[^'\\]|\\.)*)'\s*,\s*start:\s*\[\s*(\d{4})\s*,\s*(\d{1,2})\s*,\s*(\d{1,2})\s*\]/g;
-    const heads = [];
-    let m;
-    while ((m = re.exec(block))) heads.push({ index: m.index, label: m[1], title: m[2], start: [+m[3], +m[4], +m[5]] });
-    heads.forEach((h, i) => {
-      const chunk = block.slice(h.index, i + 1 < heads.length ? heads[i + 1].index : undefined);
-      const sections = (chunk.match(/\[\s*'[^']+'\s*,\s*\[\s*\n/g) || []).length;
-      const people = (chunk.match(/^\s*\[\s*'[^']+'\s*,\s*'[^']*'/gm) || []).length;
-      const y = h.start[0], mo = h.start[1], d = h.start[2];
-      const startDate = new Date(Date.UTC(y, mo, d));
-      const badDate = mo < 0 || mo > 11 || d < 1 || d > 31 || Number.isNaN(startDate.getTime());
-      if (badDate) warnings.push(`Period "${h.title}" has a start date that does not look right: [${y}, ${mo}, ${d}].`);
-      if (!people) warnings.push(`Period "${h.title}" has no staff rows.`);
-      periods.push({ label: h.label, title: h.title, start: h.start, startIso: badDate ? null : startDate.toISOString().slice(0, 10), sections, people });
-    });
-    if (!heads.length) errors.push('The PERIODS array has no periods with a label, title and start date.');
-  }
-
-  if (!/support\.js/.test(html)) warnings.push('The page does not load support.js. It will not render unless the runtime is inlined.');
-  if (/<script[^>]+src=["']https?:\/\/(?!unpkg\.com\/)/i.test(html)) warnings.push('The page loads a script from an unexpected host.');
-
-  return { ok: errors.length === 0, errors, warnings, periods, bytes };
-}
+// Runs the data file in an empty sandbox with a time limit and returns PERIODS.
+const evaluator = code => vm.runInNewContext(code, Object.create(null), { timeout: 500 });
+const check = (role, text) => inspect.inspect(role, text, evaluator);
 
 function safeEqual(a, b) {
   const ba = Buffer.from(String(a), 'utf8');
@@ -90,6 +58,7 @@ function authorized(req, cfg) {
   return safeEqual(given, cfg.password);
 }
 
+// ---------- GitHub ----------
 async function gh(cfg, method, url, body) {
   const res = await fetch(`https://api.github.com${url}`, {
     method,
@@ -106,67 +75,101 @@ async function gh(cfg, method, url, body) {
   let data = null;
   try { data = text ? JSON.parse(text) : null; } catch { data = { raw: text }; }
   if (!res.ok) {
-    const msg = (data && data.message) || `GitHub returned ${res.status}`;
-    const err = new Error(`GitHub: ${msg}`);
+    const err = new Error(`GitHub: ${(data && data.message) || `returned ${res.status}`}`);
     err.status = res.status;
     throw err;
   }
   return data;
 }
 
+const gitBlobSha = text => {
+  const buf = Buffer.from(text, 'utf8');
+  return crypto.createHash('sha1').update(`blob ${buf.length}\0`).update(buf).digest('hex');
+};
+
 function decodeContent(entry) {
-  if (!entry || entry.encoding !== 'base64') throw new Error('GitHub returned the file in an unexpected format.');
+  if (!entry || entry.encoding !== 'base64') throw new Error('GitHub returned a file in an unexpected format.');
   return Buffer.from(entry.content.replace(/\n/g, ''), 'base64').toString('utf8');
 }
 
-async function readLive(cfg, ref) {
-  const q = ref ? `?ref=${encodeURIComponent(ref)}` : `?ref=${encodeURIComponent(cfg.branch)}`;
-  const entry = await gh(cfg, 'GET', `/repos/${cfg.repo}/contents/${cfg.path}${q}`);
-  return { sha: entry.sha, html: decodeContent(entry), size: entry.size };
+async function readFile(cfg, path, ref) {
+  try {
+    const entry = await gh(cfg, 'GET', `/repos/${cfg.repo}/contents/${path}?ref=${encodeURIComponent(ref || cfg.branch)}`);
+    return { sha: entry.sha, text: decodeContent(entry), size: entry.size };
+  } catch (err) {
+    if (err.status === 404) return null;
+    throw err;
+  }
+}
+
+async function commitsFor(cfg, path) {
+  const list = await gh(cfg, 'GET', `/repos/${cfg.repo}/commits?path=${encodeURIComponent(path)}&sha=${encodeURIComponent(cfg.branch)}&per_page=${HISTORY_LIMIT}`);
+  return Array.isArray(list) ? list : [];
 }
 
 async function history(cfg) {
-  const list = await gh(cfg, 'GET', `/repos/${cfg.repo}/commits?path=${encodeURIComponent(cfg.path)}&sha=${encodeURIComponent(cfg.branch)}&per_page=${HISTORY_LIMIT}`);
-  return (Array.isArray(list) ? list : []).map(c => ({
-    sha: c.sha,
-    short: c.sha.slice(0, 7),
-    message: (c.commit && c.commit.message || '').split('\n')[0],
-    date: c.commit && c.commit.author && c.commit.author.date || null,
-    author: (c.commit && c.commit.author && c.commit.author.name) || (c.author && c.author.login) || '',
-    url: c.html_url,
+  const lists = await Promise.all(ROLES.map(r => commitsFor(cfg, cfg.paths[r])));
+  const byShaMap = new Map();
+  lists.forEach((list, i) => list.forEach(c => {
+    const cur = byShaMap.get(c.sha) || {
+      sha: c.sha, short: c.sha.slice(0, 7),
+      message: ((c.commit && c.commit.message) || '').split('\n')[0],
+      date: (c.commit && c.commit.author && c.commit.author.date) || null,
+      author: (c.commit && c.commit.author && c.commit.author.name) || (c.author && c.author.login) || '',
+      url: c.html_url, files: [],
+    };
+    cur.files.push(cfg.paths[ROLES[i]]);
+    byShaMap.set(c.sha, cur);
   }));
+  return [...byShaMap.values()].sort((a, b) => (a.date < b.date ? 1 : -1)).slice(0, HISTORY_LIMIT);
 }
 
 async function status(cfg) {
-  const [live, commits] = await Promise.all([readLive(cfg), history(cfg)]);
-  const report = inspectSchedule(live.html);
+  const [files, commits] = await Promise.all([
+    Promise.all(ROLES.map(r => readFile(cfg, cfg.paths[r]))),
+    history(cfg),
+  ]);
+  const live = {};
+  ROLES.forEach((r, i) => {
+    const f = files[i];
+    if (!f) { live[r] = { path: cfg.paths[r], missing: true }; return; }
+    const report = check(r, f.text);
+    const last = commits.find(c => c.files.includes(cfg.paths[r])) || null;
+    live[r] = { path: cfg.paths[r], sha: f.sha, bytes: report.bytes, ok: report.ok, errors: report.errors, warnings: report.warnings, periods: report.periods || null, lastCommit: last };
+  });
   return {
-    target: { repo: cfg.repo, branch: cfg.branch, path: cfg.path, url: `https://github.com/${cfg.repo}/blob/${cfg.branch}/${cfg.path}` },
-    live: { sha: live.sha, bytes: report.bytes, periods: report.periods, warnings: report.warnings, errors: report.errors, lastCommit: commits[0] || null },
+    target: { repo: cfg.repo, branch: cfg.branch, url: `https://github.com/${cfg.repo}/tree/${cfg.branch}`, paths: cfg.paths },
+    live,
     history: commits,
   };
 }
 
-async function writeFile(cfg, html, message) {
-  const current = await gh(cfg, 'GET', `/repos/${cfg.repo}/contents/${cfg.path}?ref=${encodeURIComponent(cfg.branch)}`).catch(err => {
-    if (err.status === 404) return null;
-    throw err;
-  });
-  if (current && decodeContent(current) === html) {
-    const err = new Error('This copy is identical to the live schedule. Nothing to publish.');
+// Writes several files in one commit through the Git Data API. `files` is { path: text }.
+async function commitFiles(cfg, files, message) {
+  const ref = await gh(cfg, 'GET', `/repos/${cfg.repo}/git/ref/heads/${encodeURIComponent(cfg.branch)}`);
+  const headSha = ref.object.sha;
+  const head = await gh(cfg, 'GET', `/repos/${cfg.repo}/git/commits/${headSha}`);
+  const tree = await gh(cfg, 'GET', `/repos/${cfg.repo}/git/trees/${head.tree.sha}?recursive=1`);
+  const existing = new Map((tree.tree || []).map(e => [e.path, e.sha]));
+
+  const changed = Object.entries(files).filter(([path, text]) => existing.get(path) !== gitBlobSha(text));
+  if (!changed.length) {
+    const err = new Error('Every file is identical to the live copy. Nothing to publish.');
     err.status = 409;
     throw err;
   }
-  const body = {
-    message,
-    content: Buffer.from(html, 'utf8').toString('base64'),
-    branch: cfg.branch,
-    ...(current ? { sha: current.sha } : {}),
-  };
-  const out = await gh(cfg, 'PUT', `/repos/${cfg.repo}/contents/${cfg.path}`, body);
-  return { sha: out.commit.sha, short: out.commit.sha.slice(0, 7), url: out.commit.html_url, fileSha: out.content && out.content.sha };
+  const entries = [];
+  for (const [path, text] of changed) {
+    const blob = await gh(cfg, 'POST', `/repos/${cfg.repo}/git/blobs`, { content: Buffer.from(text, 'utf8').toString('base64'), encoding: 'base64' });
+    entries.push({ path, mode: '100644', type: 'blob', sha: blob.sha });
+  }
+  const newTree = await gh(cfg, 'POST', `/repos/${cfg.repo}/git/trees`, { base_tree: head.tree.sha, tree: entries });
+  const commit = await gh(cfg, 'POST', `/repos/${cfg.repo}/git/commits`, { message, tree: newTree.sha, parents: [headSha] });
+  await gh(cfg, 'PATCH', `/repos/${cfg.repo}/git/refs/heads/${encodeURIComponent(cfg.branch)}`, { sha: commit.sha, force: false });
+  return { sha: commit.sha, short: commit.sha.slice(0, 7), url: commit.html_url || `https://github.com/${cfg.repo}/commit/${commit.sha}`, files: changed.map(([p]) => p) };
 }
 
+// ---------- HTTP ----------
 function send(res, code, payload) {
   res.statusCode = code;
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
@@ -188,13 +191,56 @@ function readBody(req) {
   });
 }
 
+async function publish(cfg, body) {
+  const staged = body.files && typeof body.files === 'object' ? body.files : {};
+  const reports = {};
+  const toWrite = {};
+  let bad = false;
+  for (const role of ROLES) {
+    if (typeof staged[role] !== 'string') continue;
+    const detected = inspect.classify(staged[role], '');
+    if (detected !== role && !(role === 'data' && detected === 'unknown')) {
+      reports[role] = { role, ok: false, errors: [`This file looks like the ${detected === 'legacy' ? 'old inline-data page' : detected} file, not the ${role} file.`], warnings: [] };
+      bad = true;
+      continue;
+    }
+    const report = check(role, staged[role]);
+    reports[role] = report;
+    if (!report.ok) { bad = true; continue; }
+    toWrite[cfg.paths[role]] = role === 'data' ? staged[role] : report.html;
+    delete report.html;
+  }
+  if (!Object.keys(reports).length) return { code: 400, payload: { error: 'No files to publish.' } };
+  if (bad && !body.force) return { code: 422, payload: { error: 'A file did not pass the checks.', reports } };
+  const dataReport = reports.data;
+  const titles = dataReport && dataReport.periods ? dataReport.periods.map(p => p.title).join(', ') : '';
+  const names = Object.keys(toWrite).join(', ');
+  const message = (body.message && String(body.message).trim()) || (titles ? `Publish schedule: ${titles}` : `Publish ${names}`);
+  const commit = await commitFiles(cfg, toWrite, message);
+  return { code: 200, payload: { ok: true, commit, reports } };
+}
+
+async function restore(cfg, ref) {
+  const files = {};
+  const reports = {};
+  for (const role of ROLES) {
+    const f = await readFile(cfg, cfg.paths[role], ref);
+    if (!f) continue;
+    files[cfg.paths[role]] = f.text;
+    const r = check(role, f.text); delete r.html; reports[role] = r;
+  }
+  if (!Object.keys(files).length) return { code: 404, payload: { error: 'That commit has none of the schedule files.' } };
+  const commit = await commitFiles(cfg, files, `Restore schedule files from ${ref.slice(0, 7)}`);
+  return { code: 200, payload: { ok: true, commit, reports } };
+}
+
 async function handler(req, res) {
   const cfg = config();
   const url = new URL(req.url, 'http://localhost');
   const op = url.searchParams.get('op') || '';
 
   if (req.method === 'GET' && op === 'health') {
-    return send(res, 200, { ok: true, configured: { password: !!cfg.password, token: !!cfg.token }, target: { repo: cfg.repo, branch: cfg.branch, path: cfg.path } });
+    return send(res, 200, { ok: true, configured: { password: !!cfg.password, token: !!cfg.token }, target: { repo: cfg.repo, branch: cfg.branch, paths: cfg.paths } });
   }
   if (!cfg.password || !cfg.token) {
     return send(res, 503, { error: 'The console is not configured. Set ADMIN_PASSWORD and GITHUB_TOKEN in the Vercel project settings, then redeploy.' });
@@ -203,40 +249,22 @@ async function handler(req, res) {
 
   try {
     if (req.method === 'GET' && op === 'status') return send(res, 200, await status(cfg));
-
     if (req.method === 'POST') {
       const body = await readBody(req);
       const action = body.op || op;
-
-      if (action === 'inspect') {
-        return send(res, 200, inspectSchedule(String(body.html || '')));
-      }
-
-      if (action === 'publish') {
-        const html = String(body.html || '');
-        const report = inspectSchedule(html);
-        if (!report.ok && !body.force) return send(res, 422, { error: 'The file did not pass the checks.', report });
-        const titles = report.periods.map(p => p.title).join(', ');
-        const message = (body.message && String(body.message).trim()) || `Publish schedule: ${titles || 'new copy'}`;
-        const commit = await writeFile(cfg, html, message);
-        return send(res, 200, { ok: true, commit, report });
-      }
-
+      if (action === 'publish') { const r = await publish(cfg, body); return send(res, r.code, r.payload); }
       if (action === 'restore') {
         const ref = String(body.ref || '');
         if (!/^[0-9a-f]{7,40}$/i.test(ref)) return send(res, 400, { error: 'A commit SHA is required.' });
-        const old = await readLive(cfg, ref);
-        const report = inspectSchedule(old.html);
-        const commit = await writeFile(cfg, old.html, `Restore schedule from ${ref.slice(0, 7)}`);
-        return send(res, 200, { ok: true, commit, report });
+        const r = await restore(cfg, ref); return send(res, r.code, r.payload);
       }
     }
     return send(res, 404, { error: 'Unknown operation.' });
   } catch (err) {
     const code = err.status && err.status >= 400 && err.status < 600 ? err.status : 500;
+    // A 401/403 from GitHub means the token is wrong, not the console password.
     return send(res, code === 401 || code === 403 ? 502 : code, { error: err.message || 'Unexpected error.' });
   }
 }
 
 module.exports = handler;
-module.exports.inspectSchedule = inspectSchedule;

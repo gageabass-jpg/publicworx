@@ -1,0 +1,7 @@
+{
+  "cleanUrls": true,
+  "redirects": [
+    { "source": "/schedule", "destination": "/", "permanent": false },
+    { "source": "/schedule/", "destination": "/", "permanent": false }
+  ]
+}
