@@ -7,176 +7,212 @@
 <title>Schedule console · TMH Radiology</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/_ds/nocturne-b784e110-754a-4756-b3b3-8d8879273ee8/styles.css">
 <script src="./inspect.js"></script>
 <style>
-:root{
-  --bg:#161826;--surface:#232532;--raised:#292b31;--hi:#2b2741;--line:#3f424d;--line-2:#595d6c;
-  --text:#e9e9ed;--text-2:#b2b6ca;--muted:#9397ab;--dim:#75798c;
-  --accent:#9184d9;--accent-2:#b5abfc;--accent-3:#d2cefd;--accent-4:#e7e5fe;--accent-line:#5d5294;--accent-bg:#423a6a;
-  --ok:oklch(0.75 0.15 150);--warn:oklch(0.8 0.15 70);--bad:oklch(0.72 0.17 25);--bad-bg:oklch(0.36 0.09 25);
-}
-*{box-sizing:border-box}
-html,body{margin:0;background:var(--bg);color:var(--text);font-family:"Inter",system-ui,sans-serif;font-size:13px;-webkit-font-smoothing:antialiased}
-a{color:var(--accent-2);text-decoration:none}a:hover{color:var(--accent-3)}
-::selection{background:var(--accent-bg)}
-button{font:inherit;cursor:pointer;border:0;border-radius:6px;padding:7px 12px;background:transparent;color:var(--accent-2);font-weight:500;box-shadow:0 0 0 1px var(--accent);transition:background .12s}
-button:hover{background:var(--hi);color:var(--accent-4)}
-button:disabled{opacity:.45;cursor:default}
-button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-button.primary{background:var(--hi);color:var(--accent-4)}
-button.primary:hover{background:#342f52}
-button.ghost{box-shadow:0 0 0 1px var(--line);color:var(--text-2)}
-button.ghost:hover{background:var(--raised);color:var(--text)}
-button.on{background:var(--hi);color:var(--accent-4);box-shadow:0 0 0 1px var(--accent)}
-button.sm{padding:4px 9px;font-size:12px}
-input[type=text],input[type=password]{font:inherit;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:8px 10px;width:100%}
-input:focus{outline:none;border-color:var(--accent)}
-.wrap{max-width:1100px;margin:0 auto;padding:22px 24px 60px;display:flex;flex-direction:column;gap:16px}
-.eyebrow{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
-h1{margin:0;font-size:24px;font-weight:500;letter-spacing:-.01em;line-height:1.1}
-h2{margin:0;font-size:14px;font-weight:500}
-.card{background:var(--surface);border-radius:10px;box-shadow:0 0 0 1px var(--line);padding:16px 18px;display:flex;flex-direction:column;gap:12px}
-.card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-@media(max-width:860px){.grid2{grid-template-columns:1fr}}
-.muted{color:var(--muted)}.dim{color:var(--dim)}.small{font-size:11.5px}
-.mono{font-variant-numeric:tabular-nums;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
-.pill{display:inline-flex;align-items:center;gap:6px;padding:3px 8px;border-radius:999px;font-size:11px;font-weight:500;background:var(--hi);color:var(--accent-3);white-space:nowrap}
-.pill.ok{background:oklch(0.3 0.06 150);color:var(--ok)}
-.pill.warn{background:oklch(0.32 0.07 70);color:var(--warn)}
-.pill.bad{background:var(--bad-bg);color:oklch(0.95 0.03 25)}
-.pill.dim{background:var(--raised);color:var(--muted)}
-.periods{display:flex;flex-direction:column;gap:6px}
-.period{display:grid;grid-template-columns:1fr auto;gap:2px 12px;padding:8px 12px;border-radius:8px;background:var(--bg);box-shadow:0 0 0 1px var(--line)}
-.period .t{font-weight:500}
-.period .m{color:var(--muted);font-size:11.5px}
-.filerow{display:grid;grid-template-columns:auto 1fr auto;gap:4px 12px;align-items:center;padding:8px 12px;border-radius:8px;background:var(--bg);box-shadow:0 0 0 1px var(--line)}
-.filerow .role{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-2);font-weight:500;width:70px}
-.filerow .name{font-weight:500}
-.filerow .m{grid-column:2 / span 2;color:var(--muted);font-size:11.5px}
-.filerow .notes{grid-column:1 / span 3;display:flex;flex-direction:column;gap:6px}
-.drop{border:1px dashed var(--line-2);border-radius:10px;padding:22px 16px;text-align:center;color:var(--text-2);background:var(--bg);cursor:pointer;transition:border-color .12s,background .12s}
-.drop.over,.drop:hover{border-color:var(--accent);background:var(--hi)}
-.drop input{display:none}
-.msg{padding:9px 12px;border-radius:8px;font-size:12.5px;line-height:1.45}
-.msg.bad{background:var(--bad-bg);color:oklch(0.95 0.03 25)}
-.msg.warn{background:oklch(0.3 0.06 70);color:oklch(0.95 0.04 70)}
-.msg.ok{background:oklch(0.28 0.06 150);color:oklch(0.95 0.04 150)}
-.msg.info{background:var(--hi);color:var(--accent-3)}
-table{width:100%;border-collapse:collapse}
-th{text-align:left;font-weight:500;color:var(--muted);font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:6px 8px;border-bottom:1px solid var(--line)}
-td{padding:8px;border-bottom:1px solid var(--line);vertical-align:middle}
-tr:last-child td{border-bottom:0}
-tr.live td{background:rgba(145,132,217,.08)}
-.previewWrap{display:flex;justify-content:center;background:var(--bg);border-radius:8px;box-shadow:0 0 0 1px var(--line);overflow:hidden}
-iframe.preview{border:0;background:var(--bg);width:100%;height:560px;display:block}
-iframe.preview.mobile{width:400px;height:800px}
-.spinner{display:inline-block;width:12px;height:12px;border:2px solid var(--accent-line);border-top-color:var(--accent-3);border-radius:50%;animation:spin .8s linear infinite;vertical-align:-2px}
-@keyframes spin{to{transform:rotate(360deg)}}
-.hidden{display:none!important}
-.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:12.5px}
-.kv div:nth-child(odd){color:var(--muted)}
-.steps{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:var(--text-2)}
-.steps .n{display:inline-flex;width:18px;height:18px;border-radius:50%;background:var(--hi);color:var(--accent-3);align-items:center;justify-content:center;font-size:11px;font-weight:500;margin-right:8px}
-ul.tight{margin:0;padding-left:16px;display:flex;flex-direction:column;gap:2px}
+  body { margin: 0; background: var(--color-bg); color: var(--color-text); font-family: var(--font-body); }
+  * { box-sizing: border-box; }
+  a { color: var(--color-accent); text-decoration: none; }
+  a:hover { color: var(--color-accent-300); text-decoration: underline; }
+  ::selection { background: var(--color-accent-800); }
+  .wrap { min-height: 100vh; padding: 36px 40px 56px; max-width: 1440px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px; }
+  @media (max-width: 640px) { .wrap { padding: 22px 18px 44px; } }
+  .kicker { display: flex; align-items: center; gap: 10px; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-neutral-500); }
+  .kicker .sep { width: 1px; height: 10px; background: var(--color-neutral-700); }
+  h1 { font-size: 28px; line-height: 1.15; letter-spacing: -0.015em; margin: 0; font-weight: 600; }
+  .panel { background: var(--color-surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); padding: 22px 24px 20px; display: flex; flex-direction: column; gap: 14px; }
+  .panel-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .panel-head h2 { font-size: 17px; margin: 0; line-height: 1; font-weight: 600; }
+  .count { font-size: 12px; color: var(--color-neutral-500); }
+  .mono { font-family: ui-monospace, 'SF Mono', Menlo, monospace; }
+  .muted { color: var(--color-neutral-500); }
+  .dim { color: var(--color-neutral-600); }
+  .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 20px; align-items: stretch; width: 100%; }
+  .col { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+
+  /* period rows */
+  .period { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 4px 16px; padding: 12px 14px; border-radius: var(--radius-md); background: color-mix(in srgb, var(--color-neutral-900) 60%, transparent); }
+  .period .t { font-size: 15px; font-weight: 500; line-height: 20px; }
+  .period .s { font-size: 12px; color: var(--color-neutral-400); white-space: nowrap; line-height: 20px; }
+  .period .new { color: oklch(0.82 0.14 150); font-weight: 500; }
+
+  /* file rows (published + staged) */
+  .frow { display: grid; grid-template-columns: 108px minmax(0,1fr) auto; gap: 4px 16px; align-items: start; padding: 16px 4px; background: linear-gradient(to right, transparent, var(--color-divider) 40px, var(--color-divider) calc(100% - 40px), transparent) no-repeat bottom / 100% 1px; }
+  .frow:last-child { background: none; }
+  .frow .badge { grid-row: 1 / 3; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; text-align: center; align-self: stretch; }
+  .frow .badge .ic { display: grid; place-items: center; width: 40px; height: 40px; border-radius: var(--radius-md); color: var(--color-accent-300); background: var(--color-accent-900); }
+  .frow .kind { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-accent-400); line-height: 15px; }
+  .frow .name { display: flex; align-items: center; gap: 8px; min-width: 0; flex-wrap: wrap; line-height: 22px; }
+  .frow .name .fn { font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 15px; }
+  .frow .name .sz { font-size: 13px; color: var(--color-neutral-500); }
+  .frow .sub { grid-column: 2 / -1; display: flex; flex-wrap: wrap; gap: 0 8px; font-size: 13px; line-height: 1.5; }
+  .frow .sub .when { color: var(--color-neutral-400); white-space: nowrap; }
+  .frow .sub .note { color: var(--color-neutral-500); }
+  .frow .notes { grid-column: 2 / -1; display: flex; flex-direction: column; gap: 8px; }
+
+  /* status circle */
+  .dot { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; flex: none; }
+  .dot.ok { color: oklch(0.82 0.14 150); background: oklch(0.82 0.14 150 / 0.15); }
+  .dot.warn { color: oklch(0.85 0.14 85); background: oklch(0.85 0.14 85 / 0.16); }
+  .dot.bad { color: oklch(0.75 0.17 25); background: oklch(0.75 0.17 25 / 0.16); }
+
+  /* live-site bar */
+  .livebar { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 0 2px; }
+  .livebar .left { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .livebar h2 { font-size: 20px; margin: 0; line-height: 1; font-weight: 600; }
+  .vsep { width: 1px; height: 14px; background: var(--color-neutral-800); }
+  .repo { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; color: var(--color-neutral-500); }
+
+  /* dropzone */
+  .drop { flex: 1; min-height: 180px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; text-align: center; padding: 30px 26px; border-radius: var(--radius-md); border: 1px dashed var(--color-neutral-700); background: color-mix(in srgb, var(--color-neutral-900) 45%, transparent); cursor: pointer; transition: background .15s, border-color .15s; }
+  .drop.over, .drop:hover { border-color: var(--color-accent); background: color-mix(in srgb, var(--color-accent) 8%, transparent); }
+  .drop input { display: none; }
+  .drop .up { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; color: var(--color-accent); background: color-mix(in srgb, var(--color-accent) 10%, transparent); }
+  .drop .big { font-size: 16px; font-weight: 500; }
+  .drop .small { font-size: 13px; color: var(--color-neutral-400); line-height: 1.55; max-width: 420px; }
+
+  /* messages */
+  .msg { padding: 9px 12px; border-radius: var(--radius-md); font-size: 12.5px; line-height: 1.45; }
+  .msg.bad { background: oklch(0.4 0.11 25 / 0.5); color: oklch(0.92 0.05 25); }
+  .msg.warn { background: oklch(0.42 0.1 85 / 0.4); color: oklch(0.93 0.06 85); }
+  .msg.ok { background: oklch(0.4 0.09 150 / 0.4); color: oklch(0.92 0.06 150); }
+  .msg.info { background: var(--color-accent-900); color: var(--color-accent-300); }
+  .msg ul { margin: 4px 0 0; padding-left: 16px; display: flex; flex-direction: column; gap: 2px; }
+
+  /* preview */
+  .previewWrap { display: flex; justify-content: center; background: var(--color-bg); border-radius: var(--radius-md); box-shadow: var(--shadow-sm); overflow: hidden; }
+  iframe.preview { border: 0; background: var(--color-bg); width: 100%; height: 560px; display: block; }
+  iframe.preview.mobile { width: 400px; height: 800px; }
+
+  .spinner { display: inline-block; width: 12px; height: 12px; border: 2px solid var(--color-accent-700); border-top-color: var(--color-accent-300); border-radius: 50%; animation: spin .8s linear infinite; vertical-align: -2px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .hidden { display: none !important; }
+  .btn.sm { font-size: 12px; padding: 6px 10px; }
+  .btn.on { background: color-mix(in srgb, var(--color-accent) 16%, transparent); color: var(--color-accent-200); border-color: var(--color-accent); }
+  .steps { display: flex; flex-direction: column; gap: 8px; font-size: 13px; color: var(--color-neutral-300); }
+  .steps .n { display: inline-flex; width: 18px; height: 18px; border-radius: 50%; background: var(--color-accent-900); color: var(--color-accent-300); align-items: center; justify-content: center; font-size: 11px; font-weight: 500; margin-right: 8px; }
+  .table td { vertical-align: middle; }
+  .table th { vertical-align: bottom; }
 </style>
 </head>
 <body>
 <div class="wrap">
 
-  <div class="row" style="justify-content:space-between;align-items:flex-end">
+  <header style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap">
     <div style="display:flex;flex-direction:column;gap:6px">
-      <div class="eyebrow" style="font-size:20px">TMH Radiology | Schedule console</div>
+      <div class="kicker"><span style="color:var(--color-accent);line-height:1">TMH Radiology</span><span class="sep"></span><span style="line-height:1">Schedule console</span></div>
       <h1>Publish a new copy of the staff schedule</h1>
     </div>
-    <div class="row">
-      <a href="/" target="_blank" rel="noopener"><button class="ghost">Open live schedule ↗</button></a>
-      <button id="signOut" class="ghost hidden">Sign out</button>
+    <div style="display:flex;gap:8px">
+      <a class="btn btn-primary" href="/" target="_blank" rel="noopener">Open live schedule
+        <svg width="14" height="14" viewBox="0 0 256 256" fill="currentColor"><path d="M200 64v104a8 8 0 0 1-16 0V83.31L69.66 197.66a8 8 0 0 1-11.32-11.32L172.69 72H88a8 8 0 0 1 0-16h104a8 8 0 0 1 8 8Z"></path></svg>
+      </a>
+      <button id="signOut" class="btn btn-secondary hidden">Sign out</button>
     </div>
-  </div>
+  </header>
 
-  <div id="notConfigured" class="card hidden">
-    <h2>The console is not set up yet</h2>
+  <!-- Not configured -->
+  <section id="notConfigured" class="panel hidden">
+    <div class="panel-head"><h2>The console is not set up yet</h2></div>
     <div class="steps">
       <div><span class="n">1</span>In GitHub, create a fine-grained personal access token for this repository with <b>Contents: Read and write</b>.</div>
       <div><span class="n">2</span>In the Vercel project, open <b>Settings → Environment Variables</b> and add <span class="mono">ADMIN_PASSWORD</span> and <span class="mono">GITHUB_TOKEN</span>.</div>
       <div><span class="n">3</span>Redeploy the project. Then reload this page.</div>
     </div>
-    <div id="notConfiguredDetail" class="small muted"></div>
-  </div>
+    <div id="notConfiguredDetail" class="small muted" style="font-size:12px"></div>
+  </section>
 
-  <div id="signIn" class="card hidden" style="max-width:420px">
-    <h2>Sign in</h2>
-    <div class="small muted">Enter the console password to view and publish schedules.</div>
-    <form id="signInForm" class="row" style="flex-wrap:nowrap">
-      <input id="password" type="password" autocomplete="current-password" placeholder="Console password" required>
-      <button class="primary" type="submit">Sign in</button>
+  <!-- Sign in -->
+  <section id="signIn" class="panel hidden" style="max-width:440px">
+    <div class="panel-head"><h2>Sign in</h2></div>
+    <div class="muted" style="font-size:12.5px">Enter the console password to view and publish schedules.</div>
+    <form id="signInForm" style="display:flex;gap:8px">
+      <input id="password" class="input" type="password" autocomplete="current-password" placeholder="Console password" required>
+      <button class="btn btn-primary" type="submit">Sign in</button>
     </form>
     <div id="signInMsg" class="msg bad hidden"></div>
-  </div>
+  </section>
 
-  <div id="main" class="hidden" style="display:flex;flex-direction:column;gap:16px">
+  <!-- Main -->
+  <div id="main" class="hidden" style="display:flex;flex-direction:column;gap:28px">
 
-    <div class="grid2">
-      <div class="card">
-        <div class="card-head">
+    <section style="display:flex;flex-direction:column;gap:14px;width:100%">
+      <div class="livebar">
+        <div class="left">
           <h2>Live site</h2>
-          <div class="row"><span id="liveState" class="pill">Loading…</span><button id="refresh" class="ghost sm">Refresh</button></div>
+          <span class="vsep"></span>
+          <span class="repo"><span>Repository</span><a id="repoLink" class="mono" href="#" target="_blank" rel="noopener">gageabass-jpg/publicworx</a><span class="dim">·</span><span id="repoBranch" class="mono" style="color:var(--color-neutral-400)">main</span><span id="liveState" class="tag tag-neutral" style="margin-left:2px"></span></span>
         </div>
-        <div class="eyebrow">Schedule data</div>
-        <div id="livePeriods" class="periods"></div>
-        <div id="liveFiles" style="display:flex;flex-direction:column;gap:6px"></div>
-        <div id="liveMeta" class="kv"></div>
-        <div id="liveWarnings" class="hidden msg warn"></div>
+        <button id="refresh" class="btn btn-ghost sm">
+          <svg width="14" height="14" viewBox="0 0 256 256" fill="currentColor"><path d="M197.67 186.37a8 8 0 0 1 0 11.29C196.58 198.73 170.82 224 128 224c-37.39 0-64.53-22.4-80-39.85V208a8 8 0 0 1-16 0v-48a8 8 0 0 1 8-8h48a8 8 0 0 1 0 16H55.44C67.76 183.35 93 208 128 208c36 0 58.14-21.46 58.36-21.68a8 8 0 0 1 11.31.05ZM216 40a8 8 0 0 0-8 8v23.85C192.53 54.4 165.39 32 128 32c-42.82 0-68.58 25.27-69.66 26.34a8 8 0 0 0 11.3 11.34C69.86 69.46 92 48 128 48c35 0 60.24 24.65 72.56 40H168a8 8 0 0 0 0 16h48a8 8 0 0 0 8-8V48a8 8 0 0 0-8-8Z"></path></svg>Refresh
+        </button>
       </div>
 
-      <div class="card">
-        <div class="card-head"><h2>Upload new copies</h2><span class="small muted">Drop one file or several</span></div>
-        <label class="drop" id="drop">
-          <input id="file" type="file" multiple accept=".js,.html,.htm,text/html,text/javascript">
-          <div style="font-size:14px;font-weight:500;color:var(--text)">Drop schedule files here</div>
-          <div class="small muted" style="margin-top:4px">schedule-data.js for a new schedule · the desktop or mobile page export for a design change</div>
-        </label>
-        <div id="staged" style="display:flex;flex-direction:column;gap:6px"></div>
-        <div id="stageActions" class="hidden" style="display:flex;flex-direction:column;gap:10px">
-          <div class="row" style="gap:8px">
-            <button id="previewDesktop" class="ghost sm">Preview desktop</button>
-            <button id="previewMobile" class="ghost sm">Preview mobile</button>
-            <button id="clearAll" class="ghost sm">Clear all</button>
-          </div>
-          <input id="message" type="text" placeholder="Commit note (optional) — for example: October schedule, pen edits from 9/28">
-          <div class="row" style="justify-content:space-between">
-            <div class="small muted">Publishing commits the files to GitHub in one commit. Vercel deploys it in about a minute.</div>
-            <button id="publish" class="primary" disabled>Publish to live site</button>
-          </div>
-          <div id="publishMsg" class="msg hidden"></div>
-        </div>
-      </div>
-    </div>
+      <div class="grid2">
+        <div class="col">
+          <section class="panel">
+            <div class="panel-head"><h2>Schedule data</h2><span id="periodCount" class="count"></span></div>
+            <div id="livePeriods" style="display:flex;flex-direction:column;gap:8px"></div>
+          </section>
 
-    <div id="previewCard" class="card hidden">
-      <div class="card-head">
-        <div class="row"><h2 id="previewTitle">Preview</h2><span id="previewNote" class="pill dim"></span></div>
-        <div class="row"><span class="small muted">Rendered with the runtime on this site. Nothing is published yet.</span><button id="closePreview" class="ghost sm">Close</button></div>
+          <section class="panel" style="flex:1">
+            <div class="panel-head"><h2>Upload new copies</h2><span class="count">Drop one file or several</span></div>
+            <label class="drop" id="drop">
+              <input id="file" type="file" multiple accept=".js,.html,.htm,text/html,text/javascript">
+              <span class="up"><svg width="22" height="22" viewBox="0 0 256 256" fill="currentColor"><path d="M248 128a87.34 87.34 0 0 1-17.6 52.81 8 8 0 1 1-12.8-9.62A71.34 71.34 0 0 0 232 128a72 72 0 0 0-144 0 8 8 0 0 1-16 0 88 88 0 0 1 3.29-23.88C74.2 104 73.1 104 72 104a48 48 0 0 0 0 96h24a8 8 0 0 1 0 16H72a64 64 0 1 1 9.29-127.32A88 88 0 0 1 248 128Zm-90.34-5.66a8 8 0 0 0-11.32 0l-32 32a8 8 0 0 0 11.32 11.32L144 147.31V208a8 8 0 0 0 16 0v-60.69l18.34 18.35a8 8 0 0 0 11.32-11.32Z"></path></svg></span>
+              <span style="display:flex;flex-direction:column;gap:6px">
+                <span class="big">Drop schedule files here</span>
+                <span class="small"><span class="mono" style="color:var(--color-neutral-300)">schedule-data.js</span> for a new schedule, or the desktop / mobile page export for a design change.</span>
+              </span>
+            </label>
+            <div id="staged" style="display:flex;flex-direction:column"></div>
+            <div id="stageActions" class="hidden" style="display:flex;flex-direction:column;gap:12px">
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <button id="previewDesktop" class="btn btn-secondary sm">Preview desktop</button>
+                <button id="previewMobile" class="btn btn-secondary sm">Preview mobile</button>
+                <button id="clearAll" class="btn btn-secondary sm">Clear all</button>
+              </div>
+              <input id="message" class="input" type="text" placeholder="Commit note (optional) — for example: October schedule">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+                <span class="muted" style="font-size:11.5px;max-width:340px">Publishing commits the files to GitHub in one commit. Vercel deploys it in about a minute.</span>
+                <button id="publish" class="btn btn-primary" disabled>Publish to live site</button>
+              </div>
+              <div id="publishMsg" class="msg hidden"></div>
+            </div>
+          </section>
+        </div>
+
+        <section class="panel">
+          <div class="panel-head"><h2>Published files</h2><span id="fileCount" class="count"></span></div>
+          <div id="liveFiles" style="display:flex;flex-direction:column"></div>
+          <div id="liveWarnings" class="msg warn hidden"></div>
+        </section>
       </div>
+    </section>
+
+    <section id="previewCard" class="panel hidden">
+      <div class="panel-head">
+        <div style="display:flex;align-items:center;gap:12px"><h2 id="previewTitle">Preview</h2><span id="previewNote" class="tag tag-neutral"></span></div>
+        <button id="closePreview" class="btn btn-secondary sm">Close</button>
+      </div>
+      <div class="muted" style="font-size:11.5px;margin-top:-4px">Rendered with the runtime on this site. Nothing is published yet.</div>
       <div class="previewWrap"><iframe id="preview" class="preview" sandbox="allow-scripts allow-same-origin" title="Schedule preview"></iframe></div>
-    </div>
+    </section>
 
-    <div class="card">
-      <div class="card-head"><h2>History</h2><span class="small muted">Recent commits to the schedule files. Restore puts every schedule file back the way it was at that commit.</span></div>
+    <section class="panel" style="padding-bottom:12px">
+      <div class="panel-head" style="align-items:flex-start"><h2>History</h2><span class="count" style="max-width:520px;text-align:right">Recent commits to the schedule files. Restore puts every schedule file back the way it was at that commit.</span></div>
       <div style="overflow-x:auto">
-        <table>
-          <thead><tr><th>When</th><th>Note</th><th>Files</th><th>By</th><th>Commit</th><th></th></tr></thead>
+        <table class="table" style="min-width:760px">
+          <thead><tr><th style="width:24%">When</th><th>Note</th><th style="width:18%">Files</th><th style="width:12%">By</th><th style="width:10%">Commit</th><th style="width:92px"></th></tr></thead>
           <tbody id="historyBody"><tr><td colspan="6" class="muted">Loading…</td></tr></tbody>
         </table>
       </div>
       <div id="historyMsg" class="msg hidden"></div>
-    </div>
+    </section>
 
   </div>
 
-  <div class="small dim">Console for the schedule site. Publishing writes to the repository branch that Vercel deploys.</div>
+  <div class="dim" style="font-size:11.5px">Console for the schedule site. Publishing writes to the repository branch that Vercel deploys.</div>
 </div>
 
 <script>
@@ -187,12 +223,19 @@ ul.tight{margin:0;padding-left:16px;display:flex;flex-direction:column;gap:2px}
   const KEY = 'tmh-schedule-console-password';
   const ROLES = ['data', 'desktop', 'mobile'];
   const ROLE_LABEL = { data: 'Schedule', desktop: 'Desktop page', mobile: 'Mobile page' };
-  const I = window.ScheduleInspect;
+  const ICON = {
+    data: 'M208 32h-24v-8a8 8 0 0 0-16 0v8H88v-8a8 8 0 0 0-16 0v8H48a16 16 0 0 0-16 16v160a16 16 0 0 0 16 16h160a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16ZM72 48v8a8 8 0 0 0 16 0v-8h80v8a8 8 0 0 0 16 0v-8h24v32H48V48Zm136 160H48V96h160v112Zm-96-88v64a8 8 0 0 1-16 0v-51.06l-4.42 2.22a8 8 0 0 1-7.16-14.32l16-8A8 8 0 0 1 112 120Zm59.16 30.45L152 176h16a8 8 0 0 1 0 16h-32a8 8 0 0 1-6.4-12.8l28.78-38.37A8 8 0 1 0 145.07 132a8 8 0 1 1-13.85-8A24 24 0 0 1 176 136a23.76 23.76 0 0 1-4.84 14.45Z',
+    desktop: 'M208 40H48a24 24 0 0 0-24 24v112a24 24 0 0 0 24 24h72v16H96a8 8 0 0 0 0 16h64a8 8 0 0 0 0-16h-24v-16h72a24 24 0 0 0 24-24V64a24 24 0 0 0-24-24Zm8 136a8 8 0 0 1-8 8H48a8 8 0 0 1-8-8v-24h176Zm0-40H40V64a8 8 0 0 1 8-8h160a8 8 0 0 1 8 8Z',
+    mobile: 'M176 16H80a24 24 0 0 0-24 24v176a24 24 0 0 0 24 24h96a24 24 0 0 0 24-24V40a24 24 0 0 0-24-24Zm8 200a8 8 0 0 1-8 8H80a8 8 0 0 1-8-8V40a8 8 0 0 1 8-8h96a8 8 0 0 1 8 8Zm-44-16a12 12 0 1 1-12-12 12 12 0 0 1 12 12Z',
+  };
+  const CHECK = '<svg width="14" height="14" viewBox="0 0 256 256" fill="currentColor"><path d="M229.66 77.66l-128 128a8 8 0 0 1-11.32 0l-56-56a8 8 0 0 1 11.32-11.32L96 188.69 218.34 66.34a8 8 0 0 1 11.32 11.32Z"></path></svg>';
+  const WARN = '<svg width="14" height="14" viewBox="0 0 256 256" fill="currentColor"><path d="M236.8 188.09 149.35 36.22a24 24 0 0 0-42.7 0L19.2 188.09a23.51 23.51 0 0 0 0 23.72A23.79 23.79 0 0 0 40.55 224h174.9a23.79 23.79 0 0 0 21.33-12.19 23.51 23.51 0 0 0 .02-23.72ZM120 104a8 8 0 0 1 16 0v40a8 8 0 0 1-16 0Zm8 88a12 12 0 1 1 12-12 12 12 0 0 1-12 12Z"></path></svg>';
+  const XMARK = '<svg width="14" height="14" viewBox="0 0 256 256" fill="currentColor"><path d="M205.66 194.34a8 8 0 0 1-11.32 11.32L128 139.31l-66.34 66.35a8 8 0 0 1-11.32-11.32L116.69 128 50.34 61.66a8 8 0 0 1 11.32-11.32L128 116.69l66.34-66.35a8 8 0 0 1 11.32 11.32L139.31 128Z"></path></svg>';
   const evaluator = code => new Function(code + '\nreturn PERIODS;')();
 
   let password = '';
   try { password = sessionStorage.getItem(KEY) || ''; } catch {}
-  const staged = {}; // role -> { name, text, report }
+  const staged = {};
   let status = null;
   let previewUrl = null;
 
@@ -203,17 +246,11 @@ ul.tight{margin:0;padding-left:16px;display:flex;flex-direction:column;gap:2px}
     const d = new Date(iso); const diff = (Date.now() - d.getTime()) / 1000;
     const rel = diff < 60 ? 'just now' : diff < 3600 ? Math.floor(diff / 60) + ' min ago' : diff < 86400 ? Math.floor(diff / 3600) + ' h ago' : diff < 86400 * 14 ? Math.floor(diff / 86400) + ' d ago' : '';
     const abs = d.toLocaleString(undefined, { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' });
-    return rel ? `${rel} · ${abs}` : abs;
+    return { rel: rel || abs, abs };
   };
   const show = (el, on) => el.classList.toggle('hidden', !on);
   const setMsg = (el, kind, html) => { el.className = 'msg ' + kind; el.innerHTML = html; show(el, true); };
-  const notes = (r, extra) => {
-    const parts = [];
-    if (r.errors && r.errors.length) parts.push(`<div class="msg bad">${r.errors.map(esc).join('<br>')}</div>`);
-    if (r.warnings && r.warnings.length) parts.push(`<div class="msg warn">${r.warnings.map(esc).join('<br>')}</div>`);
-    if (extra) parts.push(extra);
-    return parts.join('');
-  };
+  const dot = (state, title) => `<span class="dot ${state}" title="${esc(title || state)}">${state === 'ok' ? CHECK : state === 'warn' ? WARN : XMARK}</span>`;
 
   async function api(method, op, body) {
     const res = await fetch(API + '?op=' + encodeURIComponent(op), {
@@ -226,38 +263,57 @@ ul.tight{margin:0;padding-left:16px;display:flex;flex-direction:column;gap:2px}
   }
 
   function renderPeriods(el, periods, compare) {
-    if (!periods || !periods.length) { el.innerHTML = '<div class="small muted">No periods found.</div>'; return; }
+    if (!periods || !periods.length) { el.innerHTML = '<div class="muted" style="font-size:12.5px">No periods found.</div>'; return; }
     el.innerHTML = periods.map(p => {
-      const tag = compare && !compare.some(q => q.title === p.title) ? ' <span class="pill ok">new</span>' : '';
-      return `<div class="period"><div class="t">${esc(p.title)}${tag}</div><div class="m">${p.people} staff · ${p.sections} sections</div><div class="m">Starts ${esc(p.startIso || '?')} · ${p.cells} cells · ${p.onCall} on call · tab "${esc(p.label)}"</div><div class="m"></div></div>`;
+      const isNew = compare && !compare.some(q => q.title === p.title);
+      const stats = `${p.people} staff · ${p.sections} sections`;
+      return `<div class="period"><div class="t">${esc(p.title)}${isNew ? ' <span class="new">new</span>' : ''}</div><div class="s">${esc(stats)}</div></div>`;
     }).join('');
+  }
+
+  function msgs(r, extra) {
+    const parts = [];
+    if (r.errors && r.errors.length) parts.push(`<div class="msg bad">${r.errors.map(esc).join('<br>')}</div>`);
+    if (r.warnings && r.warnings.length) parts.push(`<div class="msg warn">${r.warnings.map(esc).join('<br>')}</div>`);
+    if (extra) parts.push(extra);
+    return parts.join('');
   }
 
   // ---------- live ----------
   async function loadStatus() {
-    $('liveState').textContent = 'Loading…'; $('liveState').className = 'pill';
+    $('liveState').textContent = 'Loading…'; $('liveState').className = 'tag tag-neutral';
     $('historyBody').innerHTML = '<tr><td colspan="6" class="muted">Loading…</td></tr>';
     try { status = await api('GET', 'status'); }
     catch (err) {
       if (err.status === 401) return signOut('Wrong password.');
-      $('liveState').textContent = 'Error'; $('liveState').className = 'pill bad';
-      $('liveMeta').innerHTML = `<div>Error</div><div>${esc(err.message)}</div>`;
+      $('liveState').textContent = 'error'; $('liveState').className = 'tag tag-neutral';
+      $('liveFiles').innerHTML = `<div class="msg bad">${esc(err.message)}</div>`;
       $('historyBody').innerHTML = `<tr><td colspan="6" class="muted">${esc(err.message)}</td></tr>`;
       return;
     }
     const L = status.live;
-    const problems = ROLES.flatMap(r => L[r].missing ? [`${L[r].path} is missing on the live site.`] : [...L[r].errors, ...L[r].warnings]);
+    $('repoLink').textContent = status.target.repo;
+    $('repoLink').href = status.target.url;
+    $('repoBranch').textContent = status.target.branch;
     const anyErr = ROLES.some(r => L[r].missing || L[r].errors.length);
-    $('liveState').textContent = anyErr ? 'Check failed' : problems.length ? 'Live · warnings' : 'Live';
-    $('liveState').className = 'pill ' + (anyErr ? 'bad' : problems.length ? 'warn' : 'ok');
+    const anyWarn = ROLES.some(r => !L[r].missing && L[r].warnings.length);
+    $('liveState').textContent = anyErr ? 'check failed' : anyWarn ? 'warnings' : 'Live';
+    $('liveState').className = 'tag ' + (anyErr ? 'tag-outline' : 'tag-accent');
     renderPeriods($('livePeriods'), L.data.periods);
+    $('periodCount').textContent = L.data.periods ? L.data.periods.length + (L.data.periods.length === 1 ? ' period' : ' periods') : '';
+    $('fileCount').textContent = ROLES.length + ' files';
     $('liveFiles').innerHTML = ROLES.map(r => {
-      const f = L[r];
-      const pill = f.missing ? '<span class="pill bad">missing</span>' : f.errors.length ? '<span class="pill bad">check failed</span>' : f.warnings.length ? '<span class="pill warn">warnings</span>' : '<span class="pill ok">ok</span>';
-      const c = f.lastCommit;
-      return `<div class="filerow"><span class="role">${esc(ROLE_LABEL[r])}</span><span class="name mono">${esc(f.path)}${f.missing ? '' : ' · ' + kb(f.bytes)}</span>${pill}<span class="m">${c ? esc(when(c.date)) + ' · ' + esc(c.message) : ''}</span></div>`;
+      const f = L[r]; const state = f.missing || f.errors.length ? 'bad' : f.warnings.length ? 'warn' : 'ok';
+      const c = f.lastCommit; const w = c ? when(c.date) : null;
+      const sub = f.missing ? '<span class="note">Not on the live site.</span>' : (w ? `<span class="when">${esc(w.rel)}</span><span class="note">${esc(c.message)}</span>` : '');
+      return `<div class="frow">
+        <div class="badge"><span class="ic"><svg width="22" height="22" viewBox="0 0 256 256" fill="currentColor"><path d="${ICON[r]}"></path></svg></span><span class="kind">${esc(ROLE_LABEL[r])}</span></div>
+        <div class="name"><span class="fn">${esc(f.path)}</span>${f.missing ? '' : `<span class="sz">${kb(f.bytes)}</span>`}</div>
+        ${dot(state, state === 'ok' ? 'ok' : state === 'warn' ? 'has warnings' : 'check failed')}
+        <div class="sub">${sub}</div>
+      </div>`;
     }).join('');
-    $('liveMeta').innerHTML = `<div>Repository</div><div><a href="${esc(status.target.url)}" target="_blank" rel="noopener">${esc(status.target.repo)} · ${esc(status.target.branch)}</a></div>`;
+    const problems = ROLES.flatMap(r => L[r].missing ? [`${L[r].path} is missing on the live site.`] : [...L[r].errors, ...L[r].warnings]);
     if (problems.length) setMsg($('liveWarnings'), anyErr ? 'bad' : 'warn', problems.map(esc).join('<br>')); else show($('liveWarnings'), false);
     renderHistory(status.history);
     renderStaged();
@@ -265,15 +321,17 @@ ul.tight{margin:0;padding-left:16px;display:flex;flex-direction:column;gap:2px}
 
   function renderHistory(list) {
     if (!list.length) { $('historyBody').innerHTML = '<tr><td colspan="6" class="muted">No history yet.</td></tr>'; return; }
-    $('historyBody').innerHTML = list.map((c, i) => `
-      <tr class="${i === 0 ? 'live' : ''}">
-        <td style="white-space:nowrap">${esc(when(c.date))}</td>
-        <td>${esc(c.message)}</td>
-        <td class="small muted">${c.files.map(esc).join(', ')}</td>
-        <td>${esc(c.author)}</td>
-        <td><a class="mono" href="${esc(c.url)}" target="_blank" rel="noopener">${esc(c.short)}</a></td>
-        <td style="text-align:right;white-space:nowrap">${i === 0 ? '<span class="pill ok">live</span>' : `<button class="ghost sm restore" data-sha="${esc(c.sha)}" data-short="${esc(c.short)}">Restore</button>`}</td>
-      </tr>`).join('');
+    $('historyBody').innerHTML = list.map((c, i) => {
+      const w = when(c.date);
+      return `<tr>
+        <td style="white-space:nowrap"><div style="line-height:20px">${esc(w.rel)}</div><div class="muted" style="font-size:12px;line-height:16px">${esc(w.abs)}</div></td>
+        <td style="line-height:20px">${esc(c.message)}</td>
+        <td class="mono muted" style="font-size:12px"><div style="display:flex;flex-direction:column">${c.files.map(f => '<span>' + esc(f) + '</span>').join('')}</div></td>
+        <td style="font-size:13px;color:var(--color-neutral-300)">${esc(c.author)}</td>
+        <td><a class="mono" href="${esc(c.url)}" target="_blank" rel="noopener" style="font-size:13px">${esc(c.short)}</a></td>
+        <td style="text-align:right">${i === 0 ? '<span class="tag" style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.92 0.06 150);background:oklch(0.42 0.11 150)">live</span>' : `<button class="btn btn-secondary sm restore" data-sha="${esc(c.sha)}" data-short="${esc(c.short)}">Restore</button>`}</td>
+      </tr>`;
+    }).join('');
     $('historyBody').querySelectorAll('button.restore').forEach(b => b.addEventListener('click', () => restore(b.dataset.sha, b.dataset.short)));
   }
 
@@ -294,8 +352,8 @@ ul.tight{margin:0;padding-left:16px;display:flex;flex-direction:column;gap:2px}
       const reader = new FileReader();
       reader.onload = () => {
         const text = String(reader.result || '');
-        const role = I.classify(text, file.name);
-        const report = I.inspect(role, text, evaluator);
+        const role = window.ScheduleInspect.classify(text, file.name);
+        const report = window.ScheduleInspect.inspect(role, text, evaluator);
         const key = ROLES.includes(role) ? role : 'bad:' + file.name;
         staged[key] = { name: file.name, text, report, role };
         renderStaged();
@@ -309,19 +367,25 @@ ul.tight{margin:0;padding-left:16px;display:flex;flex-direction:column;gap:2px}
     show($('stageActions'), keys.length > 0);
     if (!keys.length) { $('staged').innerHTML = ''; $('publish').disabled = true; return; }
     const order = k => ROLES.indexOf(k) === -1 ? 99 : ROLES.indexOf(k);
-    $('staged').innerHTML = keys.sort((a, b) => order(a) - order(b)).map(k => {
+    $('staged').innerHTML = '<div class="count" style="padding:6px 0 2px">Staged to publish</div>' + keys.sort((a, b) => order(a) - order(b)).map(k => {
       const s = staged[k]; const r = s.report;
       const live = status && status.live && status.live[s.role];
       const same = live && !live.missing && r.ok && live.bytes === r.bytes && (s.role !== 'data' || JSON.stringify(live.periods) === JSON.stringify(r.periods));
-      const pill = r.errors.length ? '<span class="pill bad">rejected</span>' : same ? '<span class="pill warn">same as live?</span>' : r.warnings.length ? '<span class="pill warn">ready · warnings</span>' : '<span class="pill ok">ready</span>';
+      const state = r.errors.length ? 'bad' : r.ok ? 'ok' : 'warn';
+      const label = r.errors.length ? 'rejected' : same ? 'same as live?' : r.warnings.length ? 'ready · warnings' : 'ready';
       let extra = '';
-      if (s.role === 'data' && r.periods) { extra = `<div class="periods" id="stagedPeriods"></div>`; }
-      if (r.changes && r.changes.length) extra += `<div class="msg info">Prepared for the site:<ul class="tight">${r.changes.map(c => '<li>' + esc(c) + '</li>').join('')}</ul></div>`;
-      const target = ROLES.includes(s.role) && status ? ' → ' + esc(status.target.paths[s.role]) : '';
-      return `<div class="filerow"><span class="role">${esc(ROLE_LABEL[s.role] || 'Unknown')}</span><span class="name">${esc(s.name)}<span class="mono muted">${target}</span> <span class="small muted">${kb(r.bytes)}</span></span><span class="row" style="gap:6px">${pill}<button class="ghost sm remove" data-key="${esc(k)}">Remove</button></span><div class="notes">${notes(r, extra)}</div></div>`;
+      if (s.role === 'data' && r.periods) extra += `<div class="period" style="margin-top:2px">${r.periods.map(p => `<div class="t">${esc(p.title)}</div><div class="s">${p.people} staff · ${p.sections} sections</div>`).join('')}</div>`;
+      if (r.changes && r.changes.length) extra += `<div class="msg info">Prepared for the site:<ul>${r.changes.map(c => '<li>' + esc(c) + '</li>').join('')}</ul></div>`;
+      const target = ROLES.includes(s.role) && status ? ` <span class="dim mono" style="font-size:12px">→ ${esc(status.target.paths[s.role])}</span>` : '';
+      const icon = ICON[s.role] || ICON.data;
+      return `<div class="frow">
+        <div class="badge"><span class="ic"><svg width="22" height="22" viewBox="0 0 256 256" fill="currentColor"><path d="${icon}"></path></svg></span><span class="kind">${esc(ROLE_LABEL[s.role] || 'Unknown')}</span></div>
+        <div class="name"><span class="fn">${esc(s.name)}</span><span class="sz">${kb(r.bytes)}</span>${target}</div>
+        <span style="display:flex;align-items:center;gap:8px">${dot(state, label)}<button class="btn btn-secondary sm remove" data-key="${esc(k)}">Remove</button></span>
+        <div class="sub"><span class="${state === 'bad' ? 'note' : 'when'}" style="${state === 'ok' ? 'color:oklch(0.82 0.14 150)' : state === 'warn' ? 'color:oklch(0.85 0.14 85)' : 'color:oklch(0.8 0.06 25)'}">${esc(label)}</span></div>
+        ${msgs(r, extra) ? `<div class="notes">${msgs(r, extra)}</div>` : ''}
+      </div>`;
     }).join('');
-    const sp = $('stagedPeriods');
-    if (sp && staged.data) renderPeriods(sp, staged.data.report.periods, status && status.live ? status.live.data.periods : null);
     $('staged').querySelectorAll('button.remove').forEach(b => b.addEventListener('click', () => { delete staged[b.dataset.key]; renderStaged(); }));
     const publishable = keys.some(k => ROLES.includes(k)) && keys.every(k => staged[k].report.ok);
     $('publish').disabled = !publishable;
@@ -342,7 +406,6 @@ ul.tight{margin:0;padding-left:16px;display:flex;flex-direction:column;gap:2px}
       previewUrl = URL.createObjectURL(new Blob([staged.data.text], { type: 'text/javascript' }));
       html = html.replace(/import\(\s*['"]\.\/schedule-data\.js['"]\s*\)/g, 'import(' + JSON.stringify(previewUrl) + ')');
     }
-    // Keep the preview inside the frame: no phone redirect, no analytics beacon.
     html = html.replace(/location\.replace\('mobile\.html'\)/g, 'void 0').replace(/<script defer src="\/_vercel\/insights\/script\.js"><\/script>/g, '');
     const base = '<base href="' + location.origin + '/">';
     html = /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, m => m + base) : base + html;
@@ -367,12 +430,11 @@ ul.tight{margin:0;padding-left:16px;display:flex;flex-direction:column;gap:2px}
     setMsg(el, 'info', '<span class="spinner"></span> Checking and committing…');
     try {
       const out = await api('POST', 'publish', { op: 'publish', files, message: $('message').value.trim() });
-      setMsg(el, 'ok', `Published ${out.commit.files.map(esc).join(', ')} as commit <a href="${esc(out.commit.url)}" target="_blank" rel="noopener" class="mono">${esc(out.commit.short)}</a>. Vercel is deploying it now. Reload the live schedule in about a minute.`);
       $('message').value = '';
       ROLES.forEach(r => delete staged[r]);
       closePreview();
       await loadStatus();
-      setMsg(el, 'ok', `Published as commit <a href="${esc(out.commit.url)}" target="_blank" rel="noopener" class="mono">${esc(out.commit.short)}</a>. Vercel is deploying it now.`);
+      setMsg(el, 'ok', `Published ${out.commit.files.map(esc).join(', ')} as commit <a href="${esc(out.commit.url)}" target="_blank" rel="noopener" class="mono">${esc(out.commit.short)}</a>. Vercel is deploying it now. Reload the live schedule in about a minute.`);
       show($('stageActions'), true);
     } catch (err) {
       const reps = err.data && err.data.reports ? Object.values(err.data.reports).flatMap(r => r.errors || []) : [];
@@ -405,7 +467,7 @@ ul.tight{margin:0;padding-left:16px;display:flex;flex-direction:column;gap:2px}
     try { health = await (await fetch(API + '?op=health', { cache: 'no-store' })).json(); } catch { health = null; }
     if (!health || !health.ok) {
       show($('notConfigured'), true);
-      $('notConfiguredDetail').textContent = 'The API at /api/schedule did not answer. On Vercel, the api/ folder deploys as a serverless function. On GitHub Pages there is no API, so the console cannot publish from there.';
+      $('notConfiguredDetail').textContent = 'The API at /api/schedule did not answer. On Vercel, the api/ folder deploys as a serverless function.';
       return;
     }
     if (!health.configured.password || !health.configured.token) {
