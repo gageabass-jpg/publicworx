@@ -4,9 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Schedule console · TMH Radiology</title>
+<title>Schedule console · Schedule Stream · TMH Radiology</title>
+<link rel="icon" href="/avatar.png">
+<link rel="apple-touch-icon" href="/avatar.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/_ds/nocturne-b784e110-754a-4756-b3b3-8d8879273ee8/styles.css">
 <script src="./inspect.js"></script>
 <style>
@@ -93,15 +96,42 @@
   .steps .n { display: inline-flex; width: 18px; height: 18px; border-radius: 50%; background: var(--color-accent-900); color: var(--color-accent-300); align-items: center; justify-content: center; font-size: 11px; font-weight: 500; margin-right: 8px; }
   .table td { vertical-align: middle; }
   .table th { vertical-align: bottom; }
+
+  /* brand lockup (top bar) */
+  .brand { display: flex; align-items: center; gap: 11px; }
+  .brand img { display: block; flex: none; border-radius: 8px; }
+  .brand .wm { font-family: 'IBM Plex Sans', var(--font-body); font-size: 19px; font-weight: 500; letter-spacing: -0.01em; line-height: 1; color: var(--color-text); }
+  .brand .sub { font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-neutral-400); line-height: 1; margin-top: 4px; }
+
+  /* sign-in console */
+  .signin-scene { flex: 1; display: flex; align-items: center; justify-content: center; padding: 24px 24px 10vh; border-radius: var(--radius-lg); background: radial-gradient(120% 90% at 50% -10%, var(--color-accent-900) 0%, var(--color-neutral-900) 45%, var(--color-bg) 100%); }
+  .signin-card { width: 100%; max-width: 420px; display: flex; flex-direction: column; gap: 26px; margin-top: -4vh; }
+  .signin-lockup { display: flex; align-items: center; justify-content: center; gap: 14px; }
+  .signin-lockup img { display: block; flex: none; border-radius: 11px; }
+  .signin-lockup > div { text-align: left; }
+  .signin-wm { margin: 0; font-family: 'IBM Plex Sans', var(--font-body); font-size: 28px; font-weight: 500; letter-spacing: -0.01em; line-height: 1; }
+  .signin-sub { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-neutral-400); margin-top: 6px; }
+  .signin-lead { margin: 0; text-align: center; font-size: 14px; color: var(--color-neutral-300); }
+  .signin-form { display: flex; flex-direction: column; gap: 14px; padding: 28px; border: 1px solid var(--color-neutral-700); border-radius: 14px; background: linear-gradient(180deg, color-mix(in oklch, var(--color-neutral-800) 85%, var(--color-accent-900)) 0%, var(--color-neutral-900) 100%); box-shadow: var(--shadow-lg); }
+  .signin-label { font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-neutral-300); }
+  .signin-field { position: relative; display: flex; }
+  .signin-field .lock { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--color-neutral-400); pointer-events: none; }
+  .signin-field input { width: 100%; box-sizing: border-box; padding: 12px 14px 12px 40px; font-size: 15px; font-family: var(--font-body); color: var(--color-text); background: var(--color-bg); border: 1px solid var(--color-neutral-600); border-radius: var(--radius-md); outline: none; }
+  .signin-field input:focus { border-color: var(--color-accent); box-shadow: 0 0 0 3px color-mix(in oklch, var(--color-accent) 20%, transparent); }
+  .signin-submit { margin-top: 4px; justify-content: center; gap: 8px; }
+  .signin-foot { margin: 0; text-align: center; font-size: 12.5px; line-height: 1.6; color: var(--color-neutral-400); }
 </style>
 </head>
 <body>
 <div class="wrap">
 
-  <header style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap">
-    <div style="display:flex;flex-direction:column;gap:6px">
-      <div class="kicker"><span style="color:var(--color-accent);line-height:1">TMH Radiology</span><span class="sep"></span><span style="line-height:1">Schedule console</span></div>
-      <h1>Publish a new copy of the staff schedule</h1>
+  <header style="display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap">
+    <div class="brand">
+      <img src="/avatar.png" alt="Schedule Stream icon" width="34" height="34">
+      <div>
+        <div class="wm">Schedule Stream</div>
+        <div class="sub">TMH Radiology</div>
+      </div>
     </div>
     <div style="display:flex;gap:8px">
       <a class="btn btn-primary" href="/" target="_blank" rel="noopener">Open live schedule
@@ -123,18 +153,38 @@
   </section>
 
   <!-- Sign in -->
-  <section id="signIn" class="panel hidden" style="max-width:440px">
-    <div class="panel-head"><h2>Sign in</h2></div>
-    <div class="muted" style="font-size:12.5px">Enter the console password to view and publish schedules.</div>
-    <form id="signInForm" style="display:flex;gap:8px">
-      <input id="password" class="input" type="password" autocomplete="current-password" placeholder="Console password" required>
-      <button class="btn btn-primary" type="submit">Sign in</button>
-    </form>
-    <div id="signInMsg" class="msg bad hidden"></div>
+  <section id="signIn" class="signin-scene hidden">
+    <div class="signin-card">
+      <div class="signin-lockup">
+        <img src="/avatar.png" alt="Schedule Stream icon" width="48" height="48">
+        <div>
+          <h1 class="signin-wm">Schedule Stream</h1>
+          <div class="signin-sub">TMH Radiology</div>
+        </div>
+      </div>
+      <p class="signin-lead">Enter the console password to view and publish schedules.</p>
+      <form id="signInForm" class="signin-form">
+        <label class="signin-label" for="password">Console password</label>
+        <div class="signin-field">
+          <svg class="lock" width="16" height="16" viewBox="0 0 256 256" fill="currentColor"><path d="M208 80h-24V56a56 56 0 0 0-112 0v24H48a16 16 0 0 0-16 16v112a16 16 0 0 0 16 16h160a16 16 0 0 0 16-16V96a16 16 0 0 0-16-16ZM88 56a40 40 0 0 1 80 0v24H88ZM208 208H48V96h160z"></path></svg>
+          <input id="password" type="password" autocomplete="current-password" placeholder="••••••••" required>
+        </div>
+        <button class="btn btn-primary signin-submit" type="submit">Sign in
+          <svg width="14" height="14" viewBox="0 0 256 256" fill="currentColor"><path d="M221.66 133.66l-72 72a8 8 0 0 1-11.32-11.32L196.69 136H40a8 8 0 0 1 0-16h156.69l-58.35-58.34a8 8 0 0 1 11.32-11.32l72 72a8 8 0 0 1 0 11.32Z"></path></svg>
+        </button>
+        <div id="signInMsg" class="msg bad hidden"></div>
+      </form>
+      <p class="signin-foot">Console for the schedule site. Publishing writes to the repository branch that Vercel deploys.</p>
+    </div>
   </section>
 
   <!-- Main -->
   <div id="main" class="hidden" style="display:flex;flex-direction:column;gap:28px">
+
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <div class="kicker"><span style="color:var(--color-accent);line-height:1">TMH Radiology</span><span class="sep"></span><span style="line-height:1">Schedule console</span></div>
+      <h1>Publish a new copy of the staff schedule</h1>
+    </div>
 
     <section style="display:flex;flex-direction:column;gap:14px;width:100%">
       <div class="livebar">
@@ -210,9 +260,9 @@
       <div id="historyMsg" class="msg hidden"></div>
     </section>
 
-  </div>
+    <div class="dim" style="font-size:11.5px">Console for the schedule site. Publishing writes to the repository branch that Vercel deploys.</div>
 
-  <div class="dim" style="font-size:11.5px">Console for the schedule site. Publishing writes to the repository branch that Vercel deploys.</div>
+  </div>
 </div>
 
 <script>
