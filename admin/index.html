@@ -120,6 +120,8 @@
   .signin-field input:focus { border-color: var(--color-accent); box-shadow: 0 0 0 3px color-mix(in oklch, var(--color-accent) 20%, transparent); }
   .signin-submit { margin-top: 4px; justify-content: center; gap: 8px; }
   .signin-foot { margin: 0; text-align: center; font-size: 12.5px; line-height: 1.6; color: var(--color-neutral-400); }
+  /* On the sign-in view the centered console already carries the lockup, so drop the top-bar one. */
+  header:has(~ #signIn:not(.hidden)) .brand { display: none; }
 </style>
 </head>
 <body>
