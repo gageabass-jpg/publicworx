@@ -12,6 +12,7 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/_ds/nocturne-b784e110-754a-4756-b3b3-8d8879273ee8/styles.css">
 <script src="./inspect.js"></script>
+<script src="/overrides.js"></script>
 <style>
   body { margin: 0; background: var(--color-bg); color: var(--color-text); font-family: var(--font-body); }
   * { box-sizing: border-box; }
@@ -262,6 +263,33 @@
       <div id="historyMsg" class="msg hidden"></div>
     </section>
 
+    <section class="panel" id="ovPanel">
+      <div class="panel-head"><h2>Live changes</h2><span id="ovCount" class="count"></span></div>
+      <div class="muted" style="font-size:12.5px;margin-top:-4px">Day-level changes — call-ins, swaps, sick, on-call moves — layered on top of the published schedule. They show on the site right away and never edit the baseline. Remove a change to revert that day to the baseline.</div>
+      <div id="ovSetup" class="msg warn hidden"></div>
+      <div id="ovBody" style="display:flex;flex-direction:column;gap:16px">
+        <form id="ovForm" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px 12px;align-items:end">
+          <label style="display:flex;flex-direction:column;gap:4px"><span class="count">Period</span><select id="ovPeriod" class="input"></select></label>
+          <label style="display:flex;flex-direction:column;gap:4px"><span class="count">Person</span><select id="ovPerson" class="input"></select></label>
+          <label style="display:flex;flex-direction:column;gap:4px"><span class="count">Day</span><select id="ovDay" class="input"></select></label>
+          <label style="display:flex;flex-direction:column;gap:4px"><span class="count">New shift code</span><input id="ovCode" class="input" list="ovCodes" placeholder="e.g. 3, V, 7a-430p" autocomplete="off"></label>
+          <label style="display:flex;align-items:center;gap:7px;white-space:nowrap;padding-bottom:9px"><input id="ovCall" type="checkbox" style="width:15px;height:15px;accent-color:var(--color-accent)"> <span class="count" style="letter-spacing:.02em">On call (*)</span></label>
+          <label style="display:flex;flex-direction:column;gap:4px"><span class="count">Reason</span><input id="ovReason" class="input" placeholder="e.g. called in for Dawson" autocomplete="off"></label>
+          <label style="display:flex;flex-direction:column;gap:4px"><span class="count">Your name</span><input id="ovAuthor" class="input" placeholder="Who's changing it" autocomplete="off"></label>
+          <button class="btn btn-primary" type="submit" style="height:38px">Add change</button>
+        </form>
+        <datalist id="ovCodes"><option value="7a-430p"></option><option value="7a-730p"></option><option value="3"></option><option value="11"></option><option value="7p-730a"></option><option value="9p-730a"></option><option value="8"></option><option value="/"></option><option value="V"></option><option value="H"></option></datalist>
+        <div id="ovMsg" class="msg hidden"></div>
+        <div id="ovList" style="display:flex;flex-direction:column"></div>
+      </div>
+    </section>
+
+    <section class="panel hidden" id="ovSuggests">
+      <div class="panel-head"><h2>Suggestions</h2><span id="ovSuggestCount" class="count"></span></div>
+      <div class="muted" style="font-size:12.5px;margin-top:-4px">Change requests from the schedule page. Approve to apply as a live change, or dismiss.</div>
+      <div id="ovSuggestList" style="display:flex;flex-direction:column"></div>
+    </section>
+
     <div class="dim" style="font-size:11.5px">Console for the schedule site. Publishing writes to the repository branch that Vercel deploys.</div>
 
   </div>
@@ -369,6 +397,7 @@
     if (problems.length) setMsg($('liveWarnings'), anyErr ? 'bad' : 'warn', problems.map(esc).join('<br>')); else show($('liveWarnings'), false);
     renderHistory(status.history);
     renderStaged();
+    loadOverrides();
   }
 
   function renderHistory(list) {
@@ -532,7 +561,152 @@
     else show($('signIn'), true);
   }
 
+  // ---------- live changes (overrides) ----------
+  const OV_API = '/api/overrides';
+  const OV_NAME_KEY = 'tmh-editor-name';
+  let periodsData = null;
+
+  async function apiOv(method, action, body) {
+    const url = OV_API + (method === 'GET' ? '?op=' + encodeURIComponent(action) : '');
+    const res = await fetch(url, {
+      method, headers: { 'Content-Type': 'application/json', 'X-Admin-Password': password }, body: body ? JSON.stringify(body) : undefined,
+    });
+    let data = null;
+    try { data = await res.json(); } catch { data = { error: 'The server returned an unreadable response (' + res.status + ').' }; }
+    if (!res.ok) { const e = new Error(data.error || ('Request failed (' + res.status + ')')); e.status = res.status; throw e; }
+    return data;
+  }
+
+  const pkey = p => window.ScheduleOverrides.periodKey(p);
+  const periodByKey = key => (periodsData || []).find(p => pkey(p) === key);
+  const periodTitleByKey = key => { const p = periodByKey(key); return p ? p.title : key; };
+
+  async function loadPeriodsData() {
+    if (periodsData) return periodsData;
+    try { const mod = await import('/schedule-data.js'); periodsData = mod.PERIODS || []; }
+    catch { periodsData = []; }
+    return periodsData;
+  }
+
+  function defaultPeriodIndex() {
+    const now = Date.now();
+    for (let i = 0; i < periodsData.length; i++) {
+      const s = periodsData[i].start; const start = new Date(s[0], s[1], s[2]).getTime();
+      if (now >= start && now < start + 28 * 86400000) return i;
+    }
+    return Math.max(0, periodsData.length - 1);
+  }
+
+  function fillPeriodSelect() {
+    const sel = $('ovPeriod'); if (!sel || !periodsData.length) return;
+    sel.innerHTML = periodsData.map((p, i) => `<option value="${i}">${esc(p.title)}</option>`).join('');
+    sel.value = String(defaultPeriodIndex());
+    fillPersonSelect();
+  }
+
+  function fillPersonSelect() {
+    const p = periodsData[Number($('ovPeriod').value) || 0]; const sel = $('ovPerson');
+    if (!p) { sel.innerHTML = ''; return; }
+    sel.innerHTML = p.sections.map(([sname, rows]) =>
+      `<optgroup label="${esc(sname)}">` + rows.map(r => `<option value="${esc(r[0])}" data-section="${esc(sname)}">${esc(r[0])}</option>`).join('') + '</optgroup>'
+    ).join('');
+    fillDaySelect();
+  }
+
+  function fillDaySelect() {
+    const p = periodsData[Number($('ovPeriod').value) || 0]; const sel = $('ovDay');
+    if (!p) { sel.innerHTML = ''; return; }
+    const wk = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const base = new Date(p.start[0], p.start[1], p.start[2]);
+    let html = '';
+    for (let n = 1; n <= 28; n++) { const dt = new Date(base); dt.setDate(base.getDate() + (n - 1)); html += `<option value="${n}">Day ${n} — ${wk[dt.getDay()]} ${dt.getMonth() + 1}/${dt.getDate()}</option>`; }
+    sel.innerHTML = html;
+  }
+
+  async function loadOverrides() {
+    await loadPeriodsData();
+    if (!$('ovPeriod').options.length) fillPeriodSelect();
+    if (!$('ovAuthor').value) { try { $('ovAuthor').value = localStorage.getItem(OV_NAME_KEY) || ''; } catch {} }
+    let data;
+    try { data = await apiOv('GET', 'all'); }
+    catch (err) {
+      if (err.status === 401) return signOut('Wrong password.');
+      if (err.status === 503) { setMsg($('ovSetup'), 'warn', 'Live changes are not set up yet. Add a Vercel KV store (see docs/live-changes.md), then redeploy.'); show($('ovBody'), false); show($('ovSuggests'), false); return; }
+      setMsg($('ovMsg'), 'bad', esc(err.message)); return;
+    }
+    show($('ovSetup'), false); show($('ovBody'), true);
+    renderOverridesList(data.overrides || []);
+    renderSuggestions(data.suggestions || []);
+  }
+
+  function cellLine(o) {
+    const w = when(o.updatedAt || o.createdAt);
+    const meta = [o.reason ? `<span class="note">${esc(o.reason)}</span>` : '', o.author ? `<span class="when">· ${esc(o.author)}</span>` : '', w ? `<span class="when">· ${esc(w.rel)}</span>` : ''].join('');
+    return { head: `<span class="fn" style="font-family:var(--font-body);font-size:14px">${esc(o.person)}</span> <span class="muted" style="font-size:12.5px">· ${esc(periodTitleByKey(o.periodKey))} · day ${o.day} → <b style="color:var(--color-accent-200)">${esc(o.code || 'off')}</b></span>`, meta };
+  }
+
+  function renderOverridesList(list) {
+    $('ovCount').textContent = list.length ? list.length + (list.length === 1 ? ' change' : ' changes') : '';
+    if (!list.length) { $('ovList').innerHTML = '<div class="muted" style="font-size:12.5px">No live changes. The schedule shows the baseline.</div>'; return; }
+    const sorted = [...list].sort((a, b) => (a.periodKey < b.periodKey ? -1 : a.periodKey > b.periodKey ? 1 : (a.person.localeCompare(b.person) || a.day - b.day)));
+    $('ovList').innerHTML = sorted.map(o => { const c = cellLine(o); return `<div class="frow" style="grid-template-columns:minmax(0,1fr) auto">
+      <div class="name">${c.head}</div>
+      <button class="btn btn-secondary sm ovRemove" data-id="${esc(o.id)}">Remove</button>
+      <div class="sub" style="grid-column:1/-1">${c.meta}</div>
+    </div>`; }).join('');
+    $('ovList').querySelectorAll('button.ovRemove').forEach(b => b.addEventListener('click', () => removeOverride(b.dataset.id)));
+  }
+
+  function renderSuggestions(list) {
+    show($('ovSuggests'), list.length > 0);
+    $('ovSuggestCount').textContent = list.length ? list.length + (list.length === 1 ? ' suggestion' : ' suggestions') : '';
+    $('ovSuggestList').innerHTML = list.map(s => { const c = cellLine(s); return `<div class="frow" style="grid-template-columns:minmax(0,1fr) auto auto;gap:8px 10px">
+      <div class="name">${c.head}</div>
+      <button class="btn btn-primary sm ovApprove" data-id="${esc(s.id)}">Approve</button>
+      <button class="btn btn-secondary sm ovDismiss" data-id="${esc(s.id)}">Dismiss</button>
+      <div class="sub" style="grid-column:1/-1">${c.meta}</div>
+    </div>`; }).join('');
+    $('ovSuggestList').querySelectorAll('button.ovApprove').forEach(b => b.addEventListener('click', () => resolveSuggestion(b.dataset.id, 'approve')));
+    $('ovSuggestList').querySelectorAll('button.ovDismiss').forEach(b => b.addEventListener('click', () => resolveSuggestion(b.dataset.id, 'dismiss')));
+  }
+
+  async function saveOverride() {
+    const p = periodsData[Number($('ovPeriod').value) || 0];
+    if (!p) return;
+    const opt = $('ovPerson').selectedOptions[0];
+    const person = opt ? opt.value : '';
+    const section = opt ? opt.dataset.section : '';
+    const day = Number($('ovDay').value);
+    let code = $('ovCode').value.trim();
+    if ($('ovCall').checked && code && !code.endsWith('*')) code += '*';
+    const reason = $('ovReason').value.trim();
+    const author = $('ovAuthor').value.trim();
+    if (!person) return setMsg($('ovMsg'), 'bad', 'Pick a person.');
+    if (!code) return setMsg($('ovMsg'), 'bad', 'Enter a shift code (or pick one from the list).');
+    try { localStorage.setItem(OV_NAME_KEY, author); } catch {}
+    setMsg($('ovMsg'), 'info', '<span class="spinner"></span> Saving…');
+    try {
+      await apiOv('POST', 'save', { op: 'save', periodKey: pkey(p), person, section, day, code, reason, author });
+      $('ovCode').value = ''; $('ovReason').value = ''; $('ovCall').checked = false;
+      setMsg($('ovMsg'), 'ok', 'Change saved. It is live on the schedule now.');
+      loadOverrides();
+    } catch (err) { if (err.status === 401) return signOut('Wrong password.'); setMsg($('ovMsg'), 'bad', esc(err.message)); }
+  }
+
+  async function removeOverride(id) {
+    if (!confirm('Remove this change and revert that day to the baseline schedule?')) return;
+    try { await apiOv('POST', 'remove', { op: 'remove', id }); loadOverrides(); }
+    catch (err) { if (err.status === 401) return signOut('Wrong password.'); setMsg($('ovMsg'), 'bad', esc(err.message)); }
+  }
+
+  async function resolveSuggestion(id, action) {
+    try { await apiOv('POST', 'resolve', { op: 'resolve', id, action }); loadOverrides(); }
+    catch (err) { if (err.status === 401) return signOut('Wrong password.'); setMsg($('ovMsg'), 'bad', esc(err.message)); }
+  }
+
   // ---------- wiring ----------
+  $('ovPeriod').addEventListener('change', fillPersonSelect);
+  $('ovForm').addEventListener('submit', e => { e.preventDefault(); saveOverride(); });
   $('signInForm').addEventListener('submit', e => { e.preventDefault(); signIn($('password').value); });
   $('signOut').addEventListener('click', () => signOut());
   $('refresh').addEventListener('click', loadStatus);
