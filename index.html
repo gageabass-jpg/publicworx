@@ -42,14 +42,14 @@ button:focus-visible{outline:2px solid #9184d9;outline-offset:2px}
         </div>
       </div>
       <div style="position:relative;align-self:flex-start">
-        <button onClick="{{ toggleMenu }}" style="border:0;cursor:pointer;font:inherit;background:transparent;color:#e9e9ed;display:flex;align-items:center;gap:10px;padding:4px 10px 4px 0;border-radius:6px;margin-left:-0px" style-hover="color:#e7e5fe">
-          <h1 style="margin:0;font-size:24px;font-weight:500;letter-spacing:-0.01em;line-height:1.1">{{ periodTitle }}</h1>
-          <span style="font-size:12px;color:#b5abfc;transform:{{ chevronRot }};transition:transform 0.15s;line-height:1">▼</span>
+        <button onClick="{{ toggleMenu }}" style="border:1px solid #3f424d;cursor:pointer;font:inherit;background:#161826;color:#e9e9ed;display:inline-flex;align-items:center;justify-content:space-between;gap:12px;min-width:300px;padding:9px 12px;border-radius:8px;transition:border-color 0.15s,background 0.15s" style-hover="border-color:#595d6c;background:#1c1e2b" style-focus="outline:2px solid #9184d9;outline-offset:2px">
+          <h1 style="margin:0;font-size:15px;font-weight:500;letter-spacing:-0.005em;line-height:1.2">{{ periodTitle }}</h1>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9397ab" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.6;flex:none"><polyline points="6 9 12 15 18 9"></polyline></svg>
         </button>
         <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
-          <div style="position:absolute;top:100%;left:0;margin-top:6px;min-width:260px;background:#232532;border-radius:8px;box-shadow:0 0 0 1px #595d6c, 0 6px 18px rgba(0,0,0,0.55);padding:4px;display:flex;flex-direction:column;gap:2px;z-index:20">
+          <div style="position:absolute;top:100%;left:0;margin-top:6px;min-width:300px;max-height:384px;overflow-y:auto;background:#232532;color:#e9e9ed;border:1px solid #3f424d;border-radius:8px;box-shadow:0 4px 6px -1px rgba(0,0,0,0.5), 0 2px 4px -2px rgba(0,0,0,0.5);padding:4px;display:flex;flex-direction:column;gap:2px;z-index:20">
             <sc-for list="{{ periodTabs }}" as="t" hint-placeholder-count="2">
-              <button onClick="{{ t.select }}" style="border:0;cursor:pointer;font:inherit;text-align:left;font-size:13px;font-weight:500;padding:8px 10px;border-radius:6px;background:{{ t.bg }};color:{{ t.fg }};display:flex;justify-content:space-between;align-items:center;gap:12px" style-hover="background:#292b31;color:#e7e5fe"><span>{{ t.title }}</span><span style="font-size:11px;color:#b5abfc">{{ t.check }}</span></button>
+              <button onClick="{{ t.select }}" style="position:relative;border:0;cursor:pointer;font:inherit;text-align:left;font-size:14px;font-weight:400;padding:6px 8px 6px 32px;border-radius:6px;background:transparent;color:#e9e9ed;display:flex;align-items:center" style-hover="background:#292b31;color:#e7e5fe"><span style="position:absolute;left:8px;display:inline-flex;width:14px;height:14px;align-items:center;justify-content:center;color:#b5abfc;font-size:12px">{{ t.check }}</span><span>{{ t.title }}</span></button>
             </sc-for>
           </div>
         </sc-if>
