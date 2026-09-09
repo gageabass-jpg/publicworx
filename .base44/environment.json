@@ -1,0 +1,19 @@
+{
+  "previewPort": 3000,
+  "healthPath": "/",
+  "startCommand": "docker compose -f docker-compose.base44.yml up -d",
+  "secrets": [
+    {
+      "name": "ADMIN_PASSWORD",
+      "description": "Password for the /admin schedule console (authenticates POST to /api/schedule). Optional — the main schedule views work without it.",
+      "requiredAtBoot": false,
+      "generatedForDevelopment": false
+    },
+    {
+      "name": "GITHUB_TOKEN",
+      "description": "Fine-grained GitHub token with Contents: read+write on gageabass-jpg/publicworx, used by the admin console to publish schedule changes. Optional — only needed for the /admin publish workflow.",
+      "requiredAtBoot": false,
+      "generatedForDevelopment": false
+    }
+  ]
+}
