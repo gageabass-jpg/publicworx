@@ -13,6 +13,34 @@
 <link rel="stylesheet" href="/_ds/nocturne-b784e110-754a-4756-b3b3-8d8879273ee8/styles.css">
 <script src="./inspect.js"></script>
 <style>
+  :root {
+    --color-bg: #f8f9fc;
+    --color-surface: #ffffff;
+    --color-text: #111827;
+    --color-accent: #2563eb;
+    --color-divider: color-mix(in srgb, #111827 8%, transparent);
+    --color-neutral-100: #ffffff;
+    --color-neutral-200: #f9fafb;
+    --color-neutral-300: #f3f4f6;
+    --color-neutral-400: #e5e7eb;
+    --color-neutral-500: #d1d5db;
+    --color-neutral-600: #9ca3af;
+    --color-neutral-700: #6b7280;
+    --color-neutral-800: #4b5563;
+    --color-neutral-900: #f3f4f6;
+    --color-accent-100: #eff6ff;
+    --color-accent-200: #dbeafe;
+    --color-accent-300: #1e40af;
+    --color-accent-400: #60a5fa;
+    --color-accent-500: #3b82f6;
+    --color-accent-600: #2563eb;
+    --color-accent-700: #1d4ed8;
+    --color-accent-800: #1e40af;
+    --color-accent-900: #dbeafe;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 0 0 1px #e5e7eb;
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 0 0 1px #e5e7eb;
+    --shadow-lg: 0 12px 32px rgba(0,0,0,0.1), 0 0 0 1px #e5e7eb;
+  }
   body { margin: 0; background: var(--color-bg); color: var(--color-text); font-family: var(--font-body); }
   * { box-sizing: border-box; }
   a { color: var(--color-accent); text-decoration: none; }
@@ -37,7 +65,7 @@
   .period { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 4px 16px; padding: 12px 14px; border-radius: var(--radius-md); background: color-mix(in srgb, var(--color-neutral-900) 60%, transparent); }
   .period .t { font-size: 15px; font-weight: 500; line-height: 20px; }
   .period .s { font-size: 12px; color: var(--color-neutral-400); white-space: nowrap; line-height: 20px; }
-  .period .new { color: oklch(0.82 0.14 150); font-weight: 500; }
+  .period .new { color: oklch(0.5 0.15 150); font-weight: 500; }
 
   /* file rows (published + staged) */
   .frow { display: grid; grid-template-columns: 108px minmax(0,1fr) auto; gap: 4px 16px; align-items: start; padding: 16px 4px; background: linear-gradient(to right, transparent, var(--color-divider) 40px, var(--color-divider) calc(100% - 40px), transparent) no-repeat bottom / 100% 1px; }
@@ -55,9 +83,9 @@
 
   /* status circle */
   .dot { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; flex: none; }
-  .dot.ok { color: oklch(0.82 0.14 150); background: oklch(0.82 0.14 150 / 0.15); }
-  .dot.warn { color: oklch(0.85 0.14 85); background: oklch(0.85 0.14 85 / 0.16); }
-  .dot.bad { color: oklch(0.75 0.17 25); background: oklch(0.75 0.17 25 / 0.16); }
+  .dot.ok { color: oklch(0.5 0.15 150); background: oklch(0.5 0.15 150 / 0.12); }
+  .dot.warn { color: oklch(0.6 0.15 85); background: oklch(0.6 0.15 85 / 0.12); }
+  .dot.bad { color: oklch(0.5 0.17 25); background: oklch(0.5 0.17 25 / 0.12); }
 
   /* live-site bar */
   .livebar { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 0 2px; }
@@ -76,9 +104,9 @@
 
   /* messages */
   .msg { padding: 9px 12px; border-radius: var(--radius-md); font-size: 12.5px; line-height: 1.45; }
-  .msg.bad { background: oklch(0.4 0.11 25 / 0.5); color: oklch(0.92 0.05 25); }
-  .msg.warn { background: oklch(0.42 0.1 85 / 0.4); color: oklch(0.93 0.06 85); }
-  .msg.ok { background: oklch(0.4 0.09 150 / 0.4); color: oklch(0.92 0.06 150); }
+  .msg.bad { background: oklch(0.95 0.03 25); color: oklch(0.45 0.15 25); }
+  .msg.warn { background: oklch(0.95 0.04 85); color: oklch(0.45 0.15 85); }
+  .msg.ok { background: oklch(0.95 0.04 150); color: oklch(0.45 0.15 150); }
   .msg.info { background: var(--color-accent-900); color: var(--color-accent-300); }
   .msg ul { margin: 4px 0 0; padding-left: 16px; display: flex; flex-direction: column; gap: 2px; }
 
@@ -112,7 +140,7 @@
   .signin-wm { margin: 0; font-family: 'IBM Plex Sans', var(--font-body); font-size: 28px; font-weight: 500; letter-spacing: -0.01em; line-height: 1; }
   .signin-sub { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-neutral-400); margin-top: 6px; }
   .signin-lead { margin: 0; text-align: center; font-size: 14px; color: var(--color-neutral-300); }
-  .signin-form { display: flex; flex-direction: column; gap: 14px; padding: 28px; border: 1px solid var(--color-neutral-700); border-radius: 14px; background: linear-gradient(180deg, color-mix(in oklch, var(--color-neutral-800) 85%, var(--color-accent-900)) 0%, var(--color-neutral-900) 100%); box-shadow: var(--shadow-lg); }
+  .signin-form { display: flex; flex-direction: column; gap: 14px; padding: 28px; border: 1px solid #e5e7eb; border-radius: 14px; background: #ffffff; box-shadow: 0 12px 32px rgba(0,0,0,0.1), 0 0 0 1px #e5e7eb; }
   .signin-label { font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-neutral-300); }
   .signin-field { position: relative; display: flex; }
   .signin-field .lock { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--color-neutral-400); pointer-events: none; }
@@ -381,7 +409,7 @@
         <td class="mono muted" style="font-size:12px"><div style="display:flex;flex-direction:column">${c.files.map(f => '<span>' + esc(f) + '</span>').join('')}</div></td>
         <td style="font-size:13px;color:var(--color-neutral-300)">${esc(c.author)}</td>
         <td><a class="mono" href="${esc(c.url)}" target="_blank" rel="noopener" style="font-size:13px">${esc(c.short)}</a></td>
-        <td style="text-align:right">${i === 0 ? '<span class="tag" style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.92 0.06 150);background:oklch(0.42 0.11 150)">live</span>' : `<button class="btn btn-secondary sm restore" data-sha="${esc(c.sha)}" data-short="${esc(c.short)}">Restore</button>`}</td>
+        <td style="text-align:right">${i === 0 ? '<span class="tag" style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.45 0.15 150);background:oklch(0.9 0.1 150)">live</span>' : `<button class="btn btn-secondary sm restore" data-sha="${esc(c.sha)}" data-short="${esc(c.short)}">Restore</button>`}</td>
       </tr>`;
     }).join('');
     $('historyBody').querySelectorAll('button.restore').forEach(b => b.addEventListener('click', () => restore(b.dataset.sha, b.dataset.short)));
@@ -434,7 +462,7 @@
         <div class="badge"><span class="ic"><svg width="22" height="22" viewBox="0 0 256 256" fill="currentColor"><path d="${icon}"></path></svg></span><span class="kind">${esc(ROLE_LABEL[s.role] || 'Unknown')}</span></div>
         <div class="name"><span class="fn">${esc(s.name)}</span><span class="sz">${kb(r.bytes)}</span>${target}</div>
         <span style="display:flex;align-items:center;gap:8px">${dot(state, label)}<button class="btn btn-secondary sm remove" data-key="${esc(k)}">Remove</button></span>
-        <div class="sub"><span class="${state === 'bad' ? 'note' : 'when'}" style="${state === 'ok' ? 'color:oklch(0.82 0.14 150)' : state === 'warn' ? 'color:oklch(0.85 0.14 85)' : 'color:oklch(0.8 0.06 25)'}">${esc(label)}</span></div>
+        <div class="sub"><span class="${state === 'bad' ? 'note' : 'when'}" style="${state === 'ok' ? 'color:oklch(0.5 0.15 150)' : state === 'warn' ? 'color:oklch(0.6 0.15 85)' : 'color:oklch(0.8 0.06 25)'}">${esc(label)}</span></div>
         ${msgs(r, extra) ? `<div class="notes">${msgs(r, extra)}</div>` : ''}
       </div>`;
     }).join('');
