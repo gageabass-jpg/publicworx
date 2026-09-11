@@ -27,7 +27,7 @@
     @keyframes ss-pop{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
   </style>
 </helmet>
-    <div style="height:100vh;height:100dvh;max-width:440px;margin:0 auto;display:flex;flex-direction:column;background:#ffffff;color:#111111;font-family:'Schibsted Grotesk',system-ui,sans-serif;position:relative;overflow:hidden;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)">
+    <div style="height:100vh;height:100dvh;max-width:440px;margin:0 auto;display:flex;flex-direction:column;background:#ffffff;color:#111111;font-family:'Schibsted Grotesk',system-ui,sans-serif;position:relative;overflow:hidden;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);-webkit-user-select:none;user-select:none;-webkit-touch-callout:none">
       <header style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px;padding:16px 20px 8px 20px;flex:none;position:relative">
         <div style="overflow:hidden;width:184px;flex:none">
           <div style="display:flex;width:200%;transform:{{ headerShift }};transition:transform .6s cubic-bezier(.4,.05,.2,1)">
@@ -69,7 +69,7 @@
               <div style="padding:0 18px 12px 18px;display:flex;flex-direction:column">
                 <sc-for list="{{ day.preview }}" as="p" hint-placeholder-count="4">
                   <div style="display:flex;align-items:center;gap:11px;padding:9px 0;border-top:1px solid #efefed">
-                    <span style="width:30px;height:30px;border-radius:50%;background:{{ p.avatarBg }};color:{{ p.avatarFg }};display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex:none">{{ p.initials }}</span>
+                    <span style="width:30px;height:30px;border-radius:50%;background-color:{{ p.avatarBg }};background-image:{{ p.img }};background-size:cover;background-position:center;color:{{ p.avatarFg }};display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex:none">{{ p.initials }}</span>
                     <span style="font-size:14.5px;font-weight:500;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.name }}</span>
                     <sc-if value="{{ p.oncall }}" hint-placeholder-val="{{ false }}">
                       <span style="font-size:8.5px;font-weight:700;letter-spacing:0.09em;background:#111;color:#fff;border-radius:999px;padding:3px 8px">ON CALL</span>
@@ -170,7 +170,7 @@
                 <div style="padding:12px 20px 20px 20px;display:flex;flex-direction:column;gap:12px">
                   <div style="display:flex;flex-direction:column;gap:6px">
                     <label style="font-size:11px;font-weight:700;letter-spacing:0.08em;color:#b0b0ad">YOUR NAME</label>
-                    <input ref="{{ setNameRef }}" type="text" placeholder="e.g. Bailey R." style="all:unset;box-sizing:border-box;width:100%;background:#f4f4f2;border-radius:12px;padding:12px 14px;font-size:14px;font-family:'Schibsted Grotesk',sans-serif;color:#111">
+                    <input ref="{{ setNameRef }}" type="text" placeholder="e.g. Bailey R." style="all:unset;box-sizing:border-box;width:100%;background:#f4f4f2;border-radius:12px;padding:12px 14px;font-size:14px;font-family:'Schibsted Grotesk',sans-serif;color:#111;-webkit-user-select:text;user-select:text">
                   </div>
                   <div style="display:flex;flex-direction:column;gap:8px">
                     <div style="display:flex;align-items:center;justify-content:space-between">
@@ -206,7 +206,7 @@
                   </div>
                   <div style="display:flex;flex-direction:column;gap:6px">
                     <label style="font-size:11px;font-weight:700;letter-spacing:0.08em;color:#b0b0ad">MESSAGE</label>
-                    <textarea ref="{{ setMsgRef }}" rows="4" placeholder="Describe the discrepancy — who, which day, and what's wrong." style="all:unset;box-sizing:border-box;width:100%;min-height:96px;background:#f4f4f2;border-radius:12px;padding:12px 14px;font-size:14px;line-height:1.4;font-family:'Schibsted Grotesk',sans-serif;color:#111;resize:none"></textarea>
+                    <textarea ref="{{ setMsgRef }}" rows="4" placeholder="Describe the discrepancy — who, which day, and what's wrong." style="all:unset;box-sizing:border-box;width:100%;min-height:96px;background:#f4f4f2;border-radius:12px;padding:12px 14px;font-size:14px;line-height:1.4;font-family:'Schibsted Grotesk',sans-serif;color:#111;resize:none;-webkit-user-select:text;user-select:text"></textarea>
                   </div>
                   <div style="display:flex;gap:10px;margin-top:2px">
                     <button onClick="{{ closeComposer }}" style="all:unset;cursor:pointer;flex:0 0 auto;text-align:center;font-size:14px;font-weight:600;color:#111;border-radius:999px;padding:13px 20px;background:#f4f4f2" style-hover="background:#ececea">Cancel</button>
@@ -267,10 +267,10 @@
                   </button>
                 </div>
                 <div style="padding:0 18px 4px 18px;font-size:10.5px;font-weight:600;letter-spacing:0.08em;color:#b0b0ad;flex:none">{{ exp.countLabel }}</div>
-                <div class="nosb" style="flex:1;min-height:0;overflow-y:auto;padding:4px 18px 18px 18px">
+                <div class="nosb" style="flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;transform:translateZ(0);padding:4px 18px 18px 18px">
                   <sc-for list="{{ exp.staff }}" as="p" hint-placeholder-count="5">
                     <div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-top:1px solid #efefed">
-                      <span style="width:34px;height:34px;border-radius:50%;background:{{ p.avatarBg }};color:{{ p.avatarFg }};display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex:none">{{ p.initials }}</span>
+                      <span style="width:34px;height:34px;border-radius:50%;background-color:{{ p.avatarBg }};background-image:{{ p.img }};background-size:cover;background-position:center;color:{{ p.avatarFg }};display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex:none">{{ p.initials }}</span>
                       <span style="font-size:15px;font-weight:500;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.name }}</span>
                       <sc-if value="{{ p.oncall }}" hint-placeholder-val="{{ false }}">
                         <span style="font-size:8.5px;font-weight:700;letter-spacing:0.09em;background:#111;color:#fff;border-radius:999px;padding:3px 8px">ON CALL</span>
@@ -299,10 +299,10 @@
                   </button>
                 </div>
                 <div style="padding:0 18px 4px 18px;font-size:10.5px;font-weight:600;letter-spacing:0.08em;color:rgba(255,255,255,0.45);flex:none">TAP TRASH TO MARK NOT WORKING</div>
-                <div class="nosb" style="flex:1;min-height:0;overflow-y:auto;padding:4px 18px 18px 18px">
+                <div class="nosb" style="flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;transform:translateZ(0);padding:4px 18px 18px 18px">
                   <sc-for list="{{ exp.staff }}" as="p" hint-placeholder-count="5">
                     <div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-top:1px solid rgba(255,255,255,0.1)">
-                      <span style="width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.14);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex:none">{{ p.initials }}</span>
+                      <span style="width:34px;height:34px;border-radius:50%;background-color:rgba(255,255,255,0.14);background-image:{{ p.img }};background-size:cover;background-position:center;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex:none">{{ p.initials }}</span>
                       <span style="font-size:15px;font-weight:500;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.name }}</span>
                       <span style="font-size:13px;color:rgba(255,255,255,0.5);white-space:nowrap">{{ p.time }}</span>
                       <button onClick="{{ p.remove }}" title="Remove for this day" style="all:unset;cursor:pointer;width:32px;height:32px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;flex:none;background:rgba(224,72,72,0.16)" style-hover="background:rgba(224,72,72,0.3)">
@@ -387,6 +387,11 @@ class Component extends DCLogic {
   initials(name) {
     return name.split(/[\s(]+/).filter(Boolean).slice(0,2).map(w => w[0]).join('').toUpperCase().slice(0,2);
   }
+  photo(name) {
+    const map = { 'Lora': 'lorahall', 'Heather': 'heatheryoung', 'Dave': 'davefrady', 'Trista': 'tristamiller', 'Christy': 'christybailey', 'Shelby': 'shelbysmith', 'Lana': 'lanamiller', 'Rachel': 'rachelboothe', 'Bailey': 'baileyadkins', 'Savannah': 'savannahplummer', 'Linsey': 'linseyhackney', 'Krista': 'kristamorton', 'Hannah': 'hannahmartin', 'Brayden': 'braydensims', 'Taryn': 'tarynpreece', 'Baylee': 'bayleeviars', 'Barb': 'barbhutchinson', 'Brandy': 'brandybeaver', 'Cory': 'corydolan', 'Dawson': 'dawsonquick', 'Jarrod': 'jarrodmcclanahan', 'Donnie': 'donniedavis', 'Lisa': 'lisaroberts' };
+    const f = map[name.split(/[\s(]+/)[0]];
+    return f ? "url('headshots/" + f + ".jpg')" : 'none';
+  }
   buildRoster(per) {
     const roster = {};
     for (let o = 1; o <= 28; o++) roster[o] = [];
@@ -405,9 +410,12 @@ class Component extends DCLogic {
   }
   person(p, o) {
     const bar = p.sH < 12 ? '#e0a63a' : (p.sH < 18 ? '#8f80d6' : '#37b3a3');
+    const img = this.photo(p.nm);
+    const hasPhoto = img !== 'none';
     return {
-      name: p.nm, time: p.time, oncall: p.oncall, initials: this.initials(p.nm), barColor: bar,
-      avatarBg: p.oncall ? '#111111' : '#f0f0ee',
+      name: p.nm, time: p.time, oncall: p.oncall, initials: hasPhoto ? '' : this.initials(p.nm), barColor: bar,
+      img,
+      avatarBg: p.oncall && !hasPhoto ? '#111111' : '#f0f0ee',
       avatarFg: p.oncall ? '#ffffff' : '#111111',
       remove: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState(s => ({ removed: { ...s.removed, [o + '-' + p.nm]: true } })); }
     };
