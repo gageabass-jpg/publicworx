@@ -167,9 +167,9 @@
               <i class="{{ sec.icon }}" style="font-size:12px;"></i>{{ sec.label }}
             </div>
             <sc-for list="{{ sec.rows }}" as="row" hint-placeholder-count="5">
-              <div style="display:grid;grid-template-columns:176px repeat(28,minmax(52px,1fr));align-items:stretch;border-bottom:1px solid rgba(233,233,237,.05);" style-hover="background:rgba(145,132,217,.04);">
-                <div style="position:sticky;left:0;background:rgba(30,32,52,.88);backdrop-filter:blur(10px);padding:8px 16px;font-size:13.5px;z-index:2;border-right:1px solid rgba(233,233,237,.07);display:flex;flex-direction:column;justify-content:center;">
-                  <span>{{ row.name }}</span>
+              <div style="display:grid;grid-template-columns:176px repeat(28,minmax(52px,1fr));align-items:stretch;border-bottom:1px solid rgba(233,233,237,.05);opacity:{{ row.rowOp }};filter:{{ row.rowBlur }};transition:opacity .15s ease,filter .15s ease;" style-hover="background:rgba(145,132,217,.04);">
+                <div onClick="{{ row.focusClick }}" title="Click to isolate this person · ⌘/Ctrl-click to compare" style="position:sticky;left:0;background:rgba(30,32,52,.88);backdrop-filter:blur(10px);padding:8px 16px;font-size:13.5px;z-index:2;border-right:1px solid rgba(233,233,237,.07);display:flex;flex-direction:column;justify-content:center;cursor:pointer;">
+                  <span style="color:{{ row.nameColor }};">{{ row.name }}</span>
                   <div style="height:2px;width:44px;border-radius:2px;margin-top:4px;background:linear-gradient(90deg, {{ row.tint }}, transparent);"></div>
                 </div>
                 <sc-for list="{{ row.cells }}" as="cell" hint-placeholder-count="28">
@@ -238,10 +238,10 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1880},&quot;weekendShading&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Grid&quot;},&quot;density&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;comfortable&quot;,&quot;compact&quot;],&quot;default&quot;:&quot;comfortable&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Grid&quot;}}">
 class Component extends DCLogic {
-  state = { periods: null, idx: 1, fade: true, menuOpen: false, sel: null, tt: null };
+  state = { periods: null, idx: 1, fade: true, menuOpen: false, sel: null, tt: null, focus: [] };
   componentDidMount() {
     this._onDoc = e => { if (this.state.menuOpen && !e.target.closest('[role="combobox"],[role="listbox"]')) this.setState({ menuOpen: false }); };
-    this._onKey = e => { if (e.key === 'Escape') this.setState({ menuOpen: false, exp: null }); };
+    this._onKey = e => { if (e.key === 'Escape') this.setState({ menuOpen: false, exp: null, focus: [] }); };
     document.addEventListener('click', this._onDoc);
     document.addEventListener('keydown', this._onKey);
     import('./schedule-data.js').then(m => {
@@ -292,6 +292,7 @@ class Component extends DCLogic {
       oncall: { bg: 'rgba(217,92,92,.18)', bd: 'rgba(217,92,92,.44)', fg: '#eda3a3' }
     };
     const st = this.state, weekend = this.props.weekendShading ?? true;
+    const focus = st.focus || [], hasFocus = focus.length > 0;
     const density = this.props.density ?? 'comfortable';
     const rowH = density === 'compact' ? '34px' : '42px';
     const P = st.periods, per = P ? P[st.idx] : null;
@@ -320,8 +321,20 @@ class Component extends DCLogic {
         const byDay = {};
         spec.split(',').forEach(ent => { const i = ent.indexOf(':'); byDay[+ent.slice(0, i)] = ent.slice(i + 1); });
         name = name.replace(' (traveler)', '');
+        const dim = hasFocus && !focus.includes(name);
         return {
           name, tint: tints[label] || 'rgba(233,233,237,.4)',
+          rowOp: dim ? '.28' : '1',
+          rowBlur: dim ? 'blur(1.2px)' : 'none',
+          nameColor: (hasFocus && focus.includes(name)) ? 'var(--color-accent-200)' : 'var(--color-text)',
+          focusClick: (e) => {
+            const multi = !!(e && (e.metaKey || e.ctrlKey || e.shiftKey));
+            this.setState(prev => {
+              const cur = prev.focus || [];
+              if (multi) return { focus: cur.includes(name) ? cur.filter(n => n !== name) : cur.concat(name) };
+              return (cur.length === 1 && cur[0] === name) ? { focus: [] } : { focus: [name] };
+            });
+          },
           cells: days.map((d, i) => {
             const code = byDay[i + 1];
             const cell = { colBg: d.colBg, op: (st.fade && d.past) ? .32 : 1, has: false, dash: false };
