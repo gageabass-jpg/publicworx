@@ -349,7 +349,7 @@ class Component extends DCLogic {
             else { const t = p.oncall ? T.oncall : T[p.type]; Object.assign(cell, { has: true, l1: p.l1, l2: p.l2, bg: t.bg, bd: t.bd, fg: t.fg, info: p.time + (p.oncall ? ' · On call' : ''), verb: 'is working', ttime: this.ampm(p.sL) + ' to ' + this.ampm(p.eL) + (p.extra ? ' ' + p.extra : ''), oncall: p.oncall }); }
             const info = { name, date: fmtD(d.date), shift: cell.info, verb: cell.verb, ttime: cell.ttime, oncall: !!cell.oncall, img: this.photo(name), bg: cell.bg, bd: cell.bd, fg: cell.fg };
             cell.onClick = () => this.setState({ sel: info });
-            cell.onEnter = ev => { const r = ev.currentTarget.getBoundingClientRect(); this.setState({ tt: { x: r.left + r.width / 2, y: r.top, ...info } }); };
+            cell.onEnter = ev => { const r = ev.currentTarget.getBoundingClientRect(); const z = parseFloat(getComputedStyle(document.documentElement).zoom) || 1; this.setState({ tt: { x: (r.left + r.width / 2) / z, y: r.top / z, ...info } }); };
             return cell;
           })
         };
