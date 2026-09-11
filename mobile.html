@@ -243,7 +243,7 @@ class Component extends DCLogic {
     const h24 = t => t.h % 12 + (t.ap === 'p' ? 12 : 0) + (t.mm ? +t.mm / 60 : 0);
     const sH = h24(s); let eH = h24(e); if (eH <= sH) eH += 24;
     const sL = s.label + s.ap, eL = e.label + e.ap;
-    const type = sH >= 19 ? 'night' : sH >= 12 ? 'eve' : (sH >= 11 && eH >= 23) ? 'eve' : 'day';
+    const type = (sH >= 19 || eH > 24) ? 'night' : sH >= 12 ? 'eve' : (sH >= 11 && eH >= 23) ? 'eve' : 'day';
     return { sL, eL, sH, hours: eH - sH, extra, type, oncall, time: sL + '\u2013' + eL + (extra ? ' ' + extra : '') };
   }
   renderVals() {

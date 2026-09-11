@@ -282,7 +282,7 @@ class Component extends DCLogic {
     const e = this.parseTok(eT, 'p');
     if (!s || !e) return { off: true };
     let endH = e.h24 <= s.h24 ? e.h24 + 24 : e.h24;
-    let type = s.h24 >= 19 ? 'night' : s.h24 >= 12 ? 'eve' : (s.h24 >= 11 && endH >= 23) ? 'eve' : 'day';
+    let type = (s.h24 >= 19 || endH > 24) ? 'night' : s.h24 >= 12 ? 'eve' : (s.h24 >= 11 && endH >= 23) ? 'eve' : 'day';
     return { l1: s.label, l2: e.label + (extra ? ' ' + extra : ''), sL: s.label, eL: e.label, sH24: s.h24, extra, type, oncall, time: s.label + '\u2013' + e.label + (extra ? ' ' + extra : '') };
   }
   renderVals() {
