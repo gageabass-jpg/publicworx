@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="icon" href="/avatar.png">
 <link rel="apple-touch-icon" href="/avatar.png">
+<meta name="theme-color" content="#ffffff">
 <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
 <script defer src="/_vercel/insights/script.js"></script>
 <script src="./support.js"></script>
@@ -12,214 +13,352 @@
 <body>
 <x-dc>
 <helmet>
-  <link rel="stylesheet" href="_ds/nocturne-b784e110-754a-4756-b3b3-8d8879273ee8/styles.css">
-  <script src="_ds/nocturne-b784e110-754a-4756-b3b3-8d8879273ee8/_ds_bundle.js"></script>
-  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;display=swap">
   <style>
-    html,body{margin:0;padding:0;}
-    html{background:var(--color-bg);}
-    body{background:
-      radial-gradient(900px 480px at 20% -6%, rgba(145,132,217,.18), transparent 65%),
-      radial-gradient(800px 460px at 85% 8%, rgba(76,70,150,.24), transparent 60%),
-      var(--color-bg);
-      min-height:100vh;font-family:var(--font-body);color:var(--color-text);
-      -webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;}
-    *{box-sizing:border-box}
-    a{color:var(--color-accent-300);} a:hover{color:var(--color-accent-200);}
-    @keyframes ss-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-    .nosb::-webkit-scrollbar{display:none}
-    button:focus-visible{outline:2px solid #9184d9;outline-offset:2px}
+    html,body{margin:0;padding:0}
+    html{background:#ffffff}
+    body{background:#ffffff;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+    a{color:#111} a:hover{color:#555}
+    ::-webkit-scrollbar{width:0;height:0}
+    .nosb::-webkit-scrollbar{width:0;height:0}
+    @keyframes ss-fade{from{opacity:0}to{opacity:1}}
+    @keyframes ss-pop{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:scale(1)}}
   </style>
 </helmet>
-    <div style="height:100vh;height:100dvh;max-width:480px;margin:0 auto;position:relative;overflow:hidden;font-family:var(--font-body);color:var(--color-text);background:radial-gradient(500px 320px at 25% -4%, rgba(145,132,217,.22), transparent 65%),radial-gradient(460px 300px at 90% 10%, rgba(76,70,150,.26), transparent 60%),var(--color-bg);display:flex;flex-direction:column;">
-      <div class="nosb" data-page="1" style="flex:1;overflow-y:auto;scrollbar-width:none;padding:calc(18px + env(safe-area-inset-top)) 16px 96px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;">
-          <div style="display:flex;align-items:center;gap:9px;">
-            <img src="avatar.png" alt="Schedule Stream" width="26" height="26" style="display:block;border-radius:6px;">
-            <div>
-              <div style="font-family:var(--font-heading);font-size:14px;font-weight:500;line-height:1.1;">Schedule Stream</div>
-              <div style="font-size:8.5px;letter-spacing:.14em;color:var(--color-neutral-400);">TMH RADIOLOGY</div>
+    <div style="height:100vh;height:100dvh;max-width:440px;margin:0 auto;display:flex;flex-direction:column;background:#ffffff;color:#111111;font-family:'Schibsted Grotesk',system-ui,sans-serif;position:relative;overflow:hidden;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)">
+      <header style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px;padding:16px 20px 8px 20px;flex:none;position:relative">
+        <div style="overflow:hidden;width:184px;flex:none">
+          <div style="display:flex;width:200%;transform:{{ headerShift }};transition:transform .6s cubic-bezier(.4,.05,.2,1)">
+            <div style="flex:0 0 50%">
+              <div style="font-size:20px;font-weight:700;letter-spacing:-0.02em;line-height:1.05">Schedule Stream</div>
+              <div style="font-size:9.5px;font-weight:600;letter-spacing:0.16em;color:#9a9a97;margin-top:4px">TMH RADIOLOGY</div>
+            </div>
+            <div style="flex:0 0 50%;display:flex;align-items:center">
+              <img src="uploads/logo_6467ab3f89c2b_1684515647.png" alt="WVU Medicine Thomas Hospitals" style="height:46px;width:auto;max-width:100%;object-fit:contain;display:block">
             </div>
           </div>
-          <span onClick="{{ goDesktop }}" title="Desktop view" style="width:30px;height:30px;border-radius:8px;background:rgba(233,233,237,.06);border:1px solid rgba(233,233,237,.12);display:inline-flex;align-items:center;justify-content:center;color:var(--color-neutral-300);font-size:15px;cursor:pointer;"><i class="ph ph-desktop"></i></span>
         </div>
-        <div style="position:relative;margin-top:16px;">
-          <button onClick="{{ toggleMenu }}" style="all:unset;cursor:pointer;display:flex;align-items:center;gap:9px;">
-            <span style="font-family:var(--font-heading);font-size:22px;font-weight:500;letter-spacing:-.01em;">{{ periodTitle }}</span>
-            <span style="width:22px;height:22px;border-radius:99px;background:rgba(145,132,217,.16);border:1px solid rgba(145,132,217,.35);display:inline-flex;align-items:center;justify-content:center;color:var(--color-accent-200);font-size:10px;transform:{{ chevRot }};transition:transform .2s;"><i class="ph ph-caret-down"></i></span>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:20px;position:absolute;top:12px;right:16px;z-index:40">
+          <button onClick="{{ openPicker }}" title="Change date range" style="all:unset;cursor:pointer;width:44px;height:44px;border-radius:14px;background:#f4f4f2;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;flex:none" style-hover="background:#ececea">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2.5"></rect><path d="M3 9h18"></path><path d="M8 2.5v4"></path><path d="M16 2.5v4"></path></svg>
           </button>
-          <sc-if value="{{ menuOpen }}" hint-placeholder-val="{{ false }}">
-            <div style="position:absolute;top:calc(100% + 8px);left:0;right:0;background:rgba(32,34,56,.95);border:1px solid rgba(145,132,217,.28);backdrop-filter:blur(20px);border-radius:12px;padding:5px;box-shadow:var(--shadow-lg);z-index:30;">
-              <sc-for list="{{ periodTabs }}" as="t" hint-placeholder-count="2">
-                <button onClick="{{ t.pick }}" style="all:unset;box-sizing:border-box;display:flex;justify-content:space-between;align-items:center;width:100%;cursor:pointer;min-height:44px;padding:0 12px;border-radius:8px;font-size:14px;color:{{ t.fg }};background:{{ t.bg }};">
-                  {{ t.title }}
-                  <sc-if value="{{ t.active }}" hint-placeholder-val="{{ false }}"><i class="ph ph-check" style="color:var(--color-accent-300);"></i></sc-if>
-                </button>
+        </div>
+      </header>
+      <div style="flex:1;position:relative;min-height:0;background:#f4f4f2">
+        <sc-if value="{{ todayMenuOpen }}" hint-placeholder-val="{{ false }}">
+          <div onClick="{{ closeTodayMenu }}" style="position:absolute;inset:0;z-index:25"></div>
+        </sc-if>
+        <div ref="{{ setScrollRef }}" class="nosb" style="position:absolute;inset:0;overflow-y:auto;padding:16px 62px 0 16px">
+          <sc-for list="{{ days }}" as="day" hint-placeholder-count="8">
+            <div ref="{{ day.setCardRef }}" onClick="{{ day.expand }}" style="position:sticky;top:{{ day.stickyTop }};margin-bottom:16px;aspect-ratio:1/1;transform-origin:top center;background:#ffffff;border-radius:24px;overflow:hidden;box-shadow:0 1px 2px rgba(17,17,17,0.05), 0 14px 34px rgba(17,17,17,0.10);cursor:pointer">
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 18px 12px 18px">
+                <div style="display:flex;align-items:center;gap:11px">
+                  <span style="font-size:34px;font-weight:600;letter-spacing:-0.04em;line-height:0.9;font-feature-settings:'tnum'">{{ day.num }}</span>
+                  <span style="display:flex;flex-direction:column">
+                    <span style="font-size:14px;font-weight:600;line-height:1.1">{{ day.weekday }}</span>
+                    <span style="font-size:11px;color:#9a9a97;line-height:1.25">{{ day.month }}</span>
+                  </span>
+                  <sc-if value="{{ day.isToday }}" hint-placeholder-val="{{ false }}">
+                    <span style="align-self:center;font-size:9px;font-weight:700;letter-spacing:0.1em;background:#111;color:#fff;border-radius:999px;padding:3px 8px">TODAY</span>
+                  </sc-if>
+                </div>
+                <span style="font-size:11px;font-weight:600;letter-spacing:0.05em;color:#6b6b68;font-feature-settings:'tnum'">{{ day.countLabel }}</span>
+              </div>
+              <div style="padding:0 18px 12px 18px;display:flex;flex-direction:column">
+                <sc-for list="{{ day.preview }}" as="p" hint-placeholder-count="4">
+                  <div style="display:flex;align-items:center;gap:11px;padding:9px 0;border-top:1px solid #efefed">
+                    <span style="width:30px;height:30px;border-radius:50%;background:{{ p.avatarBg }};color:{{ p.avatarFg }};display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex:none">{{ p.initials }}</span>
+                    <span style="font-size:14.5px;font-weight:500;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.name }}</span>
+                    <sc-if value="{{ p.oncall }}" hint-placeholder-val="{{ false }}">
+                      <span style="font-size:8.5px;font-weight:700;letter-spacing:0.09em;background:#111;color:#fff;border-radius:999px;padding:3px 8px">ON CALL</span>
+                    </sc-if>
+                    <span style="font-size:13px;color:#4a4a47;white-space:nowrap">{{ p.time }}</span>
+                    <span style="width:4px;height:26px;border-radius:999px;flex:none;background:{{ p.barColor }}"></span>
+                  </div>
+                </sc-for>
+                <sc-if value="{{ day.empty }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-size:13px;color:#a5a5a2;padding:10px 0 4px">No one scheduled</div>
+                </sc-if>
+              </div>
+              <sc-if value="{{ day.clip }}" hint-placeholder-val="{{ false }}">
+                <div style="position:absolute;left:0;right:0;bottom:0;height:52px;pointer-events:none;background:linear-gradient(rgba(255,255,255,0),#ffffff 78%);display:flex;align-items:flex-end;justify-content:center;padding-bottom:8px">
+                  <span style="font-size:10px;font-weight:600;letter-spacing:0.04em;color:#a5a5a2">{{ day.moreLabel }}</span>
+                </div>
+              </sc-if>
+            </div>
+          </sc-for>
+          <div style="background:#111111;color:#ffffff;border-radius:24px;padding:26px 22px 24px 22px;margin-bottom:16px;box-shadow:0 1px 2px rgba(17,17,17,0.05), 0 14px 34px rgba(17,17,17,0.14)">
+            <div style="font-size:20px;font-weight:600;letter-spacing:-0.02em;line-height:1.2;text-wrap:pretty">See something off? You can help fix any discrepancies on the calendar.</div>
+            <div style="font-size:13px;color:rgba(255,255,255,0.6);line-height:1.4;margin-top:8px">Flag a missing shift, wrong time, or coverage gap and we&#39;ll route it to the scheduler.</div>
+            <button onClick="{{ reportDiscrepancy }}" style="all:unset;cursor:pointer;margin-top:18px;display:inline-flex;align-items:center;gap:9px;background:#ffffff;color:#111111;border-radius:999px;padding:12px 20px;font-size:14px;font-weight:600" style-hover="background:#ececea">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-8.9 8.4 8.5 8.5 0 0 1-3.6-.8L3 20l1.9-5.5a8.38 8.38 0 0 1-.8-3.6 8.5 8.5 0 0 1 8.4-8.9 8.5 8.5 0 0 1 8.5 8.5Z"></path></svg>
+              Send a message
+            </button>
+          </div>
+          <div style="height:300px"></div>
+        </div>
+        <sc-if value="{{ showRail }}" hint-placeholder-val="{{ true }}">
+          <div ref="{{ setRailRef }}" onPointerDown="{{ railDown }}" onPointerMove="{{ railMove }}" onPointerUp="{{ railUp }}" onPointerCancel="{{ railUp }}" class="nosb" style="position:absolute;top:44px;right:0;bottom:0;width:58px;overflow-y:auto;background:transparent;z-index:2;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none">
+            <div style="position:relative;padding:190px 0">
+
+              <sc-for list="{{ railDays }}" as="day" hint-placeholder-count="8">
+                <div ref="{{ day.setRailRowRef }}" onClick="{{ day.jump }}" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:{{ day.railGap }} 0;transition:padding 0.35s cubic-bezier(.2,.8,.3,1)">
+                  <span style="font-size:8px;font-weight:700;letter-spacing:0.06em;color:#b6b6b3;height:{{ day.letterH }};overflow:hidden;opacity:{{ day.letterOp }};transition:height 0.35s,opacity 0.25s">{{ day.letter }}</span>
+                  <span style="width:{{ day.dotSize }};height:{{ day.dotSize }};border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:{{ day.dotFont }};font-weight:{{ day.dotWeight }};font-feature-settings:'tnum';background:{{ day.dotBg }};color:{{ day.dotColor }};opacity:{{ day.dotOpacity }};box-shadow:{{ day.dotShadow }};transition:all 0.32s cubic-bezier(.2,.8,.3,1)">{{ day.num }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+        <div style="position:absolute;right:0;top:14px;z-index:26;display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+          <button onPointerDown="{{ todayPressStart }}" onPointerUp="{{ todayPressEnd }}" onPointerLeave="{{ todayPressCancel }}" title="Tap: jump to today · Hold: menu" style="all:unset;cursor:pointer;position:relative;background:#ffffff;border-radius:18px 0 0 18px;box-shadow:-7px 8px 22px rgba(17,17,17,0.16);padding:7px 11px 7px 15px;display:inline-flex;align-items:center;justify-content:center;color:{{ todayBtnFg }};touch-action:none;transition:padding 0.25s cubic-bezier(.2,.8,.3,1),color 0.2s" style-hover="padding-right:15px">
+            <div style="position:relative;width:48px;height:32px">
+              <svg width="48" height="18" viewBox="0 0 54 20" fill="none" style="display:block">
+                <path id="ss-today-arc" d="M10 20 A17 15 0 0 1 44 20" stroke="none"></path>
+                <text fill="currentColor" font-family="'Schibsted Grotesk',sans-serif" font-size="7.5" font-weight="700" letter-spacing="2.4"><textPath href="#ss-today-arc" startOffset="50%" text-anchor="middle">TODAY</textPath></text>
+              </svg>
+              <span style="position:absolute;left:0;right:0;bottom:2px;text-align:center;font-size:18px;font-weight:700;line-height:1;font-feature-settings:'tnum';color:currentColor">{{ todayNum }}</span>
+            </div>
+          </button>
+          <sc-if value="{{ todayMenuOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="width:186px;background:#ffffff;border-radius:16px 0 16px 16px;overflow:hidden;box-shadow:0 2px 6px rgba(17,17,17,0.08), 0 22px 50px rgba(17,17,17,0.22);animation:ss-pop .18s cubic-bezier(.2,.8,.3,1.1)">
+              <div style="padding:12px 14px 8px 14px">
+                <div style="font-size:9px;font-weight:700;letter-spacing:0.12em;color:#b0b0ad">TODAY</div>
+                <div style="font-size:14px;font-weight:600;letter-spacing:-0.01em;margin-top:1px">{{ todayLong }}</div>
+              </div>
+              <div style="height:1px;background:#efefed"></div>
+              <sc-for list="{{ todayMenu }}" as="m" hint-placeholder-count="3">
+                <div onClick="{{ m.act }}" style="display:flex;align-items:center;gap:11px;padding:11px 14px;cursor:pointer" style-hover="background:#f4f4f2">
+                  <span style="width:18px;height:18px;flex:none;display:inline-flex;color:#111">{{ m.icon }}</span>
+                  <span style="font-size:13.5px;font-weight:500;flex:1;min-width:0">{{ m.label }}</span>
+                </div>
               </sc-for>
             </div>
           </sc-if>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin-top:14px;">
-          <sc-for list="{{ dows }}" as="w" hint-placeholder-count="7">
-            <div style="text-align:center;font-size:10px;font-weight:600;color:var(--color-neutral-500);">{{ w.l }}</div>
-          </sc-for>
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;margin-top:5px;">
-          <sc-for list="{{ calDays }}" as="d" hint-placeholder-count="28">
-            <button onClick="{{ d.select }}" style="all:unset;box-sizing:border-box;cursor:pointer;height:44px;border-radius:11px;background:{{ d.bg }};border:1px solid {{ d.bd }};color:{{ d.fg }};opacity:{{ d.op }};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;position:relative;">
-              <span style="font-size:8px;font-weight:600;position:absolute;top:3px;left:0;right:0;text-align:center;color:var(--color-accent-300);">{{ d.mon }}</span>
-              <span style="font-size:14.5px;font-weight:600;font-variant-numeric:tabular-nums;margin-top:4px;">{{ d.num }}</span>
-              <span style="width:4px;height:4px;border-radius:99px;background:{{ d.dot }};"></span>
-            </button>
-          </sc-for>
-        </div>
-        <sc-if value="{{ showDay }}" hint-placeholder-val="{{ true }}">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:20px;">
-            <div>
-              <div style="font-size:11px;letter-spacing:.12em;color:var(--color-neutral-400);">ON SHIFT</div>
-              <div style="display:flex;align-items:baseline;gap:8px;">
-                <span style="font-family:var(--font-heading);font-size:19px;font-weight:500;">{{ selDateLabel }}</span>
-                <sc-if value="{{ isToday }}" hint-placeholder-val="{{ false }}">
-                  
-                </sc-if>
+        <sc-if value="{{ scrubbing }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;left:50%;bottom:22px;transform:translateX(-50%);z-index:24;background:#111111;color:#ffffff;border-radius:16px;padding:11px 20px;box-shadow:0 12px 34px rgba(17,17,17,0.28);display:flex;flex-direction:column;align-items:center;gap:2px;pointer-events:none;white-space:nowrap">
+            <span style="font-size:16px;font-weight:600;letter-spacing:-0.01em">{{ scrubLabel }}</span>
+            <span style="font-size:11px;font-weight:600;letter-spacing:0.02em;color:rgba(255,255,255,0.6)">{{ scrubCount }}</span>
+          </div>
+        </sc-if>
+        <sc-if value="{{ composerOpen }}" hint-placeholder-val="{{ false }}">
+          <div ref="{{ setComposerBackdrop }}" onClick="{{ closeComposer }}" style="position:absolute;inset:0;z-index:34;background:rgba(17,17,17,0.32);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)"></div>
+          <div ref="{{ setComposerRef }}" style="position:absolute;left:16px;right:16px;bottom:16px;z-index:35;background:#ffffff;border-radius:26px;overflow:hidden;box-shadow:0 2px 6px rgba(17,17,17,0.08), 0 30px 70px rgba(17,17,17,0.3);will-change:transform">
+            <sc-if value="{{ composerSent }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:44px 26px 48px 26px">
+                <span style="width:52px;height:52px;border-radius:50%;background:#111;color:#fff;display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>
+                </span>
+                <div style="font-size:19px;font-weight:600;letter-spacing:-0.01em">Message sent</div>
+                <div style="font-size:13px;color:#9a9a97;margin-top:6px;line-height:1.4">Thanks — the scheduler will take a look.</div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ composerNotSent }}" hint-placeholder-val="{{ true }}">
+              <div>
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 20px 6px 22px">
+                  <div>
+                    <div style="font-size:18px;font-weight:700;letter-spacing:-0.02em;line-height:1.1">Report a discrepancy</div>
+                    <div style="font-size:11.5px;color:#9a9a97;margin-top:3px">Sent to the scheduling team</div>
+                  </div>
+                  <button onClick="{{ closeComposer }}" style="all:unset;cursor:pointer;width:32px;height:32px;border-radius:50%;background:#f4f4f2;display:inline-flex;align-items:center;justify-content:center;flex:none" style-hover="background:#ececea">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+                  </button>
+                </div>
+                <div style="padding:12px 20px 20px 20px;display:flex;flex-direction:column;gap:12px">
+                  <div style="display:flex;flex-direction:column;gap:6px">
+                    <label style="font-size:11px;font-weight:700;letter-spacing:0.08em;color:#b0b0ad">YOUR NAME</label>
+                    <input ref="{{ setNameRef }}" type="text" placeholder="e.g. Bailey R." style="all:unset;box-sizing:border-box;width:100%;background:#f4f4f2;border-radius:12px;padding:12px 14px;font-size:14px;font-family:'Schibsted Grotesk',sans-serif;color:#111">
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:8px">
+                    <div style="display:flex;align-items:center;justify-content:space-between">
+                      <label style="font-size:11px;font-weight:700;letter-spacing:0.08em;color:#b0b0ad">DATE / RANGE</label>
+                      <span style="font-size:12.5px;font-weight:600;color:#111">{{ rangeLabel }}</span>
+                    </div>
+                    <div style="background:#f4f4f2;border-radius:16px;padding:12px 12px 14px 12px">
+                      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+                        <button onClick="{{ calPrev }}" style="all:unset;cursor:pointer;width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center" style-hover="background:#e6e6e3">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg>
+                        </button>
+                        <span style="font-size:14px;font-weight:600;letter-spacing:-0.01em">{{ monthLabel }}</span>
+                        <button onClick="{{ calNext }}" style="all:unset;cursor:pointer;width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center" style-hover="background:#e6e6e3">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"></path></svg>
+                        </button>
+                      </div>
+                      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:4px">
+                        <sc-for list="{{ weekdayLetters }}" as="w" hint-placeholder-count="7">
+                          <span style="text-align:center;font-size:10px;font-weight:700;letter-spacing:0.04em;color:#b6b6b3;padding:2px 0">{{ w }}</span>
+                        </sc-for>
+                      </div>
+                      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px">
+                        <sc-for list="{{ calCells }}" as="c" hint-placeholder-count="35">
+                          <sc-if value="{{ c.blank }}" hint-placeholder-val="{{ false }}">
+                            <span></span>
+                          </sc-if>
+                          <sc-if value="{{ c.notBlank }}" hint-placeholder-val="{{ true }}">
+                            <button onClick="{{ c.pick }}" style="all:unset;cursor:pointer;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:{{ c.cellWeight }};font-feature-settings:'tnum';border-radius:{{ c.cellRadius }};background:{{ c.cellBg }};color:{{ c.cellColor }}">{{ c.day }}</button>
+                          </sc-if>
+                        </sc-for>
+                      </div>
+                    </div>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:6px">
+                    <label style="font-size:11px;font-weight:700;letter-spacing:0.08em;color:#b0b0ad">MESSAGE</label>
+                    <textarea ref="{{ setMsgRef }}" rows="4" placeholder="Describe the discrepancy — who, which day, and what's wrong." style="all:unset;box-sizing:border-box;width:100%;min-height:96px;background:#f4f4f2;border-radius:12px;padding:12px 14px;font-size:14px;line-height:1.4;font-family:'Schibsted Grotesk',sans-serif;color:#111;resize:none"></textarea>
+                  </div>
+                  <div style="display:flex;gap:10px;margin-top:2px">
+                    <button onClick="{{ closeComposer }}" style="all:unset;cursor:pointer;flex:0 0 auto;text-align:center;font-size:14px;font-weight:600;color:#111;border-radius:999px;padding:13px 20px;background:#f4f4f2" style-hover="background:#ececea">Cancel</button>
+                    <button onClick="{{ sendComposer }}" style="all:unset;cursor:pointer;flex:1;text-align:center;font-size:14px;font-weight:600;background:#111;color:#fff;border-radius:999px;padding:13px 0" style-hover="background:#000">Send message</button>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+        <sc-if value="{{ pickerOpen }}" hint-placeholder-val="{{ false }}">
+          <div onClick="{{ closePicker }}" style="position:absolute;inset:0;z-index:20;background:rgba(244,244,242,0.55);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);animation:ss-fade .18s ease"></div>
+          <div style="position:absolute;left:18px;right:18px;top:70px;z-index:21;background:#ffffff;border-radius:24px;overflow:hidden;box-shadow:0 2px 6px rgba(17,17,17,0.08), 0 30px 70px rgba(17,17,17,0.24);animation:ss-pop .22s cubic-bezier(.2,.8,.3,1.1)">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 18px 12px 18px">
+              <span style="font-size:16px;font-weight:700;letter-spacing:-0.01em">Date range</span>
+              <button onClick="{{ closePicker }}" style="all:unset;cursor:pointer;width:30px;height:30px;border-radius:50%;background:#f4f4f2;display:inline-flex;align-items:center;justify-content:center" style-hover="background:#ececea">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+              </button>
+            </div>
+            <div class="nosb" style="max-height:60vh;overflow-y:auto;padding:0 12px 12px 12px">
+              <sc-for list="{{ periodList }}" as="pr" hint-placeholder-count="4">
+                <div onClick="{{ pr.pick }}" style="display:flex;align-items:center;gap:12px;padding:13px 12px;border-radius:14px;cursor:pointer;background:{{ pr.rowBg }}" style-hover="background:#f4f4f2">
+                  <span style="width:38px;height:38px;border-radius:11px;flex:none;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;background:{{ pr.badgeBg }};color:{{ pr.badgeFg }}">
+                    <span style="font-size:7px;font-weight:700;letter-spacing:0.08em;line-height:1;opacity:0.7">{{ pr.badgeMon }}</span>
+                    <span style="font-size:15px;font-weight:600;line-height:1.05;font-feature-settings:'tnum'">{{ pr.badgeNum }}</span>
+                  </span>
+                  <span style="display:flex;flex-direction:column;flex:1;min-width:0">
+                    <span style="font-size:14.5px;font-weight:600;line-height:1.2">{{ pr.range }}</span>
+                    <span style="font-size:11.5px;color:#9a9a97;line-height:1.3">{{ pr.sub }}</span>
+                  </span>
+                  <sc-if value="{{ pr.current }}" hint-placeholder-val="{{ false }}">
+                    <span style="font-size:8.5px;font-weight:700;letter-spacing:0.09em;background:#111;color:#fff;border-radius:999px;padding:3px 8px">CURRENT</span>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ isExpanded }}" hint-placeholder-val="{{ false }}">
+          <div onClick="{{ collapse }}" style="position:absolute;inset:0;z-index:10;background:rgba(244,244,242,0.55);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);animation:ss-fade .18s ease"></div>
+          <div ref="{{ setOverlayRef }}" style="position:absolute;left:18px;right:18px;top:64px;bottom:60px;z-index:11;perspective:1600px;will-change:transform">
+            <div style="position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.4,.05,.2,1);transform:{{ flipTransform }}">
+              <!-- FRONT -->
+              <div style="position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;background:#ffffff;border-radius:24px;overflow:hidden;box-shadow:0 2px 6px rgba(17,17,17,0.08), 0 30px 70px rgba(17,17,17,0.24)">
+                <div onClick="{{ collapse }}" title="Tap to close" style="display:flex;align-items:center;justify-content:space-between;padding:18px 18px 14px 18px;flex:none;cursor:pointer">
+                  <div style="display:flex;align-items:center;gap:12px">
+                    <span style="font-size:38px;font-weight:600;letter-spacing:-0.04em;line-height:0.9;font-feature-settings:'tnum'">{{ exp.num }}</span>
+                    <span style="display:flex;flex-direction:column">
+                      <span style="font-size:15px;font-weight:600;line-height:1.1">{{ exp.weekday }}</span>
+                      <span style="font-size:11.5px;color:#9a9a97;line-height:1.25">{{ exp.monthYear }}</span>
+                    </span>
+                    <sc-if value="{{ exp.isToday }}" hint-placeholder-val="{{ false }}">
+                      <span style="align-self:center;font-size:9px;font-weight:700;letter-spacing:0.1em;background:#111;color:#fff;border-radius:999px;padding:3px 8px">TODAY</span>
+                    </sc-if>
+                  </div>
+                  <button onClick="{{ toggleFlip }}" title="Edit who's working" style="all:unset;cursor:pointer;width:34px;height:34px;border-radius:50%;background:#f4f4f2;display:inline-flex;align-items:center;justify-content:center;flex:none" style-hover="background:#ececea">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path><path d="M21 3v5h-5"></path><path d="M21 12a9 9 0 0 1-15 6.7L3 16"></path><path d="M3 21v-5h5"></path></svg>
+                  </button>
+                </div>
+                <div style="padding:0 18px 4px 18px;font-size:10.5px;font-weight:600;letter-spacing:0.08em;color:#b0b0ad;flex:none">{{ exp.countLabel }}</div>
+                <div class="nosb" style="flex:1;min-height:0;overflow-y:auto;padding:4px 18px 18px 18px">
+                  <sc-for list="{{ exp.staff }}" as="p" hint-placeholder-count="5">
+                    <div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-top:1px solid #efefed">
+                      <span style="width:34px;height:34px;border-radius:50%;background:{{ p.avatarBg }};color:{{ p.avatarFg }};display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex:none">{{ p.initials }}</span>
+                      <span style="font-size:15px;font-weight:500;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.name }}</span>
+                      <sc-if value="{{ p.oncall }}" hint-placeholder-val="{{ false }}">
+                        <span style="font-size:8.5px;font-weight:700;letter-spacing:0.09em;background:#111;color:#fff;border-radius:999px;padding:3px 8px">ON CALL</span>
+                      </sc-if>
+                      <span style="font-size:13.5px;color:#4a4a47;white-space:nowrap">{{ p.time }}</span>
+                      <span style="width:4px;height:30px;border-radius:999px;flex:none;background:{{ p.barColor }}"></span>
+                    </div>
+                  </sc-for>
+                  <sc-if value="{{ exp.empty }}" hint-placeholder-val="{{ false }}">
+                    <div style="font-size:13.5px;color:#a5a5a2;padding:14px 0">No one scheduled</div>
+                  </sc-if>
+                </div>
+              </div>
+              <!-- BACK -->
+              <div style="position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;transform:rotateY(180deg);display:flex;flex-direction:column;background:#111111;color:#ffffff;border-radius:24px;overflow:hidden;box-shadow:0 2px 6px rgba(17,17,17,0.08), 0 30px 70px rgba(17,17,17,0.30)">
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 18px 14px 18px;flex:none">
+                  <div style="display:flex;align-items:center;gap:12px">
+                    <span style="font-size:38px;font-weight:600;letter-spacing:-0.04em;line-height:0.9;font-feature-settings:'tnum'">{{ exp.num }}</span>
+                    <span style="display:flex;flex-direction:column">
+                      <span style="font-size:15px;font-weight:600;line-height:1.1">{{ exp.weekday }}</span>
+                      <span style="font-size:11.5px;color:rgba(255,255,255,0.55);line-height:1.25">Edit staffing</span>
+                    </span>
+                  </div>
+                  <button onClick="{{ toggleFlip }}" title="Done" style="all:unset;cursor:pointer;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.14);display:inline-flex;align-items:center;justify-content:center;flex:none" style-hover="background:rgba(255,255,255,0.22)">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path><path d="M21 3v5h-5"></path><path d="M21 12a9 9 0 0 1-15 6.7L3 16"></path><path d="M3 21v-5h5"></path></svg>
+                  </button>
+                </div>
+                <div style="padding:0 18px 4px 18px;font-size:10.5px;font-weight:600;letter-spacing:0.08em;color:rgba(255,255,255,0.45);flex:none">TAP TRASH TO MARK NOT WORKING</div>
+                <div class="nosb" style="flex:1;min-height:0;overflow-y:auto;padding:4px 18px 18px 18px">
+                  <sc-for list="{{ exp.staff }}" as="p" hint-placeholder-count="5">
+                    <div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-top:1px solid rgba(255,255,255,0.1)">
+                      <span style="width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.14);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex:none">{{ p.initials }}</span>
+                      <span style="font-size:15px;font-weight:500;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.name }}</span>
+                      <span style="font-size:13px;color:rgba(255,255,255,0.5);white-space:nowrap">{{ p.time }}</span>
+                      <button onClick="{{ p.remove }}" title="Remove for this day" style="all:unset;cursor:pointer;width:32px;height:32px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;flex:none;background:rgba(224,72,72,0.16)" style-hover="background:rgba(224,72,72,0.3)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ff6b6b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path><path d="M10 11v6"></path><path d="M14 11v6"></path></svg>
+                      </button>
+                    </div>
+                  </sc-for>
+                  <sc-if value="{{ exp.empty }}" hint-placeholder-val="{{ false }}">
+                    <div style="font-size:13.5px;color:rgba(255,255,255,0.5);padding:14px 0">No one scheduled</div>
+                  </sc-if>
+                </div>
               </div>
             </div>
           </div>
-          <div class="nosb" data-cards="1" onScroll="{{ onCardsScroll }}" style="display:flex;gap:12px;overflow-x:auto;scrollbar-width:none;scroll-snap-type:x mandatory;margin:14px -16px 0;padding:0 16px;align-items:flex-start;">
-            <sc-for list="{{ cards }}" as="g" hint-placeholder-count="3">
-              <div style="flex:0 0 100%;scroll-snap-align:center;scroll-snap-stop:always;perspective:1200px;position:relative;z-index:{{ g.z }};min-height:170px;">
-              <div style="position:relative;height:100%;transform-style:preserve-3d;transition:{{ g.flipTr }};transform:{{ g.flip }};">
-              <div style="backface-visibility:hidden;-webkit-backface-visibility:hidden;height:100%;box-sizing:border-box;background:linear-gradient(165deg, rgba(233,233,237,.07), rgba(233,233,237,.02));border:1px solid rgba(233,233,237,.11);border-top:1px solid {{ g.edge }};border-radius:16px;overflow:hidden;min-height:170px;position:relative;opacity:{{ g.frontOp }};pointer-events:{{ g.frontPe }};transition:opacity .2s ease .18s;">
-                <div style="position:absolute;inset:0;pointer-events:none;background:radial-gradient(320px 120px at 20% -20%, {{ g.glow }}, transparent 70%);"></div>
-                <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px 10px;position:relative;">
-                  <div style="font-family:var(--font-heading);font-size:16px;font-weight:500;">{{ g.title }}</div>
-                  <span style="font-family:var(--font-heading);font-size:17px;font-weight:500;color:{{ g.color }};">{{ g.count }}</span>
-                </div>
-                <sc-for list="{{ g.people }}" as="p" hint-placeholder-count="3">
-                  <button onClick="{{ p.open }}" style="all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;gap:11px;width:100%;min-height:48px;padding:6px 16px;border-top:1px solid rgba(233,233,237,.06);background:{{ p.rowBg }};position:relative;">
-                    <span style="width:28px;height:28px;flex:none;border-radius:99px;border:1px solid rgba(145,132,217,.4);background-size:cover;background-position:center;background-color:rgba(145,132,217,.16);background-image:{{ p.imgCss }};"></span>
-                    <span style="font-size:14px;font-weight:500;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ p.name }}</span>
-                    <sc-if value="{{ p.oncall }}" hint-placeholder-val="{{ false }}">
-                      <span style="font-size:8px;letter-spacing:.08em;font-weight:600;color:#eda3a3;background:rgba(217,92,92,.18);border:1px solid rgba(217,92,92,.44);border-radius:99px;padding:2px 6px;">ON CALL</span>
-                    </sc-if>
-                    <span style="font-size:12.5px;color:var(--color-neutral-400);font-variant-numeric:tabular-nums;white-space:nowrap;">{{ p.time }}</span>
-                  </button>
-                </sc-for>
-                <sc-if value="{{ g.emptyShow }}" hint-placeholder-val="{{ false }}">
-                  <div style="font-size:13px;color:var(--color-neutral-500);padding:6px 16px 14px;position:relative;">No one scheduled</div>
-                </sc-if>
-              </div>
-              <div onClick="{{ closeSheet }}" style="position:absolute;bottom:0;left:0;right:0;min-height:100%;transform:{{ g.backT }};backface-visibility:hidden;-webkit-backface-visibility:hidden;visibility:{{ g.backVis }};overflow:hidden;box-sizing:border-box;cursor:pointer;background:linear-gradient(165deg, rgba(38,40,66,.97), rgba(28,30,48,.98));border:1px solid rgba(233,233,237,.14);border-bottom:1px solid {{ g.edge }};border-radius:16px;padding:16px;box-shadow:var(--shadow-lg);">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-                  <div style="font-family:var(--font-heading);font-size:15px;font-weight:500;">{{ g.title }}</div>
-                  <i class="ph ph-x" style="font-size:13px;color:var(--color-neutral-400);"></i>
-                </div>
-                <div style="display:flex;align-items:center;gap:13px;">
-                  <span style="width:46px;height:46px;flex:none;border-radius:99px;border:1px solid rgba(145,132,217,.45);background-size:cover;background-position:center;background-color:rgba(145,132,217,.16);background-image:{{ shImgCss }};"></span>
-                  <div>
-                    <div style="font-size:14.5px;"><strong style="font-weight:600;">{{ shName }}</strong> {{ shVerb }} <strong style="font-weight:600;color:var(--color-accent-200);">{{ shTime }}</strong></div>
-                    <div style="display:flex;align-items:center;gap:8px;margin-top:4px;font-size:12px;color:var(--color-neutral-400);">{{ shDate }}
-                      <sc-if value="{{ shOnCall }}" hint-placeholder-val="{{ false }}">
-                        <span style="font-size:8.5px;letter-spacing:.08em;font-weight:600;color:#eda3a3;background:rgba(217,92,92,.18);border:1px solid rgba(217,92,92,.44);border-radius:99px;padding:2px 7px;">ON CALL</span>
-                      </sc-if>
-                    </div>
-                  </div>
-                </div>
-                <div style="display:flex;gap:8px;margin-top:16px;">
-                  <button onClick="{{ reportOff }}" class="btn" style="font-size:13px;flex:1;justify-content:center;color:{{ reportFg }};border:1px solid {{ reportBd }};background:{{ reportBg }};">{{ reportLabel }}</button>
-
-                </div>
-              </div>
-              </div>
-              </div>
-            </sc-for>
-          </div>
-          <div style="display:flex;justify-content:center;gap:7px;margin-top:12px;">
-            <sc-for list="{{ cardDots }}" as="dt" hint-placeholder-count="3">
-              <button onClick="{{ dt.go }}" style="all:unset;cursor:pointer;width:{{ dt.w }};height:6px;border-radius:99px;background:{{ dt.bg }};transition:width .2s,background .2s;"></button>
-            </sc-for>
-          </div>
-        </sc-if>
-        <sc-if value="{{ showStaff }}" hint-placeholder-val="{{ false }}">
-          <div style="display:flex;flex-direction:column;margin-top:8px;">
-            <sc-for list="{{ staff }}" as="s" hint-placeholder-count="8">
-              <div>
-                <sc-if value="{{ s.isSection }}" hint-placeholder-val="{{ false }}">
-                  <div style="font-size:10.5px;letter-spacing:.14em;color:var(--color-accent-300);padding:18px 2px 8px;">{{ s.name }}</div>
-                </sc-if>
-                <sc-if value="{{ s.isPerson }}" hint-placeholder-val="{{ true }}">
-                  <div style="background:linear-gradient(165deg, rgba(233,233,237,.06), rgba(233,233,237,.02));border:1px solid {{ s.ring }};backdrop-filter:blur(14px);border-radius:14px;overflow:hidden;margin-bottom:8px;">
-                    <button onClick="{{ s.toggle }}" style="all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;gap:11px;width:100%;min-height:54px;padding:9px 14px;">
-                      <span style="width:30px;height:30px;flex:none;border-radius:99px;border:1px solid rgba(145,132,217,.4);background-size:cover;background-position:center;background-color:rgba(145,132,217,.16);background-image:{{ s.imgCss }};"></span>
-                      <span style="font-size:14.5px;font-weight:500;flex:1;min-width:0;">{{ s.name }}</span>
-                      <span style="font-size:12.5px;color:var(--color-neutral-400);font-variant-numeric:tabular-nums;">{{ s.summary }}</span>
-                      <i class="ph ph-caret-right" style="font-size:12px;color:var(--color-neutral-500);transform:{{ s.chev }};transition:transform .2s;"></i>
-                    </button>
-                    <sc-if value="{{ s.open }}" hint-placeholder-val="{{ false }}">
-                      <div style="padding:0 14px 12px;">
-                        <sc-for list="{{ s.shifts }}" as="sh" hint-placeholder-count="4">
-                          <div style="display:flex;align-items:center;gap:10px;min-height:40px;border-top:1px solid rgba(233,233,237,.06);opacity:{{ sh.op }};">
-                            <span style="width:74px;flex:none;font-size:12px;color:var(--color-neutral-400);white-space:nowrap;">{{ sh.date }}</span>
-                            <span style="flex:1;min-width:0;display:inline-flex;align-items:center;padding:4px 10px;border-radius:99px;background:{{ sh.bg }};border:1px solid {{ sh.bd }};color:{{ sh.fg }};font-size:12px;font-weight:500;"><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ sh.label }}</span></span>
-                            <span style="width:34px;flex:none;text-align:right;font-size:11.5px;color:var(--color-neutral-400);font-variant-numeric:tabular-nums;">{{ sh.hours }}</span>
-                          </div>
-                        </sc-for>
-                        <div style="display:flex;justify-content:space-between;padding-top:10px;font-size:12px;color:var(--color-neutral-400);"><span>{{ s.weeks }}</span><span style="font-weight:600;color:var(--color-text);">{{ s.total }}</span></div>
-                      </div>
-                    </sc-if>
-                  </div>
-                </sc-if>
-              </div>
-            </sc-for>
-          </div>
         </sc-if>
       </div>
-      <div style="position:absolute;bottom:0;left:0;right:0;padding:10px 16px calc(6px + env(safe-area-inset-bottom));background:rgba(22,24,38,.72);backdrop-filter:blur(24px);border-top:1px solid rgba(233,233,237,.08);z-index:6;">
-        <div style="display:flex;gap:2px;padding:3px;border-radius:12px;background:rgba(233,233,237,.07);">
-          <button onClick="{{ viewDay }}" style="all:unset;box-sizing:border-box;flex:1;cursor:pointer;min-height:38px;border-radius:9px;font-size:14px;font-weight:600;text-align:center;background:{{ dayTabBg }};color:{{ dayTabFg }};transition:background .2s;">Day</button>
-          <button onClick="{{ viewStaff }}" style="all:unset;box-sizing:border-box;flex:1;cursor:pointer;min-height:38px;border-radius:9px;font-size:14px;font-weight:600;text-align:center;background:{{ staffTabBg }};color:{{ staffTabFg }};transition:background .2s;">Staff</button>
-        </div>
-      </div>
-      <sc-if value="{{ sheetShow }}" hint-placeholder-val="{{ false }}">
-        <div onClick="{{ closeSheet }}" style="position:absolute;inset:0;z-index:20;background:rgba(16,17,28,.5);backdrop-filter:blur(8px);animation:ss-in .2s ease;"></div>
-      </sc-if>
     </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:480,&quot;height&quot;:920}}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;showRail&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Layout&quot;},&quot;scaleFalloff&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:0.03,&quot;min&quot;:0,&quot;max&quot;:0.08,&quot;step&quot;:0.01,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Motion&quot;}}">
 class Component extends DCLogic {
-  state = { periods: null, idx: 1, sel: null, menuOpen: false, view: 'day', card: 0, openPerson: null, sheet: null, report: null };
+  state = { periods: null, idx: 0, active: 0, expanded: null, flipped: false, removed: {}, railOpen: false, pickerOpen: false, todayFocus: false, todayMenuOpen: false, headerLogo: false, composerOpen: false, composerSent: false, cal: null, rangeStart: null, rangeEnd: null, scrubbing: false };
+  cards = []; wraps = []; railRows = [];
+  componentWillUnmount() { clearInterval(this._logoTimer); }
   componentDidMount() {
+    this._logoTimer = setInterval(() => this.setState(s => ({ headerLogo: !s.headerLogo })), 10000);
     import('./schedule-data.js').then(m => {
       const P = m.PERIODS, today = this.today();
       let idx = P.findIndex(p => { const s = new Date(...p.start); const e = new Date(s); e.setDate(e.getDate() + 27); return today >= s && today <= e; });
       if (idx < 0) idx = P.length - 1;
-      this.setState({ periods: P, idx });
+      this.setState({ periods: P, idx }, () => {
+        const to = this.todayOffset();
+        const i = to ? to - 1 : 0;
+        this.setState({ active: i });
+        const settle = () => (document.fonts && document.fonts.ready) ? document.fonts.ready.then(land) : land();
+        let tries = 0;
+        const land = () => {
+          const card = this.cards[i], sc = this.scroller;
+          if (card && sc && card.offsetHeight > 0 && sc.scrollHeight > sc.clientHeight) {
+            sc.scrollTop = Math.max(0, this.cardTop(i) - 8);
+            this.onScroll();
+            requestAnimationFrame(() => { sc.scrollTop = Math.max(0, this.cardTop(i) - 8); this.onScroll(); });
+          } else if (tries++ < 40) {
+            requestAnimationFrame(land);
+          }
+        };
+        requestAnimationFrame(settle);
+      });
     });
-    const attach = () => {
-      const el = document.querySelector('[data-page]');
-      if (!el) { setTimeout(attach, 300); return; }
-      if (el.__bounced) return; el.__bounced = true;
-      let off = 0, t = null;
-      el.addEventListener('wheel', e => {
-        const atTop = el.scrollTop <= 0, atBot = el.scrollTop + el.clientHeight >= el.scrollHeight - 1;
-        if ((atTop && e.deltaY < 0) || (atBot && e.deltaY > 0)) {
-          off = Math.max(-64, Math.min(64, off - e.deltaY * 0.28));
-          el.style.transition = 'none';
-          el.style.transform = 'translateY(' + off + 'px)';
-          clearTimeout(t);
-          t = setTimeout(() => { off = 0; el.style.transition = 'transform .5s cubic-bezier(.2,.9,.25,1.25)'; el.style.transform = 'translateY(0px)'; }, 90);
-        }
-      }, { passive: true });
-    };
-    attach();
   }
-  today() { const t = new Date(); t.setHours(0, 0, 0, 0); return t; }
-  photo(name) {
-    const map = { 'Lora': 'lorahall', 'Heather': 'heatheryoung', 'Dave': 'davefrady', 'Trista': 'tristamiller', 'Christy': 'christybailey', 'Shelby': 'shelbysmith', 'Lana': 'lanamiller', 'Rachel': 'rachelboothe', 'Bailey': 'baileyadkins', 'Savannah': 'savannahplummer', 'Linsey': 'linseyhackney', 'Krista': 'kristamorton', 'Hannah': 'hannahmartin', 'Brayden': 'braydensims', 'Taryn': 'tarynpreece', 'Baylee': 'bayleeviars', 'Barb': 'barbhutchinson', 'Brandy': 'brandybeaver', 'Cory': 'corydolan', 'Dawson': 'dawsonquick', 'Jarrod': 'jarrodmcclanahan', 'Donnie': 'donniedavis', 'Lisa': 'lisaroberts' };
-    const f = map[name.split(' ')[0]];
-    return f ? "url('headshots/" + f + ".jpg')" : 'none';
+  today() { const t = new Date(); t.setHours(0,0,0,0); return t; }
+  base() { const p = this.state.periods[this.state.idx]; return new Date(...p.start); }
+  todayOffset() {
+    if (!this.state.periods) return null;
+    const diff = Math.round((this.today() - this.base()) / 86400000) + 1;
+    return (diff >= 1 && diff <= 28) ? diff : null;
   }
-  ampm(l) { return l.replace(/a$/, 'am').replace(/p$/, 'pm'); }
   parseTok(t) {
     const m = t.match(/^(\d{1,2}):?(\d{2})?(a|p)?$/); if (!m) return null;
     let h = +m[1], mm = m[2] || '', ap = m[3];
@@ -239,134 +378,414 @@ class Component extends DCLogic {
     const [sT, eT] = words[ti].split('-');
     const s = this.parseTok(sT), e = this.parseTok(eT);
     if (!s || !e) return { off: true };
-    if (!e.ap) e.ap = 'p'; if (!s.ap) s.ap = e.ap === 'p' && s.h <= 12 ? 'a' : 'a';
+    if (!e.ap) e.ap = 'p'; if (!s.ap) s.ap = 'a';
     const h24 = t => t.h % 12 + (t.ap === 'p' ? 12 : 0) + (t.mm ? +t.mm / 60 : 0);
     const sH = h24(s); let eH = h24(e); if (eH <= sH) eH += 24;
     const sL = s.label + s.ap, eL = e.label + e.ap;
-    const type = (sH >= 19 || eH > 24) ? 'night' : sH >= 12 ? 'eve' : (sH >= 11 && eH >= 23) ? 'eve' : 'day';
-    return { sL, eL, sH, hours: eH - sH, extra, type, oncall, time: sL + '\u2013' + eL + (extra ? ' ' + extra : '') };
+    return { sL, eL, sH, extra, oncall, time: sL + '\u2013' + eL + (extra ? ' ' + extra : '') };
   }
-  renderVals() {
-    const T = {
-      day: { edge: 'rgba(217,165,62,.55)', glow: 'rgba(217,165,62,.10)', c: '#e3c37a', bg: 'rgba(217,165,62,.16)', bd: 'rgba(217,165,62,.38)', fg: '#e8ca82' },
-      eve: { edge: 'rgba(145,132,217,.60)', glow: 'rgba(145,132,217,.12)', c: '#b3a7e8', bg: 'rgba(145,132,217,.16)', bd: 'rgba(145,132,217,.40)', fg: '#c9c0f0' },
-      night: { edge: 'rgba(63,191,174,.50)', glow: 'rgba(63,191,174,.09)', c: '#7fd8ca', bg: 'rgba(63,191,174,.13)', bd: 'rgba(63,191,174,.34)', fg: '#8adfd2' },
-      oncall: { bg: 'rgba(217,92,92,.18)', bd: 'rgba(217,92,92,.44)', fg: '#eda3a3' }
-    };
-    const st = this.state, P = st.periods, per = P ? P[st.idx] : null;
-    const today = this.today();
-    const base = per ? new Date(...per.start) : today;
-    const dateOf = o => { const d = new Date(base); d.setDate(d.getDate() + o - 1); return d; };
-    let todayOff = null;
-    if (per) { const diff = Math.round((today - base) / 86400000) + 1; if (diff >= 1 && diff <= 28) todayOff = diff; }
-    const sel = st.sel ?? todayOff ?? 1;
-    const MON = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
-    const calDays = [];
-    for (let o = 1; o <= 28; o++) {
-      const d = dateOf(o), isSel = o === sel, past = todayOff && o < todayOff;
-      calDays.push({
-        num: d.getDate(), mon: (o === 1 || d.getDate() === 1) ? MON[d.getMonth()] : '',
-        bg: isSel ? 'linear-gradient(160deg, rgba(145,132,217,.45), rgba(145,132,217,.15))' : 'rgba(233,233,237,.045)',
-        bd: isSel ? 'rgba(145,132,217,.6)' : 'rgba(233,233,237,.08)',
-        fg: 'var(--color-text)', op: past && !isSel ? .45 : 1,
-        dot: o === todayOff ? 'var(--color-accent)' : 'transparent',
-        select: () => this.setState({ sel: o })
-      });
-    }
-    const groups = { day: [], eve: [], night: [] };
-    const staff = [];
-    const fmtD = d => d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-    if (per) per.sections.forEach(([label, rows]) => {
-      staff.push({ isSection: true, isPerson: false, name: label.toUpperCase() });
+  initials(name) {
+    return name.split(/[\s(]+/).filter(Boolean).slice(0,2).map(w => w[0]).join('').toUpperCase().slice(0,2);
+  }
+  buildRoster(per) {
+    const roster = {};
+    for (let o = 1; o <= 28; o++) roster[o] = [];
+    per.sections.forEach(([label, rows]) => {
       rows.forEach(([name, spec]) => {
         const nm = name.replace(' (traveler)', '');
-        const byDay = {};
-        spec.split(',').forEach(ent => { const i = ent.indexOf(':'); byDay[+ent.slice(0, i)] = ent.slice(i + 1); });
-        const shifts = []; const wk = [0, 0, 0, 0]; let onCalls = 0;
-        for (let o = 1; o <= 28; o++) {
-          const code = byDay[o]; if (!code) continue;
+        spec.split(',').forEach(ent => {
+          const i = ent.indexOf(':'); const o = +ent.slice(0, i); const code = ent.slice(i + 1);
           const p = this.parseCode(code);
-          const d = dateOf(o);
-          const row = { date: fmtD(d).replace(',', ''), op: todayOff && o < todayOff ? .5 : 1, hours: '', bg: 'transparent', bd: 'transparent', fg: 'var(--color-neutral-300)' };
-          if (p.off) { shifts.push({ ...row, label: 'Requested off', fg: 'var(--color-neutral-500)' }); continue; }
-          if (p.vac) { shifts.push({ ...row, label: 'Vacation', bd: 'rgba(233,233,237,.28)' }); continue; }
-          if (p.hol) { shifts.push({ ...row, label: 'Holiday', fg: 'var(--color-neutral-400)' }); continue; }
-          const t = p.oncall ? T.oncall : T[p.type];
-          wk[Math.floor((o - 1) / 7)] += p.hours; if (p.oncall) onCalls++;
-          const hrs = Number.isInteger(p.hours) ? String(p.hours) : p.hours.toFixed(1);
-          shifts.push({ ...row, label: this.ampm(p.sL) + '\u2013' + this.ampm(p.eL) + (p.extra ? ' \u00b7 ' + p.extra : '') + (p.oncall ? ' \u00b7 on call' : ''), bg: t.bg, bd: t.bd, fg: t.fg, hours: hrs + 'h' });
-          if (o === sel) {
-            const info = { name: nm, g: p.type, imgCss: this.photo(nm), verb: 'is working', time: this.ampm(p.sL) + ' to ' + this.ampm(p.eL) + (p.extra ? ' ' + p.extra : ''), oncall: p.oncall, date: fmtD(d) };
-            groups[p.type].push({ name: nm, sH: p.sH, imgCss: info.imgCss, time: p.sL + '\u2013' + p.eL, oncall: p.oncall,
-              rowBg: p.oncall ? 'rgba(217,92,92,.10)' : 'transparent',
-              open: () => { clearTimeout(this._settleT); this.setState({ sheet: info, settled: false, report: null }); this._settleT = setTimeout(() => this.setState({ settled: true }), 640); } });
-          }
-        }
-        const total = wk.reduce((a, b) => a + b, 0);
-        const open = st.openPerson === nm;
-        staff.push({ isSection: false, isPerson: true, name: nm, imgCss: this.photo(nm), open,
-          ring: open ? 'rgba(145,132,217,.45)' : 'rgba(233,233,237,.10)',
-          chev: open ? 'rotate(90deg)' : 'none',
-          toggle: () => this.setState(s => ({ openPerson: s.openPerson === nm ? null : nm })),
-          summary: (Number.isInteger(total) ? total : total.toFixed(1)) + 'h' + (onCalls ? ' \u00b7 ' + onCalls + ' on call' : ''),
-          shifts, weeks: 'Weeks ' + wk.map(h => h ? (Number.isInteger(h) ? h : h.toFixed(1)) : '\u00b7').join(' / '),
-          total: (Number.isInteger(total) ? total : total.toFixed(1)) + ' h total' });
+          if (p.off || p.vac || p.hol) return;
+          roster[o].push({ nm, sH: p.sH, time: p.time, oncall: p.oncall });
+        });
       });
     });
-    const cards = [{ title: 'Day', k: 'day' }, { title: 'Evening', k: 'eve' }, { title: 'Night', k: 'night' }].map(c => {
-      const ppl = groups[c.k].sort((a, b) => a.sH - b.sH);
-      const flipped = !!st.sheet && st.sheet.g === c.k;
-      const settled = flipped && st.settled;
-      return { title: c.title, people: ppl, count: ppl.length, edge: T[c.k].edge, glow: T[c.k].glow, color: T[c.k].c, emptyShow: !ppl.length,
-        flip: settled ? 'none' : (flipped ? 'rotateX(180deg)' : 'rotateX(0deg)'), z: flipped ? 25 : 1,
-        flipTr: (settled || st.closing) ? 'none' : 'transform .6s cubic-bezier(.35,.1,.2,1)',
-        backT: settled ? 'none' : 'rotateX(180deg)', backVis: 'visible',
-        frontOp: flipped ? 0 : 1, frontPe: flipped ? 'none' : 'auto' };
-    });
-    const sd = dateOf(sel);
+    return roster;
+  }
+  person(p, o) {
+    const bar = p.sH < 12 ? '#e0a63a' : (p.sH < 18 ? '#8f80d6' : '#37b3a3');
+    return {
+      name: p.nm, time: p.time, oncall: p.oncall, initials: this.initials(p.nm), barColor: bar,
+      avatarBg: p.oncall ? '#111111' : '#f0f0ee',
+      avatarFg: p.oncall ? '#ffffff' : '#111111',
+      remove: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState(s => ({ removed: { ...s.removed, [o + '-' + p.nm]: true } })); }
+    };
+  }
+  renderVals() {
+    const st = this.state;
+    if (!st.periods) {
+      return { days: [], showRail: true, isExpanded: false, pickerOpen: false, periodList: [], headerDay: '',
+        todayNum: '', todayBtnBg: '#111', todayBtnFg: '#fff', todayMenuOpen: false, todayLong: '', todayMenu: [],
+        headerShift: 'translateX(0)', composerOpen: false, composerSent: false, composerNotSent: true,
+        reportDiscrepancy: () => {}, closeComposer: () => {}, sendComposer: () => {}, setComposerRef: () => {}, setComposerBackdrop: () => {}, setNameRef: () => {}, setMsgRef: () => {},
+        monthLabel: '', calCells: [], rangeLabel: 'Select date(s)', weekdayLetters: ['S','M','T','W','T','F','S'], calPrev: () => {}, calNext: () => {},
+        todayPressStart: () => {}, todayPressEnd: () => {}, todayPressCancel: () => {}, closeTodayMenu: () => {},
+        openPicker: () => {}, closePicker: () => {}, periodShort: 'Loading\u2026',
+        togglePeriod: () => {}, setScrollRef: el => { this.scroller = el; }, setRailRef: () => {}, scrubbing: false, scrubLabel: '', scrubCount: '', railDown: () => {}, railMove: () => {}, railUp: () => {} };
+    }
+    const per = st.periods[st.idx];
+    const base = this.base();
+    const todayOff = this.todayOffset();
+    const WD = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    const WL = ['S','M','T','W','T','F','S'];
+    const MON = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const dateOf = o => { const d = new Date(base); d.setDate(d.getDate() + o - 1); return d; };
+    const roster = this.buildRoster(per);
+    const rem = st.removed;
+    const liveList = o => roster[o].slice().filter(p => !rem[o + '-' + p.nm]).sort((a, b) => a.sH - b.sH);
+    const active = st.active;
+    const railOpen = st.railOpen;
+    const scrubbing = st.scrubbing;
+    const PREV = 5;
+    const days = [];
+    for (let o = 1; o <= 28; o++) {
+      const idx0 = o - 1;
+      const d = dateOf(o);
+      const list = liveList(o);
+      const isActive = idx0 === active;
+      const dist = Math.abs(idx0 - active);
+      const extra = Math.max(0, list.length - PREV);
+      days.push({
+        num: d.getDate(), weekday: WD[d.getDay()], month: MON[d.getMonth()], letter: WL[d.getDay()],
+        isToday: o === todayOff,
+        countLabel: list.length + ' ON SHIFT',
+        empty: list.length === 0,
+        clip: list.length > PREV,
+        moreLabel: '+' + extra + ' more \u00b7 tap to open',
+        preview: list.slice(0, PREV).map(p => this.person(p, o)),
+        stickyTop: (8 + idx0 * 3) + 'px',
+        dotBg: isActive ? '#111111' : 'transparent',
+        dotColor: isActive ? '#ffffff' : (o === todayOff ? '#111111' : '#9a9a97'),
+        dotShadow: o === todayOff && !isActive ? '0 0 0 1.5px #111 inset' : 'none',
+        dotSize: (isActive ? 38 : dist === 1 ? 28 : dist === 2 ? 24 : 21) + 'px',
+        dotFont: (isActive ? '17px' : dist === 1 ? '13px' : dist === 2 ? '12px' : '10.5px'),
+        dotWeight: isActive ? 700 : 600,
+        dotOpacity: isActive ? 1 : Math.max(0.32, 1 - dist * 0.16),
+        railGap: railOpen ? '4px' : '2px',
+        letterH: isActive && railOpen ? '12px' : '0px',
+        letterOp: isActive && railOpen ? 1 : 0,
+        setCardRef: el => { this.cards[idx0] = el; },
+        setWrapRef: el => { this.wraps[idx0] = el; },
+        setRailRowRef: el => { this.railRows[idx0] = el; },
+        expand: () => this.openCard(idx0, o),
+        jump: () => this.jumpTo(idx0)
+      });
+    }
+    const railDays = days;
     const fmtR = d => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     const endD = new Date(base); endD.setDate(endD.getDate() + 27);
+    const todayD = this.today();
+    const periodList = st.periods.map((p, pi) => {
+      const s = new Date(...p.start), e = new Date(s); e.setDate(e.getDate() + 27);
+      const current = pi === st.idx;
+      const isNow = todayD >= s && todayD <= e;
+      const MONA = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+      return {
+        range: fmtR(s) + ' \u2013 ' + fmtR(e),
+        sub: '4-week period \u00b7 ' + e.getFullYear(),
+        badgeMon: MONA[s.getMonth()], badgeNum: s.getDate(),
+        badgeBg: current ? '#111' : '#f4f4f2', badgeFg: current ? '#fff' : '#111',
+        rowBg: current ? '#f7f7f5' : 'transparent',
+        current: isNow,
+        pick: () => this.setState({ idx: pi, active: 0, expanded: null, flipped: false, pickerOpen: false }, () => {
+          if (this.scroller) this.scroller.scrollTop = 0; this.onScroll();
+        })
+      };
+    });
+    let exp = null;
+    if (st.expanded != null) {
+      const o = st.expanded, d = dateOf(o), list = liveList(o);
+      exp = {
+        num: d.getDate(), weekday: WD[d.getDay()],
+        monthYear: MON[d.getMonth()] + ' ' + d.getFullYear(),
+        isToday: o === todayOff,
+        countLabel: list.length + ' ON SHIFT',
+        empty: list.length === 0,
+        staff: list.map(p => this.person(p, o))
+      };
+    }
     return {
-      periodTitle: per ? fmtR(base) + ' \u2013 ' + fmtR(endD) : 'Loading\u2026',
-      menuOpen: st.menuOpen, toggleMenu: () => this.setState(s => ({ menuOpen: !s.menuOpen })),
-      chevRot: st.menuOpen ? 'rotate(180deg)' : 'none',
-      periodTabs: (P || []).map((p, i) => ({ title: p.title, active: i === st.idx, fg: i === st.idx ? 'var(--color-accent-200)' : 'var(--color-text)', bg: i === st.idx ? 'rgba(145,132,217,.10)' : 'transparent', pick: () => this.setState({ idx: i, sel: null, menuOpen: false }) })),
-      dows: ['S','M','T','W','T','F','S'].map(l => ({ l })),
-      calDays,
-      showDay: st.view === 'day', showStaff: st.view === 'staff',
-      selDateLabel: sd.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' }),
-      isToday: sel === todayOff,
-      cards,
-      onCardsScroll: e => { const el = e.currentTarget; const i = Math.round(el.scrollLeft / (el.clientWidth - 20)); if (i !== st.card) this.setState({ card: Math.max(0, Math.min(2, i)) }); },
-      cardDots: ['Day','Evening','Night'].map((n, i) => ({ w: i === st.card ? '20px' : '6px', bg: i === st.card ? 'var(--color-accent-300)' : 'rgba(233,233,237,.18)', go: () => { const el = document.querySelector('[data-cards]'); if (el) el.scrollTo({ left: i * (el.clientWidth - 20), behavior: 'smooth' }); } })),
-      staff,
-      viewDay: () => this.setState({ view: 'day' }), viewStaff: () => this.setState({ view: 'staff' }),
-      goDesktop: () => { window.location.href = 'index.html?desktop=1'; },
-      dayTabBg: st.view === 'day' ? 'rgba(145,132,217,.18)' : 'transparent', dayTabFg: st.view === 'day' ? 'var(--color-accent-200)' : 'var(--color-neutral-400)',
-      staffTabBg: st.view === 'staff' ? 'rgba(145,132,217,.18)' : 'transparent', staffTabFg: st.view === 'staff' ? 'var(--color-accent-200)' : 'var(--color-neutral-400)',
-      sheetShow: !!st.sheet, closeSheet: () => {
-        clearTimeout(this._settleT);
-        if (st.settled) {
-          this.setState({ settled: false, closing: true });
-          requestAnimationFrame(() => requestAnimationFrame(() => this.setState({ closing: false, sheet: null, report: null })));
-        } else this.setState({ sheet: null, settled: false, report: null });
+      days, railDays, periodList,
+      showRail: this.props.showRail ?? true,
+      railOverflow: railOpen ? 'auto' : 'hidden',
+      railJustify: railOpen ? 'flex-start' : 'center',
+      railPad: '10px',
+      headerShift: st.headerLogo ? 'translateX(-50%)' : 'translateX(0)',
+      reportDiscrepancy: () => this.setState({ composerOpen: true, composerSent: false }, () => this.slideComposer(true)),
+      closeComposer: () => { if (this._composerClosing) return; this.slideComposer(false); },
+      sendComposer: () => this.submitDiscrepancy(),
+      setComposerRef: el => { this.composerEl = el; },
+      setComposerBackdrop: el => { this.composerBackdrop = el; },
+      setNameRef: el => { this.nameEl = el; },
+      setMsgRef: el => { this.msgEl = el; },
+      composerOpen: st.composerOpen,
+      composerSent: st.composerSent,
+      composerNotSent: !st.composerSent,
+      ...this.calendarVals(),
+      headerDay: base.getDate(),
+      todayNum: todayD.getDate(),
+      todayBtnBg: 'transparent',
+      todayBtnFg: st.todayFocus ? '#b68235' : '#111111',
+      todayLong: todayD.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }),
+      todayMenuOpen: st.todayMenuOpen,
+      todayMenu: [
+        { label: 'Expand today\u2019s card', icon: this.icon(['M15 3h6v6','M9 21H3v-6','M21 3l-7 7','M3 21l7-7']), act: () => { const o = this.todayOffset(); if (o) this.setState({ expanded: o, flipped: false, todayMenuOpen: false }); } },
+        { label: 'Restore stack', icon: this.icon(['M12 2l9 4.5-9 4.5-9-4.5L12 2Z','M3 12l9 4.5 9-4.5','M3 17l9 4.5 9-4.5']), act: () => this.closeTodayMenu() }
+      ],
+      todayPressStart: () => { this._longPressed = false; clearTimeout(this._pressTimer); this._pressTimer = setTimeout(() => { this._longPressed = true; this.openTodayMenu(); }, 420); },
+      todayPressEnd: () => { clearTimeout(this._pressTimer); if (!this._longPressed) this.focusToday(false); },
+      todayPressCancel: () => { clearTimeout(this._pressTimer); },
+      closeTodayMenu: () => this.closeTodayMenu(),
+      pickerOpen: st.pickerOpen,
+      openPicker: () => this.setState({ pickerOpen: true }),
+      closePicker: () => this.setState({ pickerOpen: false }),
+      periodShort: fmtR(base) + ' \u2013 ' + fmtR(endD),
+      isExpanded: st.expanded != null,      exp: exp || { num: '', weekday: '', monthYear: '', isToday: false, countLabel: '', empty: true, staff: [] },
+      flipTransform: st.flipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+      toggleFlip: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState(s => ({ flipped: !s.flipped })); },
+      collapse: () => this.closeCard(),
+      setOverlayRef: el => { this.overlayEl = el; },
+      togglePeriod: () => this.setState(s => ({ idx: (s.idx + 1) % s.periods.length, active: 0, expanded: null, flipped: false }), () => {
+        if (this.scroller) this.scroller.scrollTop = 0; this.onScroll();
+      }),
+      setScrollRef: el => {
+        this.scroller = el;
+        if (el && !el.__wired) { el.__wired = 1; el.addEventListener('scroll', () => this.onScroll(), { passive: true }); }
       },
-      shName: st.sheet && st.sheet.name, shVerb: st.sheet && st.sheet.verb, shTime: st.sheet && st.sheet.time,
-      shDate: st.sheet && st.sheet.date, shOnCall: !!(st.sheet && st.sheet.oncall),
-      shImgCss: st.sheet ? st.sheet.imgCss : 'none',
-      reportLabel: st.report === 'sending' ? 'Sending…' : st.report === 'sent' ? 'Reported ✓' : st.report === 'error' ? 'Failed — tap to retry' : "I'm Not Working",
-      reportFg: st.report === 'sent' ? '#8adfd2' : '#eda3a3',
-      reportBd: st.report === 'sent' ? 'rgba(63,191,174,.5)' : 'rgba(217,92,92,.55)',
-      reportBg: st.report === 'sent' ? 'rgba(63,191,174,.13)' : 'rgba(217,92,92,.10)',
-      reportOff: (e) => {
-        if (e && e.stopPropagation) e.stopPropagation();
-        const s = st.sheet; if (!s || st.report === 'sending' || st.report === 'sent') return;
-        this.setState({ report: 'sending' });
-        fetch('https://formspree.io/f/moeqkzvq', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ name: s.name, message: s.name + ' reports they are NOT working this shift.', regarding: s.date + ' · ' + s.time + (s.oncall ? ' · on call' : ''), _subject: 'Schedule Stream — ' + s.name + ' not working ' + s.date, source: 'mobile' }) })
-          .then(r => this.setState({ report: r.ok ? 'sent' : 'error' }))
-          .catch(() => this.setState({ report: 'error' }));
-      }
+      setRailRef: el => { this.rail = el; },
+      scrubbing: st.scrubbing,
+      scrubLabel: (adaySafe => adaySafe.weekday ? (adaySafe.weekday + ' \u00b7 ' + (adaySafe.month || '').slice(0, 3) + ' ' + adaySafe.num) : '')(days[active] || {}),
+      scrubCount: (days[active] && days[active].countLabel) ? days[active].countLabel.replace('ON SHIFT', 'on shift') : '',
+      railDown: (e) => this.railDown(e),
+      railMove: (e) => this.railMove(e),
+      railUp: () => { if (this.state.scrubbing) this.setState({ scrubbing: false }); }
     };
+  }
+  railDown(e) {
+    const r = e.currentTarget;
+    const sc = this.scroller; if (!sc) return;
+    this._scrub = { y: e.clientY, scroll: sc.scrollTop };
+    const rh = r.clientHeight || 300;
+    this._scrubFactor = Math.max(1, (sc.scrollHeight - sc.clientHeight) / rh);
+    try { r.setPointerCapture(e.pointerId); } catch (_) {}
+    this.setState({ scrubbing: true });
+  }
+  railMove(e) {
+    if (!this.state.scrubbing) return;
+    const sc = this.scroller; if (!sc || !this._scrub) return;
+    const dy = e.clientY - this._scrub.y;
+    const max = sc.scrollHeight - sc.clientHeight;
+    sc.scrollTop = Math.max(0, Math.min(max, this._scrub.scroll + dy * this._scrubFactor));
+  }
+  onScroll() {
+    if (this.raf) return;
+    this.raf = requestAnimationFrame(() => {
+      this.raf = null;
+      const sc = this.scroller; if (!sc) return;
+      const stp = sc.scrollTop;
+      const max = Math.max(1, sc.scrollHeight - sc.clientHeight);
+      const prog = stp / max;
+      const N = this.cards.length || 1;
+      if (this.state.todayFocus) {
+        this.cards.forEach(c => c && (c.style.transform = 'scale(1)'));
+        if (this._focusScrolling) return;
+        const act0 = this.centerMostCard(stp, sc);
+        this.openRail();
+        if (act0 !== this.state.active) { this.setState({ active: act0 }); this.centerRail(act0); }
+        return;
+      }
+      const falloff = this.props.scaleFalloff ?? 0.03;
+      this.cards.forEach((card, i) => {
+        if (!card) return;
+        const start = i / N;
+        const p = Math.min(1, Math.max(0, (prog - start) / (1 - start)));
+        const target = Math.max(0.86, 1 - (N - 1 - i) * falloff);
+        card.style.transform = 'scale(' + (1 - (1 - target) * p) + ')';
+      });
+      const act = this.centerMostCard(stp, sc);
+      this.openRail();
+      if (act !== this.state.active) { this.setState({ active: act }); this.centerRail(act); }
+    });
+  }
+  openRail() {
+    clearTimeout(this._railT);
+    if (!this.state.railOpen) this.setState({ railOpen: true });
+    this._railT = setTimeout(() => this.setState({ railOpen: false }), 1200);
+  }
+  icon(paths) {
+    return React.createElement('svg', { width: 18, height: 18, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2, strokeLinecap: 'round', strokeLinejoin: 'round' },
+      paths.map((d, i) => React.createElement('path', { key: i, d })));
+  }
+  openTodayMenu() {
+    this.setState({ todayMenuOpen: true });
+  }
+  calendarVals() {
+    const MON = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const MONA = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const cal = this.calState();
+    const rs = this.state.rangeStart, re = this.state.rangeEnd;
+    const todayMs = this.today().getTime();
+    const first = new Date(cal.y, cal.m, 1);
+    const pad = first.getDay();
+    const dim = new Date(cal.y, cal.m + 1, 0).getDate();
+    const cells = [];
+    for (let i = 0; i < pad; i++) cells.push({ blank: true, notBlank: false, key: 'b' + i });
+    for (let d = 1; d <= dim; d++) {
+      const ms = new Date(cal.y, cal.m, d).getTime();
+      const isStart = ms === rs, isEnd = ms === re, sel = isStart || isEnd;
+      const inRange = rs != null && re != null && ms > rs && ms < re;
+      cells.push({
+        blank: false, notBlank: true, key: 'd' + d, day: d,
+        cellBg: sel ? '#111111' : (inRange ? '#e2e2df' : 'transparent'),
+        cellColor: sel ? '#ffffff' : (ms === todayMs ? '#111111' : '#3a3a3a'),
+        cellWeight: sel || ms === todayMs ? 700 : 500,
+        cellRadius: sel ? '50%' : (inRange ? '7px' : '50%'),
+        pick: () => this.pickDay(ms)
+      });
+    }
+    const fmt = ms => { const d = new Date(ms); return MONA[d.getMonth()] + ' ' + d.getDate(); };
+    const rangeLabel = rs == null ? 'Select date(s)' : (re == null ? fmt(rs) : fmt(rs) + ' \u2013 ' + fmt(re));
+    return { monthLabel: MON[cal.m] + ' ' + cal.y, calCells: cells, rangeLabel, weekdayLetters: ['S','M','T','W','T','F','S'], calPrev: () => this.calShift(-1), calNext: () => this.calShift(1) };
+  }
+  calState() { const c = this.state.cal; if (c) return c; const t = this.today(); return { y: t.getFullYear(), m: t.getMonth() }; }
+  calShift(delta) { const c = this.calState(); let y = c.y, m = c.m + delta; if (m < 0) { m = 11; y--; } if (m > 11) { m = 0; y++; } this.setState({ cal: { y, m } }); }
+  pickDay(ms) {
+    const { rangeStart, rangeEnd } = this.state;
+    if (rangeStart == null || rangeEnd != null) this.setState({ rangeStart: ms, rangeEnd: null });
+    else if (ms < rangeStart) this.setState({ rangeStart: ms });
+    else if (ms > rangeStart) this.setState({ rangeEnd: ms });
+  }
+  rangeText() {
+    const rs = this.state.rangeStart, re = this.state.rangeEnd;
+    const MONA = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const fmt = ms => { const d = new Date(ms); return MONA[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear(); };
+    if (rs == null) return 'Not specified';
+    return re == null ? fmt(rs) : fmt(rs) + ' – ' + fmt(re);
+  }
+  submitDiscrepancy() {
+    if (this.state.composerSent) return;
+    const name = (this.nameEl && this.nameEl.value.trim()) || '(no name given)';
+    const msg = (this.msgEl && this.msgEl.value.trim()) || '(no message)';
+    const range = this.rangeText();
+    const per = this.state.periods ? this.state.periods[this.state.idx] : null;
+    fetch('https://formspree.io/f/moeqkzvq', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({
+        name: name,
+        message: msg,
+        regarding: range,
+        period: per ? per.title : '',
+        _subject: 'Schedule Stream — discrepancy from ' + name,
+        source: 'mobile'
+      })
+    }).catch(() => {});
+    this.setState({ composerSent: true }, () => { clearTimeout(this._sentT); this._sentT = setTimeout(() => this.slideComposer(false), 1600); });
+  }
+  slideComposer(opening) {
+    const el = this.composerEl, bd = this.composerBackdrop;
+    if (!el) { if (!opening) this.setState({ composerOpen: false }); return; }
+    const ease = 'cubic-bezier(.3,.82,.35,1)';
+    if (opening) {
+      el.style.transition = 'none';
+      el.style.transform = 'translateY(120%)';
+      if (bd) { bd.style.transition = 'none'; bd.style.opacity = '0'; }
+      requestAnimationFrame(() => {
+        el.style.transition = 'transform .42s ' + ease;
+        el.style.transform = 'translateY(0)';
+        if (bd) { bd.style.transition = 'opacity .3s ease'; bd.style.opacity = '1'; }
+      });
+    } else {
+      this._composerClosing = true;
+      el.style.transition = 'transform .34s cubic-bezier(.5,0,.75,.35)';
+      el.style.transform = 'translateY(120%)';
+      if (bd) { bd.style.transition = 'opacity .3s ease'; bd.style.opacity = '0'; }
+      const done = () => { el.removeEventListener('transitionend', done); this._composerClosing = false; this.setState({ composerOpen: false }); };
+      el.addEventListener('transitionend', done);
+      setTimeout(done, 420);
+    }
+  }
+  openCard(idx0, o) {
+    const src = this.cards[idx0];
+    this._srcRect = src ? src.getBoundingClientRect() : null;
+    this._expandIdx = idx0;
+    this.setState({ expanded: o, flipped: false }, () => this.flipAnimate(true));
+  }
+  closeCard() {
+    if (this._closing) return;
+    this.flipAnimate(false);
+  }
+  flipAnimate(opening) {
+    const el = this.overlayEl; if (!el) { if (!opening) this.setState({ expanded: null, flipped: false }); return; }
+    const src = (this._expandIdx != null && this.cards[this._expandIdx]) ? this.cards[this._expandIdx].getBoundingClientRect() : this._srcRect;
+    const tgt = el.getBoundingClientRect();
+    const ease = 'cubic-bezier(.4,.02,.2,1)';
+    if (!src || !tgt.width) { if (!opening) this.setState({ expanded: null, flipped: false }); return; }
+    const sx = src.width / tgt.width, sy = src.height / tgt.height;
+    const tx = src.left - tgt.left, ty = src.top - tgt.top;
+    const collapsed = 'translate(' + tx + 'px,' + ty + 'px) scale(' + sx + ',' + sy + ')';
+    el.style.transformOrigin = 'top left';
+    if (opening) {
+      el.style.transition = 'none';
+      el.style.transform = collapsed;
+      el.style.opacity = '0.4';
+      requestAnimationFrame(() => {
+        el.style.transition = 'transform .42s ' + ease + ', opacity .28s ease';
+        el.style.transform = 'none';
+        el.style.opacity = '1';
+      });
+    } else {
+      this._closing = true;
+      el.style.transition = 'transform .38s ' + ease + ', opacity .3s ease';
+      el.style.transform = collapsed;
+      el.style.opacity = '0';
+      const done = () => { el.removeEventListener('transitionend', done); this._closing = false; this.setState({ expanded: null, flipped: false }); };
+      el.addEventListener('transitionend', done);
+      setTimeout(done, 460);
+    }
+  }
+  focusToday(openMenu) {
+    const P = this.state.periods; if (!P) return;
+    const today = this.today();
+    let pIdx = P.findIndex(p => { const s = new Date(...p.start); const e = new Date(s); e.setDate(e.getDate() + 27); return today >= s && today <= e; });
+    if (pIdx < 0) pIdx = this.state.idx;
+    const base = new Date(...P[pIdx].start);
+    const diff = Math.round((today - base) / 86400000);
+    const i = (diff >= 0 && diff < 28) ? diff : 0;
+    this._focusScrolling = true;
+    clearTimeout(this._focusT);
+    this.setState({ idx: pIdx, active: i, todayFocus: true, todayMenuOpen: !!openMenu, expanded: null }, () => {
+      this.cards.forEach(c => c && (c.style.transform = 'scale(1)'));
+      if (this.scroller) this.scroller.scrollTo({ top: Math.max(0, this.cardTop(i) - 8), behavior: 'smooth' });
+      this.centerRail(i);
+      this._focusT = setTimeout(() => { this._focusScrolling = false; }, 850);
+    });
+  }
+  closeTodayMenu() {
+    this.setState({ todayMenuOpen: false, todayFocus: false }, () => this.onScroll());
+  }
+  cardMetrics() {
+    const c = this.cards.find(Boolean);
+    const h = c ? c.offsetHeight : 300;
+    return { h, step: h + 16, top0: 16 };
+  }
+  cardTop(i) { const m = this.cardMetrics(); return m.top0 + i * m.step; }
+  centerMostCard(stp, sc) {
+    const n = this.cards.length;
+    if (stp <= 2) return 0;
+    if (stp + sc.clientHeight >= sc.scrollHeight - 2) return n - 1;
+    const m = this.cardMetrics();
+    const focus = stp + sc.clientHeight / 2;
+    const i = Math.round((focus - m.top0 - m.h / 2) / m.step);
+    return Math.max(0, Math.min(n - 1, i));
+  }
+  centerRail(i) {
+    const r = this.rail, row = this.railRows[i]; if (!r || !row) return;
+    r.scrollTo({ top: Math.max(0, row.offsetTop - r.clientHeight / 2 + row.offsetHeight / 2), behavior: 'smooth' });
+  }
+  jumpTo(i) {
+    if (this.scroller) this.scroller.scrollTo({ top: Math.max(0, this.cardTop(i) - 8), behavior: 'smooth' });
   }
 }
 </script>
