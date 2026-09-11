@@ -147,7 +147,7 @@
         <div style="display:grid;grid-template-columns:176px repeat(28,minmax(52px,1fr));border-bottom:1px solid rgba(233,233,237,.09);align-items:end;">
           <div style="position:sticky;left:0;background:rgba(30,32,52,.88);backdrop-filter:blur(10px);padding:14px 16px;font-size:10.5px;letter-spacing:.14em;color:var(--color-neutral-400);z-index:3;align-self:stretch;display:flex;align-items:flex-end;">STAFF</div>
           <sc-for list="{{ days }}" as="d" hint-placeholder-count="28">
-            <div onClick="{{ d.onSelect }}" title="Click to see this day" style="text-align:center;padding:8px 2px 6px;background:{{ d.headBg }};cursor:pointer;">
+            <div onClick="{{ d.onSelect }}" title="Click to see this day" style="text-align:center;padding:8px 2px 6px;background:{{ d.headBg }};cursor:pointer;border-radius:8px;outline:{{ d.todayOutline }};outline-offset:-2px;">
               <div style="font-size:10px;color:{{ d.dowColor }};">{{ d.dow }}</div>
               <div style="font-family:var(--font-heading);font-size:14px;font-weight:500;color:{{ d.numColor }};">{{ d.num }}</div>
               <div style="font-size:9px;color:{{ d.dowColor }};height:11px;">{{ d.sub }}</div>
@@ -192,7 +192,7 @@
   </div>
 
   <sc-if value="{{ tipShow }}" hint-placeholder-val="{{ false }}">
-    <div style="position:fixed;left:{{ tipX }};top:{{ tipY }};transform:translate(-50%,-112%);background:rgba(32,34,56,.95);border:1px solid rgba(145,132,217,.35);backdrop-filter:blur(16px);border-radius:14px;padding:12px 14px;font-size:13px;pointer-events:none;z-index:40;box-shadow:var(--shadow-md);white-space:nowrap;display:flex;align-items:flex-start;gap:11px;">
+    <div style="position:fixed;left:{{ tipX }};top:{{ tipY }};transform:translate(-50%,-112%);background:rgba(32,34,56,.95);border:1px solid rgba(145,132,217,.35);backdrop-filter:blur(16px);border-radius:14px;padding:12px 14px;font-size:13px;pointer-events:none;z-index:40;box-shadow:var(--shadow-md);white-space:normal;max-width:340px;display:flex;align-items:flex-start;gap:11px;">
       <sc-if value="{{ tipHasImg }}" hint-placeholder-val="{{ false }}">
         <span role="img" aria-label="{{ tipName }}" style="width:40px;height:40px;border-radius:99px;border:1px solid rgba(145,132,217,.45);display:block;flex:none;background-size:cover;background-position:center;background-image:{{ tipImgCss }};"></span>
       </sc-if>
@@ -307,11 +307,12 @@ class Component extends DCLogic {
       days.push({
         date: d, isToday, notToday: !isToday, dow: 'SMTWTFS'[d.getDay()], num: d.getDate(),
         mon: d.toLocaleDateString('en-US', { month: 'short' }).toUpperCase(),
-        dowColor: isToday ? 'var(--color-accent-300)' : 'var(--color-neutral-500)',
-        numColor: isToday ? 'var(--color-accent-200)' : 'var(--color-text)',
+        dowColor: 'var(--color-neutral-500)',
+        numColor: 'var(--color-text)',
         sub: (d.getDate() === 1 || i === 0) ? d.toLocaleDateString('en-US', { month: 'short' }) : '',
-        headBg: isSel ? 'rgba(145,132,217,.20)' : (isToday ? 'rgba(145,132,217,.10)' : 'transparent'),
-        colBg: isSel ? 'rgba(145,132,217,.10)' : (isToday ? 'rgba(145,132,217,.07)' : (weekend && wknd ? 'rgba(233,233,237,.022)' : 'transparent')),
+        todayOutline: isToday ? '2px solid oklch(0.75 0.15 150)' : '',
+        headBg: isSel ? 'rgba(145,132,217,.20)' : 'transparent',
+        colBg: isSel ? 'rgba(145,132,217,.10)' : (weekend && wknd ? 'rgba(233,233,237,.022)' : 'transparent'),
         onSelect: () => this.setState(s => ({ selDay: s.selDay === off ? null : off })),
         past: d < today
       });
@@ -349,7 +350,7 @@ class Component extends DCLogic {
             else { const t = p.oncall ? T.oncall : T[p.type]; Object.assign(cell, { has: true, l1: p.l1, l2: p.l2, bg: t.bg, bd: t.bd, fg: t.fg, info: p.time + (p.oncall ? ' · On call' : ''), verb: 'is working', ttime: this.ampm(p.sL) + ' to ' + this.ampm(p.eL) + (p.extra ? ' ' + p.extra : ''), oncall: p.oncall }); }
             const info = { name, date: fmtD(d.date), shift: cell.info, verb: cell.verb, ttime: cell.ttime, oncall: !!cell.oncall, img: this.photo(name), bg: cell.bg, bd: cell.bd, fg: cell.fg };
             cell.onClick = () => this.setState({ sel: info });
-            cell.onEnter = ev => { const r = ev.currentTarget.getBoundingClientRect(); const z = parseFloat(getComputedStyle(document.documentElement).zoom) || 1; this.setState({ tt: { x: (r.left + r.width / 2) / z, y: r.top / z, ...info } }); };
+            cell.onEnter = ev => { const r = ev.currentTarget.getBoundingClientRect(); const z = parseFloat(getComputedStyle(document.documentElement).zoom) || 1; const vw = window.innerWidth / z; const HALF = 176, M = 12; let x = (r.left + r.width / 2) / z; x = Math.max(M + HALF, Math.min(vw - M - HALF, x)); this.setState({ tt: { x, y: r.top / z, ...info } }); };
             return cell;
           })
         };
