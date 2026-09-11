@@ -126,8 +126,8 @@
                   </div>
                 </div>
                 <div style="display:flex;gap:8px;margin-top:16px;">
-                  <button class="btn" style="font-size:13px;flex:1;justify-content:center;color:#eda3a3;border:1px solid rgba(217,92,92,.55);background:rgba(217,92,92,.10);" style-hover="background:rgba(217,92,92,.18);">I'm Not Working</button>
-                  
+                  <button onClick="{{ reportOff }}" class="btn" style="font-size:13px;flex:1;justify-content:center;color:{{ reportFg }};border:1px solid {{ reportBd }};background:{{ reportBg }};">{{ reportLabel }}</button>
+
                 </div>
               </div>
               </div>
@@ -187,7 +187,7 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:480,&quot;height&quot;:920}}">
 class Component extends DCLogic {
-  state = { periods: null, idx: 1, sel: null, menuOpen: false, view: 'day', card: 0, openPerson: null, sheet: null };
+  state = { periods: null, idx: 1, sel: null, menuOpen: false, view: 'day', card: 0, openPerson: null, sheet: null, report: null };
   componentDidMount() {
     import('./schedule-data.js').then(m => {
       const P = m.PERIODS, today = this.today();
@@ -299,7 +299,7 @@ class Component extends DCLogic {
             const info = { name: nm, g: p.type, imgCss: this.photo(nm), verb: 'is working', time: this.ampm(p.sL) + ' to ' + this.ampm(p.eL) + (p.extra ? ' ' + p.extra : ''), oncall: p.oncall, date: fmtD(d) };
             groups[p.type].push({ name: nm, sH: p.sH, imgCss: info.imgCss, time: p.sL + '\u2013' + p.eL, oncall: p.oncall,
               rowBg: p.oncall ? 'rgba(217,92,92,.10)' : 'transparent',
-              open: () => { clearTimeout(this._settleT); this.setState({ sheet: info, settled: false }); this._settleT = setTimeout(() => this.setState({ settled: true }), 640); } });
+              open: () => { clearTimeout(this._settleT); this.setState({ sheet: info, settled: false, report: null }); this._settleT = setTimeout(() => this.setState({ settled: true }), 640); } });
           }
         }
         const total = wk.reduce((a, b) => a + b, 0);
@@ -348,12 +348,24 @@ class Component extends DCLogic {
         clearTimeout(this._settleT);
         if (st.settled) {
           this.setState({ settled: false, closing: true });
-          requestAnimationFrame(() => requestAnimationFrame(() => this.setState({ closing: false, sheet: null })));
-        } else this.setState({ sheet: null, settled: false });
+          requestAnimationFrame(() => requestAnimationFrame(() => this.setState({ closing: false, sheet: null, report: null })));
+        } else this.setState({ sheet: null, settled: false, report: null });
       },
       shName: st.sheet && st.sheet.name, shVerb: st.sheet && st.sheet.verb, shTime: st.sheet && st.sheet.time,
       shDate: st.sheet && st.sheet.date, shOnCall: !!(st.sheet && st.sheet.oncall),
-      shImgCss: st.sheet ? st.sheet.imgCss : 'none'
+      shImgCss: st.sheet ? st.sheet.imgCss : 'none',
+      reportLabel: st.report === 'sending' ? 'Sending…' : st.report === 'sent' ? 'Reported ✓' : st.report === 'error' ? 'Failed — tap to retry' : "I'm Not Working",
+      reportFg: st.report === 'sent' ? '#8adfd2' : '#eda3a3',
+      reportBd: st.report === 'sent' ? 'rgba(63,191,174,.5)' : 'rgba(217,92,92,.55)',
+      reportBg: st.report === 'sent' ? 'rgba(63,191,174,.13)' : 'rgba(217,92,92,.10)',
+      reportOff: (e) => {
+        if (e && e.stopPropagation) e.stopPropagation();
+        const s = st.sheet; if (!s || st.report === 'sending' || st.report === 'sent') return;
+        this.setState({ report: 'sending' });
+        fetch('https://formspree.io/f/moeqkzvq', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify({ name: s.name, message: s.name + ' reports they are NOT working this shift.', regarding: s.date + ' · ' + s.time + (s.oncall ? ' · on call' : ''), _subject: 'Schedule Stream — ' + s.name + ' not working ' + s.date, source: 'mobile' }) })
+          .then(r => this.setState({ report: r.ok ? 'sent' : 'error' }))
+          .catch(() => this.setState({ report: 'error' }));
+      }
     };
   }
 }
