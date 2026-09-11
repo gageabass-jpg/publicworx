@@ -250,7 +250,7 @@
           <div ref="{{ setOverlayRef }}" style="position:absolute;left:18px;right:18px;top:64px;bottom:60px;z-index:11;perspective:1600px;will-change:transform">
             <div style="position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.4,.05,.2,1);transform:{{ flipTransform }}">
               <!-- FRONT -->
-              <div style="position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;background:#ffffff;border-radius:24px;overflow:hidden;box-shadow:0 2px 6px rgba(17,17,17,0.08), 0 30px 70px rgba(17,17,17,0.24)">
+              <div style="position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;transform:translateZ(0);display:flex;flex-direction:column;background:#ffffff;border-radius:24px;overflow:hidden;box-shadow:0 2px 6px rgba(17,17,17,0.08), 0 30px 70px rgba(17,17,17,0.24)">
                 <div onClick="{{ collapse }}" title="Tap to close" style="display:flex;align-items:center;justify-content:space-between;padding:18px 18px 14px 18px;flex:none;cursor:pointer">
                   <div style="display:flex;align-items:center;gap:12px">
                     <span style="font-size:38px;font-weight:600;letter-spacing:-0.04em;line-height:0.9;font-feature-settings:'tnum'">{{ exp.num }}</span>
