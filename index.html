@@ -74,10 +74,12 @@
     </div>
   </div>
 
-  <div style="display:flex;align-items:baseline;gap:12px;margin:28px 2px 14px;">
-    <div style="font-family:var(--font-heading);font-size:28px;font-weight:500;">{{ todayDow }}</div>
-    
-    
+  <div style="display:flex;align-items:baseline;gap:12px;margin:28px 2px 14px;flex-wrap:wrap;">
+    <div style="font-family:var(--font-heading);font-size:28px;font-weight:500;">{{ headingDate }}</div>
+    <div style="font-size:13px;color:var(--color-neutral-400);">{{ selCountLabel }}</div>
+    <sc-if value="{{ showBackToday }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ backToToday }}" class="btn btn-secondary" style="font-size:12px;padding:4px 10px;">Back to today</button>
+    </sc-if>
   </div>
 
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;">
@@ -145,7 +147,7 @@
         <div style="display:grid;grid-template-columns:176px repeat(28,minmax(52px,1fr));border-bottom:1px solid rgba(233,233,237,.09);align-items:end;">
           <div style="position:sticky;left:0;background:rgba(30,32,52,.88);backdrop-filter:blur(10px);padding:14px 16px;font-size:10.5px;letter-spacing:.14em;color:var(--color-neutral-400);z-index:3;align-self:stretch;display:flex;align-items:flex-end;">STAFF</div>
           <sc-for list="{{ days }}" as="d" hint-placeholder-count="28">
-            <div style="text-align:center;padding:8px 2px 6px;background:{{ d.headBg }};">
+            <div onClick="{{ d.onSelect }}" title="Click to see this day" style="text-align:center;padding:8px 2px 6px;background:{{ d.headBg }};cursor:pointer;">
               <sc-if value="{{ d.isToday }}" hint-placeholder-val="{{ false }}">
                 <div style="width:44px;margin:0 auto;border-radius:10px;background:linear-gradient(160deg, rgba(145,132,217,.35), rgba(145,132,217,.10));border:1px solid rgba(145,132,217,.5);padding:4px 0 5px;box-shadow:0 0 18px rgba(145,132,217,.25);">
                   <div style="font-size:8.5px;letter-spacing:.12em;color:var(--color-accent-200);">{{ d.mon }}</div>
@@ -299,17 +301,25 @@ class Component extends DCLogic {
     const today = this.today();
     const base = per ? new Date(...per.start) : today;
     const fmtD = d => d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    const dateOf = o => { const d = new Date(base); d.setDate(d.getDate() + o - 1); return d; };
+    let todayOff = null;
+    if (per) { const diff = Math.round((today - base) / 86400000) + 1; if (diff >= 1 && diff <= 28) todayOff = diff; }
+    const effSel = (st.selDay != null && st.selDay >= 1 && st.selDay <= 28) ? st.selDay : (todayOff || 1);
+    const selIsToday = effSel === todayOff;
     const days = [];
     for (let i = 0; i < 28; i++) {
       const d = new Date(base); d.setDate(d.getDate() + i);
+      const off = i + 1;
       const isToday = per && d.getTime() === today.getTime();
+      const isSel = off === effSel;
       const wknd = d.getDay() === 0 || d.getDay() === 6;
       days.push({
         date: d, isToday, notToday: !isToday, dow: 'SMTWTFS'[d.getDay()], num: d.getDate(),
         mon: d.toLocaleDateString('en-US', { month: 'short' }).toUpperCase(),
         sub: (d.getDate() === 1 || i === 0) ? d.toLocaleDateString('en-US', { month: 'short' }) : '',
-        headBg: isToday ? 'rgba(145,132,217,.10)' : 'transparent',
-        colBg: isToday ? 'rgba(145,132,217,.07)' : (weekend && wknd ? 'rgba(233,233,237,.022)' : 'transparent'),
+        headBg: isSel ? 'rgba(145,132,217,.20)' : (isToday ? 'rgba(145,132,217,.10)' : 'transparent'),
+        colBg: isSel ? 'rgba(145,132,217,.10)' : (isToday ? 'rgba(145,132,217,.07)' : (weekend && wknd ? 'rgba(233,233,237,.022)' : 'transparent')),
+        onSelect: () => this.setState(s => ({ selDay: s.selDay === off ? null : off })),
         past: d < today
       });
     }
@@ -352,17 +362,15 @@ class Component extends DCLogic {
         };
       })
     }));
-    // today summary
-    const tp = P ? P.find(p => { const s = new Date(...p.start); const e = new Date(s); e.setDate(e.getDate() + 27); return today >= s && today <= e; }) : null;
-    const groups = { day: [], eve: [], night: [] }; let todayCount = 0;
-    if (tp) {
-      const off = Math.round((today - new Date(...tp.start)) / 86400000) + 1;
-      tp.sections.forEach(([label, rows]) => rows.forEach(([name, spec]) => {
-        const ent = spec.split(',').find(e => +e.slice(0, e.indexOf(':')) === off);
+    // on-shift summary for the selected day (defaults to today) within the viewed period
+    const groups = { day: [], eve: [], night: [] }; let selCount = 0;
+    if (per) {
+      per.sections.forEach(([label, rows]) => rows.forEach(([name, spec]) => {
+        const ent = spec.split(',').find(e => +e.slice(0, e.indexOf(':')) === effSel);
         if (!ent) return;
         const p = this.parseCode(ent.slice(ent.indexOf(':') + 1));
         if (p.off || p.vac || p.hol || !p.type) return;
-        todayCount++;
+        selCount++;
         const t = p.oncall ? T.oncall : T[p.type];
         const nm = name.replace(' (traveler)', '');
         groups[p.type].push({ name: nm, time: p.time, oncall: p.oncall, bg: t.bg, bd: t.bd, fg: t.fg, sH: p.sH24, sL: p.sL, range: this.ampm(p.sL) + ' \u2013 ' + this.ampm(p.eL), imgCss: this.photo(nm) ? "url('" + this.photo(nm) + "')" : 'none' });
@@ -400,7 +408,10 @@ class Component extends DCLogic {
       toggleFade: () => this.setState(s => ({ fade: !s.fade })),
       fadeTrackBg: st.fade ? 'var(--color-accent-600)' : 'rgba(233,233,237,.10)',
       fadeKnobLeft: st.fade ? '19px' : '3px',
-      todayDow: today.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }).replace(/(\d+)$/, n => n + (n % 100 >= 11 && n % 100 <= 13 ? 'th' : ['th', 'st', 'nd', 'rd'][n % 10] || 'th')), todayCount,
+      headingDate: dateOf(effSel).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }).replace(/(\d+)$/, n => n + (n % 100 >= 11 && n % 100 <= 13 ? 'th' : ['th', 'st', 'nd', 'rd'][n % 10] || 'th')),
+      selCountLabel: selCount + (selCount === 1 ? ' person on shift' : ' on shift') + (selIsToday ? ' · Today' : ''),
+      showBackToday: todayOff != null && !selIsToday,
+      backToToday: () => this.setState({ selDay: null }),
       summary, days, sections, rowH,
       expShow: !!st.exp && summary.some(c => c.expanded),
       closeExp: () => this.setState({ exp: null }),
