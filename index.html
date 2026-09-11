@@ -148,18 +148,9 @@
           <div style="position:sticky;left:0;background:rgba(30,32,52,.88);backdrop-filter:blur(10px);padding:14px 16px;font-size:10.5px;letter-spacing:.14em;color:var(--color-neutral-400);z-index:3;align-self:stretch;display:flex;align-items:flex-end;">STAFF</div>
           <sc-for list="{{ days }}" as="d" hint-placeholder-count="28">
             <div onClick="{{ d.onSelect }}" title="Click to see this day" style="text-align:center;padding:8px 2px 6px;background:{{ d.headBg }};cursor:pointer;">
-              <sc-if value="{{ d.isToday }}" hint-placeholder-val="{{ false }}">
-                <div style="width:44px;margin:0 auto;border-radius:10px;background:linear-gradient(160deg, rgba(145,132,217,.35), rgba(145,132,217,.10));border:1px solid rgba(145,132,217,.5);padding:4px 0 5px;box-shadow:0 0 18px rgba(145,132,217,.25);">
-                  <div style="font-size:8.5px;letter-spacing:.12em;color:var(--color-accent-200);">{{ d.mon }}</div>
-                  <div style="font-family:var(--font-heading);font-size:17px;font-weight:500;line-height:1.1;">{{ d.num }}</div>
-                  <div style="font-size:8.5px;color:var(--color-accent-200);">{{ d.dow }}</div>
-                </div>
-              </sc-if>
-              <sc-if value="{{ d.notToday }}" hint-placeholder-val="{{ true }}">
-                <div style="font-size:10px;color:var(--color-neutral-500);">{{ d.dow }}</div>
-                <div style="font-family:var(--font-heading);font-size:14px;font-weight:500;color:var(--color-text);">{{ d.num }}</div>
-                <div style="font-size:9px;color:var(--color-neutral-500);height:11px;">{{ d.sub }}</div>
-              </sc-if>
+              <div style="font-size:10px;color:{{ d.dowColor }};">{{ d.dow }}</div>
+              <div style="font-family:var(--font-heading);font-size:14px;font-weight:500;color:{{ d.numColor }};">{{ d.num }}</div>
+              <div style="font-size:9px;color:{{ d.dowColor }};height:11px;">{{ d.sub }}</div>
             </div>
           </sc-for>
         </div>
@@ -316,6 +307,8 @@ class Component extends DCLogic {
       days.push({
         date: d, isToday, notToday: !isToday, dow: 'SMTWTFS'[d.getDay()], num: d.getDate(),
         mon: d.toLocaleDateString('en-US', { month: 'short' }).toUpperCase(),
+        dowColor: isToday ? 'var(--color-accent-300)' : 'var(--color-neutral-500)',
+        numColor: isToday ? 'var(--color-accent-200)' : 'var(--color-text)',
         sub: (d.getDate() === 1 || i === 0) ? d.toLocaleDateString('en-US', { month: 'short' }) : '',
         headBg: isSel ? 'rgba(145,132,217,.20)' : (isToday ? 'rgba(145,132,217,.10)' : 'transparent'),
         colBg: isSel ? 'rgba(145,132,217,.10)' : (isToday ? 'rgba(145,132,217,.07)' : (weekend && wknd ? 'rgba(233,233,237,.022)' : 'transparent')),
