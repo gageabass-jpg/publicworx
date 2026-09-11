@@ -388,15 +388,15 @@ class Component extends DCLogic {
     const endD = new Date(base); endD.setDate(endD.getDate() + 27);
     return {
       rangeLabel: per ? fmtR(base) + ' \u2013 ' + fmtR(endD) + ', ' + endD.getFullYear() : 'Loading\u2026',
-      prevRange: () => this.setState(s => ({ idx: Math.max(0, s.idx - 1), menuOpen: false })),
-      nextRange: () => this.setState(s => ({ idx: Math.min((P ? P.length : 1) - 1, s.idx + 1), menuOpen: false })),
+      prevRange: () => this.setState(s => ({ idx: Math.max(0, s.idx - 1), menuOpen: false, focus: [] })),
+      nextRange: () => this.setState(s => ({ idx: Math.min((P ? P.length : 1) - 1, s.idx + 1), menuOpen: false, focus: [] })),
       prevDisabled: st.idx === 0, nextDisabled: !P || st.idx === P.length - 1,
       prevOp: st.idx === 0 ? .35 : 1, nextOp: (!P || st.idx === P.length - 1) ? .35 : 1,
       toggleMenu: () => this.setState(s => ({ menuOpen: !s.menuOpen })),
       menuOpen: st.menuOpen,
       selectBd: st.menuOpen ? 'var(--color-accent)' : 'rgba(233,233,237,.16)',
       chevRot: st.menuOpen ? 'rotate(180deg)' : 'none',
-      periodOpts: (P || []).map((p, i) => ({ title: p.title, active: i === st.idx, fg: i === st.idx ? 'var(--color-accent-200)' : 'var(--color-text)', bg: i === st.idx ? 'rgba(145,132,217,.10)' : 'transparent', pick: () => this.setState({ idx: i, menuOpen: false }) })),
+      periodOpts: (P || []).map((p, i) => ({ title: p.title, active: i === st.idx, fg: i === st.idx ? 'var(--color-accent-200)' : 'var(--color-text)', bg: i === st.idx ? 'rgba(145,132,217,.10)' : 'transparent', pick: () => this.setState({ idx: i, menuOpen: false, focus: [] }) })),
       toggleFade: () => this.setState(s => ({ fade: !s.fade })),
       fadeTrackBg: st.fade ? 'var(--color-accent-600)' : 'rgba(233,233,237,.10)',
       fadeKnobLeft: st.fade ? '19px' : '3px',
