@@ -247,10 +247,11 @@
         </sc-if>
         <sc-if value="{{ isExpanded }}" hint-placeholder-val="{{ false }}">
           <div onClick="{{ collapse }}" style="position:absolute;inset:0;z-index:10;background:rgba(244,244,242,0.55);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);animation:ss-fade .18s ease"></div>
-          <div ref="{{ setOverlayRef }}" style="position:absolute;left:18px;right:18px;top:64px;bottom:60px;z-index:11;perspective:1600px;will-change:transform">
-            <div style="position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.4,.05,.2,1);transform:{{ flipTransform }}">
+          <div ref="{{ setOverlayRef }}" style="position:absolute;left:18px;right:18px;top:64px;bottom:60px;z-index:11;will-change:transform">
+            <div style="position:relative;width:100%;height:100%">
               <!-- FRONT -->
-              <div style="position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;transform:translateZ(0);display:flex;flex-direction:column;background:#ffffff;border-radius:24px;overflow:hidden;box-shadow:0 2px 6px rgba(17,17,17,0.08), 0 30px 70px rgba(17,17,17,0.24)">
+              <sc-if value="{{ showFront }}" hint-placeholder-val="{{ true }}">
+              <div style="position:absolute;inset:0;display:flex;flex-direction:column;background:#ffffff;border-radius:24px;overflow:hidden;box-shadow:0 2px 6px rgba(17,17,17,0.08), 0 30px 70px rgba(17,17,17,0.24);animation:ss-fade .18s ease">
                 <div onClick="{{ collapse }}" title="Tap to close" style="display:flex;align-items:center;justify-content:space-between;padding:18px 18px 14px 18px;flex:none;cursor:pointer">
                   <div style="display:flex;align-items:center;gap:12px">
                     <span style="font-size:38px;font-weight:600;letter-spacing:-0.04em;line-height:0.9;font-feature-settings:'tnum'">{{ exp.num }}</span>
@@ -267,7 +268,7 @@
                   </button>
                 </div>
                 <div style="padding:0 18px 4px 18px;font-size:10.5px;font-weight:600;letter-spacing:0.08em;color:#b0b0ad;flex:none">{{ exp.countLabel }}</div>
-                <div class="nosb" style="flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;transform:translateZ(0);padding:4px 18px 18px 18px">
+                <div class="nosb" style="flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:4px 18px 18px 18px">
                   <sc-for list="{{ exp.staff }}" as="p" hint-placeholder-count="5">
                     <div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-top:1px solid #efefed">
                       <span style="width:34px;height:34px;border-radius:50%;background-color:{{ p.avatarBg }};background-image:{{ p.img }};background-size:cover;background-position:center;color:{{ p.avatarFg }};display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex:none">{{ p.initials }}</span>
@@ -284,8 +285,10 @@
                   </sc-if>
                 </div>
               </div>
+              </sc-if>
               <!-- BACK -->
-              <div style="position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;transform:rotateY(180deg);display:flex;flex-direction:column;background:#111111;color:#ffffff;border-radius:24px;overflow:hidden;box-shadow:0 2px 6px rgba(17,17,17,0.08), 0 30px 70px rgba(17,17,17,0.30)">
+              <sc-if value="{{ showBack }}" hint-placeholder-val="{{ false }}">
+              <div style="position:absolute;inset:0;display:flex;flex-direction:column;background:#111111;color:#ffffff;border-radius:24px;overflow:hidden;box-shadow:0 2px 6px rgba(17,17,17,0.08), 0 30px 70px rgba(17,17,17,0.30);animation:ss-fade .18s ease">
                 <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 18px 14px 18px;flex:none">
                   <div style="display:flex;align-items:center;gap:12px">
                     <span style="font-size:38px;font-weight:600;letter-spacing:-0.04em;line-height:0.9;font-feature-settings:'tnum'">{{ exp.num }}</span>
@@ -299,7 +302,7 @@
                   </button>
                 </div>
                 <div style="padding:0 18px 4px 18px;font-size:10.5px;font-weight:600;letter-spacing:0.08em;color:rgba(255,255,255,0.45);flex:none">TAP TRASH TO MARK NOT WORKING</div>
-                <div class="nosb" style="flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;transform:translateZ(0);padding:4px 18px 18px 18px">
+                <div class="nosb" style="flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:4px 18px 18px 18px">
                   <sc-for list="{{ exp.staff }}" as="p" hint-placeholder-count="5">
                     <div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-top:1px solid rgba(255,255,255,0.1)">
                       <span style="width:34px;height:34px;border-radius:50%;background-color:rgba(255,255,255,0.14);background-image:{{ p.img }};background-size:cover;background-position:center;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex:none">{{ p.initials }}</span>
@@ -315,6 +318,7 @@
                   </sc-if>
                 </div>
               </div>
+              </sc-if>
             </div>
           </div>
         </sc-if>
@@ -550,7 +554,8 @@ class Component extends DCLogic {
       closePicker: () => this.setState({ pickerOpen: false }),
       periodShort: fmtR(base) + ' \u2013 ' + fmtR(endD),
       isExpanded: st.expanded != null,      exp: exp || { num: '', weekday: '', monthYear: '', isToday: false, countLabel: '', empty: true, staff: [] },
-      flipTransform: st.flipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+      showFront: !st.flipped,
+      showBack: !!st.flipped,
       toggleFlip: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState(s => ({ flipped: !s.flipped })); },
       collapse: () => this.closeCard(),
       setOverlayRef: el => { this.overlayEl = el; },
