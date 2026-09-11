@@ -248,10 +248,9 @@
         <sc-if value="{{ isExpanded }}" hint-placeholder-val="{{ false }}">
           <div onClick="{{ collapse }}" style="position:absolute;inset:0;z-index:10;background:rgba(244,244,242,0.55);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);animation:ss-fade .18s ease"></div>
           <div ref="{{ setOverlayRef }}" style="position:absolute;left:18px;right:18px;top:64px;bottom:60px;z-index:11;will-change:transform">
-            <div style="position:relative;width:100%;height:100%">
+            <div ref="{{ setFlipRef }}" style="position:relative;width:100%;height:100%">
               <!-- FRONT -->
-              <sc-if value="{{ showFront }}" hint-placeholder-val="{{ true }}">
-              <div style="position:absolute;inset:0;display:flex;flex-direction:column;background:#ffffff;border-radius:24px;overflow:hidden;box-shadow:0 2px 6px rgba(17,17,17,0.08), 0 30px 70px rgba(17,17,17,0.24);animation:ss-fade .18s ease">
+              <div style="position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;background:#ffffff;border-radius:24px;overflow:hidden;box-shadow:0 2px 6px rgba(17,17,17,0.08), 0 30px 70px rgba(17,17,17,0.24);visibility:{{ frontVis }}">
                 <div onClick="{{ collapse }}" title="Tap to close" style="display:flex;align-items:center;justify-content:space-between;padding:18px 18px 14px 18px;flex:none;cursor:pointer">
                   <div style="display:flex;align-items:center;gap:12px">
                     <span style="font-size:38px;font-weight:600;letter-spacing:-0.04em;line-height:0.9;font-feature-settings:'tnum'">{{ exp.num }}</span>
@@ -285,10 +284,8 @@
                   </sc-if>
                 </div>
               </div>
-              </sc-if>
               <!-- BACK -->
-              <sc-if value="{{ showBack }}" hint-placeholder-val="{{ false }}">
-              <div style="position:absolute;inset:0;display:flex;flex-direction:column;background:#111111;color:#ffffff;border-radius:24px;overflow:hidden;box-shadow:0 2px 6px rgba(17,17,17,0.08), 0 30px 70px rgba(17,17,17,0.30);animation:ss-fade .18s ease">
+              <div style="position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;transform:{{ backTransform }};display:flex;flex-direction:column;background:#111111;color:#ffffff;border-radius:24px;overflow:hidden;box-shadow:0 2px 6px rgba(17,17,17,0.08), 0 30px 70px rgba(17,17,17,0.30);visibility:{{ backVis }}">
                 <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 18px 14px 18px;flex:none">
                   <div style="display:flex;align-items:center;gap:12px">
                     <span style="font-size:38px;font-weight:600;letter-spacing:-0.04em;line-height:0.9;font-feature-settings:'tnum'">{{ exp.num }}</span>
@@ -318,7 +315,6 @@
                   </sc-if>
                 </div>
               </div>
-              </sc-if>
             </div>
           </div>
         </sc-if>
@@ -327,7 +323,7 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;showRail&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Layout&quot;},&quot;scaleFalloff&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:0.03,&quot;min&quot;:0,&quot;max&quot;:0.08,&quot;step&quot;:0.01,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Motion&quot;}}">
 class Component extends DCLogic {
-  state = { periods: null, idx: 0, active: 0, expanded: null, flipped: false, removed: {}, railOpen: false, pickerOpen: false, todayFocus: false, todayMenuOpen: false, headerLogo: false, composerOpen: false, composerSent: false, cal: null, rangeStart: null, rangeEnd: null, scrubbing: false };
+  state = { periods: null, idx: 0, active: 0, expanded: null, flipped: false, flipping: false, removed: {}, railOpen: false, pickerOpen: false, todayFocus: false, todayMenuOpen: false, headerLogo: false, composerOpen: false, composerSent: false, cal: null, rangeStart: null, rangeEnd: null, scrubbing: false };
   cards = []; wraps = []; railRows = [];
   componentWillUnmount() { clearInterval(this._logoTimer); }
   componentDidMount() {
@@ -554,11 +550,13 @@ class Component extends DCLogic {
       closePicker: () => this.setState({ pickerOpen: false }),
       periodShort: fmtR(base) + ' \u2013 ' + fmtR(endD),
       isExpanded: st.expanded != null,      exp: exp || { num: '', weekday: '', monthYear: '', isToday: false, countLabel: '', empty: true, staff: [] },
-      showFront: !st.flipped,
-      showBack: !!st.flipped,
-      toggleFlip: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState(s => ({ flipped: !s.flipped })); },
+      frontVis: (!st.flipped || st.flipping) ? 'visible' : 'hidden',
+      backVis: (st.flipped || st.flipping) ? 'visible' : 'hidden',
+      backTransform: (st.flipped && !st.flipping) ? 'none' : 'rotateY(180deg)',
+      toggleFlip: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.flipCard(); },
       collapse: () => this.closeCard(),
       setOverlayRef: el => { this.overlayEl = el; },
+      setFlipRef: el => { this.flipEl = el; },
       togglePeriod: () => this.setState(s => ({ idx: (s.idx + 1) % s.periods.length, active: 0, expanded: null, flipped: false }), () => {
         if (this.scroller) this.scroller.scrollTop = 0; this.onScroll();
       }),
@@ -723,18 +721,53 @@ class Component extends DCLogic {
     const src = this.cards[idx0];
     this._srcRect = src ? src.getBoundingClientRect() : null;
     this._expandIdx = idx0;
-    this.setState({ expanded: o, flipped: false }, () => this.flipAnimate(true));
+    clearTimeout(this._flipT); this._flipping = false;
+    this.setState({ expanded: o, flipped: false, flipping: false }, () => {
+      // Rest state: flat, upright, scrollable. Clear any leftover 3D from a prior flip.
+      if (this.flipEl) { this.flipEl.style.transition = 'none'; this.flipEl.style.transform = 'none'; this.flipEl.style.transformStyle = 'flat'; }
+      if (this.overlayEl) this.overlayEl.style.perspective = 'none';
+      this.flipAnimate(true);
+    });
+  }
+  flipCard() {
+    if (this._flipping) return;
+    const wrap = this.flipEl, ov = this.overlayEl;
+    const toBack = !this.state.flipped;
+    this._flipping = true;
+    // Enter a 3D context only for the duration of the flip, then flatten again
+    // so the resting face is a normal (scrollable) element on iOS.
+    this.setState({ flipping: true }, () => {
+      if (wrap) {
+        if (ov) ov.style.perspective = '1600px';
+        wrap.style.transformStyle = 'preserve-3d';
+        wrap.style.transition = 'none';
+        wrap.style.transform = toBack ? 'rotateY(0deg)' : 'rotateY(180deg)';
+        void wrap.offsetWidth;
+        requestAnimationFrame(() => {
+          wrap.style.transition = 'transform .5s cubic-bezier(.4,.05,.2,1)';
+          wrap.style.transform = toBack ? 'rotateY(180deg)' : 'rotateY(0deg)';
+        });
+      }
+      clearTimeout(this._flipT);
+      this._flipT = setTimeout(() => {
+        this._flipping = false;
+        if (wrap) { wrap.style.transition = 'none'; wrap.style.transform = 'none'; wrap.style.transformStyle = 'flat'; }
+        if (ov) ov.style.perspective = 'none';
+        this.setState({ flipped: toBack, flipping: false });
+      }, 540);
+    });
   }
   closeCard() {
     if (this._closing) return;
+    clearTimeout(this._flipT); this._flipping = false;
     this.flipAnimate(false);
   }
   flipAnimate(opening) {
-    const el = this.overlayEl; if (!el) { if (!opening) this.setState({ expanded: null, flipped: false }); return; }
+    const el = this.overlayEl; if (!el) { if (!opening) this.setState({ expanded: null, flipped: false, flipping: false }); return; }
     const src = (this._expandIdx != null && this.cards[this._expandIdx]) ? this.cards[this._expandIdx].getBoundingClientRect() : this._srcRect;
     const tgt = el.getBoundingClientRect();
     const ease = 'cubic-bezier(.4,.02,.2,1)';
-    if (!src || !tgt.width) { if (!opening) this.setState({ expanded: null, flipped: false }); return; }
+    if (!src || !tgt.width) { if (!opening) this.setState({ expanded: null, flipped: false, flipping: false }); return; }
     const sx = src.width / tgt.width, sy = src.height / tgt.height;
     const tx = src.left - tgt.left, ty = src.top - tgt.top;
     const collapsed = 'translate(' + tx + 'px,' + ty + 'px) scale(' + sx + ',' + sy + ')';
@@ -753,7 +786,7 @@ class Component extends DCLogic {
       el.style.transition = 'transform .38s ' + ease + ', opacity .3s ease';
       el.style.transform = collapsed;
       el.style.opacity = '0';
-      const done = () => { el.removeEventListener('transitionend', done); this._closing = false; this.setState({ expanded: null, flipped: false }); };
+      const done = () => { el.removeEventListener('transitionend', done); this._closing = false; this.setState({ expanded: null, flipped: false, flipping: false }); };
       el.addEventListener('transitionend', done);
       setTimeout(done, 460);
     }
