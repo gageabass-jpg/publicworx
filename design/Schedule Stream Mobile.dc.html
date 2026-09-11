@@ -2,11 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<link rel="icon" href="/avatar.png">
-<link rel="apple-touch-icon" href="/avatar.png">
-<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
-<script defer src="/_vercel/insights/script.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="./support.js"></script>
 </head>
 <body>
@@ -17,22 +13,20 @@
   <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
   <style>
     html,body{margin:0;padding:0;}
-    html{background:var(--color-bg);}
     body{background:
       radial-gradient(900px 480px at 20% -6%, rgba(145,132,217,.18), transparent 65%),
       radial-gradient(800px 460px at 85% 8%, rgba(76,70,150,.24), transparent 60%),
       var(--color-bg);
-      min-height:100vh;font-family:var(--font-body);color:var(--color-text);
-      -webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;}
-    *{box-sizing:border-box}
+      min-height:100vh;font-family:var(--font-body);color:var(--color-text);}
     a{color:var(--color-accent-300);} a:hover{color:var(--color-accent-200);}
     @keyframes ss-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
     .nosb::-webkit-scrollbar{display:none}
-    button:focus-visible{outline:2px solid #9184d9;outline-offset:2px}
   </style>
 </helmet>
-    <div style="height:100vh;height:100dvh;max-width:480px;margin:0 auto;position:relative;overflow:hidden;font-family:var(--font-body);color:var(--color-text);background:radial-gradient(500px 320px at 25% -4%, rgba(145,132,217,.22), transparent 65%),radial-gradient(460px 300px at 90% 10%, rgba(76,70,150,.26), transparent 60%),var(--color-bg);display:flex;flex-direction:column;">
-      <div class="nosb" data-page="1" style="flex:1;overflow-y:auto;scrollbar-width:none;padding:calc(18px + env(safe-area-inset-top)) 16px 96px;">
+<div style="min-height:100vh;display:grid;place-items:center;padding:32px 16px;">
+  <x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" dark="{{ true }}" status-bar-opacity="{{ sbOp }}" hint-size="430px,880px">
+    <div style="height:100%;position:relative;overflow:hidden;font-family:var(--font-body);color:var(--color-text);background:radial-gradient(500px 320px at 25% -4%, rgba(145,132,217,.22), transparent 65%),radial-gradient(460px 300px at 90% 10%, rgba(76,70,150,.26), transparent 60%),var(--color-bg);display:flex;flex-direction:column;">
+      <div class="nosb" data-page="1" onScroll="{{ onPageScroll }}" style="flex:1;overflow-y:auto;scrollbar-width:none;padding:58px 16px 96px;">
         <div style="display:flex;align-items:center;justify-content:space-between;">
           <div style="display:flex;align-items:center;gap:9px;">
             <img src="avatar.png" alt="Schedule Stream" width="26" height="26" style="display:block;border-radius:6px;">
@@ -41,7 +35,7 @@
               <div style="font-size:8.5px;letter-spacing:.14em;color:var(--color-neutral-400);">TMH RADIOLOGY</div>
             </div>
           </div>
-          <span onClick="{{ goDesktop }}" title="Desktop view" style="width:30px;height:30px;border-radius:8px;background:rgba(233,233,237,.06);border:1px solid rgba(233,233,237,.12);display:inline-flex;align-items:center;justify-content:center;color:var(--color-neutral-300);font-size:15px;cursor:pointer;"><i class="ph ph-desktop"></i></span>
+          <span title="Desktop view" style="width:30px;height:30px;border-radius:8px;background:rgba(233,233,237,.06);border:1px solid rgba(233,233,237,.12);display:inline-flex;align-items:center;justify-content:center;color:var(--color-neutral-300);font-size:15px;cursor:pointer;"><i class="ph ph-desktop"></i></span>
         </div>
         <div style="position:relative;margin-top:16px;">
           <button onClick="{{ toggleMenu }}" style="all:unset;cursor:pointer;display:flex;align-items:center;gap:9px;">
@@ -174,7 +168,7 @@
           </div>
         </sc-if>
       </div>
-      <div style="position:absolute;bottom:0;left:0;right:0;padding:10px 16px calc(16px + env(safe-area-inset-bottom));background:rgba(22,24,38,.72);backdrop-filter:blur(24px);border-top:1px solid rgba(233,233,237,.08);z-index:6;">
+      <div style="position:absolute;bottom:0;left:0;right:0;padding:10px 16px 24px;background:rgba(22,24,38,.72);backdrop-filter:blur(24px);border-top:1px solid rgba(233,233,237,.08);z-index:6;">
         <div style="display:flex;gap:2px;padding:3px;border-radius:12px;background:rgba(233,233,237,.07);">
           <button onClick="{{ viewDay }}" style="all:unset;box-sizing:border-box;flex:1;cursor:pointer;min-height:38px;border-radius:9px;font-size:14px;font-weight:600;text-align:center;background:{{ dayTabBg }};color:{{ dayTabFg }};transition:background .2s;">Day</button>
           <button onClick="{{ viewStaff }}" style="all:unset;box-sizing:border-box;flex:1;cursor:pointer;min-height:38px;border-radius:9px;font-size:14px;font-weight:600;text-align:center;background:{{ staffTabBg }};color:{{ staffTabFg }};transition:background .2s;">Staff</button>
@@ -184,10 +178,12 @@
         <div onClick="{{ closeSheet }}" style="position:absolute;inset:0;z-index:20;background:rgba(16,17,28,.5);backdrop-filter:blur(8px);animation:ss-in .2s ease;"></div>
       </sc-if>
     </div>
+  </x-import>
+</div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:480,&quot;height&quot;:920}}">
 class Component extends DCLogic {
-  state = { periods: null, idx: 1, sel: null, menuOpen: false, view: 'day', card: 0, openPerson: null, sheet: null };
+  state = { periods: null, idx: 1, sel: null, menuOpen: false, view: 'day', card: 0, openPerson: null, sheet: null, sbOp: 1 };
   componentDidMount() {
     import('./schedule-data.js').then(m => {
       const P = m.PERIODS, today = this.today();
@@ -341,9 +337,10 @@ class Component extends DCLogic {
       cardDots: ['Day','Evening','Night'].map((n, i) => ({ w: i === st.card ? '20px' : '6px', bg: i === st.card ? 'var(--color-accent-300)' : 'rgba(233,233,237,.18)', go: () => { const el = document.querySelector('[data-cards]'); if (el) el.scrollTo({ left: i * (el.clientWidth - 20), behavior: 'smooth' }); } })),
       staff,
       viewDay: () => this.setState({ view: 'day' }), viewStaff: () => this.setState({ view: 'staff' }),
-      goDesktop: () => { window.location.href = 'index.html?desktop=1'; },
       dayTabBg: st.view === 'day' ? 'rgba(145,132,217,.18)' : 'transparent', dayTabFg: st.view === 'day' ? 'var(--color-accent-200)' : 'var(--color-neutral-400)',
       staffTabBg: st.view === 'staff' ? 'rgba(145,132,217,.18)' : 'transparent', staffTabFg: st.view === 'staff' ? 'var(--color-accent-200)' : 'var(--color-neutral-400)',
+      sbOp: st.sbOp,
+      onPageScroll: e => { const op = Math.max(0, Math.min(1, 1 - e.currentTarget.scrollTop / 70)); if (Math.abs(op - st.sbOp) > .04 || (op === 0) !== (st.sbOp === 0) || (op === 1) !== (st.sbOp === 1)) this.setState({ sbOp: op }); },
       sheetShow: !!st.sheet, closeSheet: () => {
         clearTimeout(this._settleT);
         if (st.settled) {
