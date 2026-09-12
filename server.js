@@ -6,6 +6,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const scheduleHandler = require('./api/schedule');
+const removalHandler = require('./api/removal-request');
 
 const ROOT = __dirname;
 const PORT = process.env.PORT || 3000;
@@ -61,6 +62,10 @@ const server = http.createServer((req, res) => {
     // Adapt: the Vercel handler expects req.url to be the full path with query
     req.url = req.url;
     return scheduleHandler(req, res);
+  }
+
+  if (pathname === '/api/removal-request') {
+    return removalHandler(req, res);
   }
 
   serveStatic(req, res, pathname);
