@@ -252,7 +252,10 @@
     </section>
 
     <section class="panel" style="padding-bottom:12px">
-      <div class="panel-head" style="align-items:flex-start"><h2>History</h2><span class="count" style="max-width:520px;text-align:right">Recent commits to the schedule files. Restore puts every schedule file back the way it was at that commit.</span></div>
+      <div class="panel-head" style="align-items:flex-start;gap:12px">
+        <div style="display:flex;align-items:center;gap:10px"><h2>History</h2><span id="historyActionTag" class="tag hidden" style="background:rgba(224,160,48,.16);border:1px solid rgba(224,160,48,.5);color:#e3b45a"></span></div>
+        <span class="count" style="max-width:460px;text-align:right">Mobile requests needing action, plus recent commits. Restore puts every schedule file back the way it was at that commit.</span>
+      </div>
       <div style="overflow-x:auto">
         <table class="table" style="min-width:760px">
           <thead><tr><th style="width:24%">When</th><th>Note</th><th style="width:18%">Files</th><th style="width:12%">By</th><th style="width:10%">Commit</th><th style="width:92px"></th></tr></thead>
@@ -367,24 +370,87 @@
     }).join('');
     const problems = ROLES.flatMap(r => L[r].missing ? [`${L[r].path} is missing on the live site.`] : [...L[r].errors, ...L[r].warnings]);
     if (problems.length) setMsg($('liveWarnings'), anyErr ? 'bad' : 'warn', problems.map(esc).join('<br>')); else show($('liveWarnings'), false);
-    renderHistory(status.history);
+    renderHistory(status.history, inboxItems);
     renderStaged();
+    loadInbox();
   }
 
-  function renderHistory(list) {
-    if (!list.length) { $('historyBody').innerHTML = '<tr><td colspan="6" class="muted">No history yet.</td></tr>'; return; }
-    $('historyBody').innerHTML = list.map((c, i) => {
-      const w = when(c.date);
-      return `<tr>
-        <td style="white-space:nowrap"><div style="line-height:20px">${esc(w.rel)}</div><div class="muted" style="font-size:12px;line-height:16px">${esc(w.abs)}</div></td>
-        <td style="line-height:20px">${esc(c.message)}</td>
-        <td class="mono muted" style="font-size:12px"><div style="display:flex;flex-direction:column">${c.files.map(f => '<span>' + esc(f) + '</span>').join('')}</div></td>
-        <td style="font-size:13px;color:var(--color-neutral-300)">${esc(c.author)}</td>
-        <td><a class="mono" href="${esc(c.url)}" target="_blank" rel="noopener" style="font-size:13px">${esc(c.short)}</a></td>
-        <td style="text-align:right">${i === 0 ? '<span class="tag" style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.92 0.06 150);background:oklch(0.42 0.11 150)">live</span>' : `<button class="btn btn-secondary sm restore" data-sha="${esc(c.sha)}" data-short="${esc(c.short)}">Restore</button>`}</td>
-      </tr>`;
-    }).join('');
-    $('historyBody').querySelectorAll('button.restore').forEach(b => b.addEventListener('click', () => restore(b.dataset.sha, b.dataset.short)));
+  // ---------- mobile inbox (removal requests + discrepancy reports) ----------
+  const REMOVAL_API = '/api/removal-request';
+  let inboxItems = [];
+  async function inboxApi(method, op, body) {
+    const res = await fetch(REMOVAL_API + '?op=' + encodeURIComponent(op), {
+      method, headers: { 'Content-Type': 'application/json', 'X-Admin-Password': password }, body: body ? JSON.stringify(body) : undefined,
+    });
+    let data = null;
+    try { data = await res.json(); } catch { data = { error: 'The server returned an unreadable response (' + res.status + ').' }; }
+    if (!res.ok) { const e = new Error(data.error || ('Request failed (' + res.status + ')')); e.status = res.status; throw e; }
+    return data;
+  }
+  const needsAction = x => (x.kind === 'removal' && x.status === 'pending') || (x.kind === 'discrepancy' && x.status === 'open');
+  async function loadInbox() {
+    try { const d = await inboxApi('GET', 'inbox'); inboxItems = d.items || []; }
+    catch (err) { if (err.status === 401) { signOut('Wrong password.'); return; } inboxItems = []; }
+    if (status) renderHistory(status.history, inboxItems);
+  }
+  async function resolveInbox(key, action) {
+    try { await inboxApi('POST', 'resolve', { key, action }); }
+    catch (err) { if (err.status === 401) return signOut('Wrong password.'); alert(err.message); return; }
+    loadInbox();
+  }
+
+  function actionRow(w, desc, actions, need, statusTag) {
+    const rel = w ? `<div style="line-height:20px">${esc(w.rel)}</div><div class="muted" style="font-size:12px;line-height:16px">${esc(w.abs)}</div>` : '';
+    const badge = need
+      ? '<span class="tag" style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;background:rgba(224,160,48,.16);border:1px solid rgba(224,160,48,.5);color:#e3b45a">action needed</span>'
+      : (statusTag || '');
+    return `<tr style="background:${need ? 'rgba(224,160,48,.05)' : 'transparent'}">
+      <td style="white-space:nowrap;vertical-align:top">${rel}</td>
+      <td colspan="4" style="vertical-align:top"><div style="display:flex;flex-direction:column;gap:8px"><div>${desc}</div><div style="display:flex;gap:8px;flex-wrap:wrap">${actions}</div></div></td>
+      <td style="text-align:right;vertical-align:top">${badge}</td>
+    </tr>`;
+  }
+  function inboxRow(x) {
+    const w = x.requestedAt ? when(x.requestedAt) : null;
+    const need = needsAction(x);
+    if (x.kind === 'discrepancy') {
+      const head = `<strong>Discrepancy</strong> from ${esc(x.name)}${x.regarding ? ' · ' + esc(x.regarding) : ''}`;
+      const desc = `<div style="line-height:18px">${head}</div><div class="muted" style="font-size:12.5px;white-space:normal;line-height:16px;margin-top:2px">${esc(x.message || '')}</div>`;
+      const actions = need
+        ? `<button class="btn btn-primary sm" data-act="resolve" data-key="${esc(x.key)}">Resolve</button>`
+        : `<button class="btn btn-secondary sm" data-act="delete" data-key="${esc(x.key)}">Delete</button>`;
+      return actionRow(w, desc, actions, need, '<span class="tag tag-neutral" style="font-size:10px">resolved</span>');
+    }
+    const detail = `${esc(x.day || ('Day ' + x.offset))}${x.time ? ' · ' + esc(x.time) : ''}`;
+    const desc = `<div style="line-height:18px"><strong>Removal</strong> — ${esc(x.name)} · ${detail}</div><div class="muted" style="font-size:12px;line-height:16px">${esc(x.period)}</div>`;
+    const actions = need
+      ? `<button class="btn btn-primary sm" data-act="approve" data-key="${esc(x.key)}">Approve</button><button class="btn btn-secondary sm" data-act="reject" data-key="${esc(x.key)}">Reject</button>`
+      : `<button class="btn btn-secondary sm" data-act="reject" data-key="${esc(x.key)}">Put back</button>`;
+    return actionRow(w, desc, actions, need, '<span class="tag tag-neutral" style="font-size:10px">approved · hidden</span>');
+  }
+  function commitRow(c, i) {
+    const w = when(c.date);
+    return `<tr>
+      <td style="white-space:nowrap;vertical-align:top"><div style="line-height:20px">${esc(w.rel)}</div><div class="muted" style="font-size:12px;line-height:16px">${esc(w.abs)}</div></td>
+      <td style="line-height:20px;vertical-align:top">${esc(c.message)}</td>
+      <td class="mono muted" style="font-size:12px;vertical-align:top"><div style="display:flex;flex-direction:column">${c.files.map(f => '<span>' + esc(f) + '</span>').join('')}</div></td>
+      <td style="font-size:13px;color:var(--color-neutral-300);vertical-align:top">${esc(c.author)}</td>
+      <td style="vertical-align:top"><a class="mono" href="${esc(c.url)}" target="_blank" rel="noopener" style="font-size:13px">${esc(c.short)}</a></td>
+      <td style="text-align:right;vertical-align:top">${i === 0 ? '<span class="tag" style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:oklch(0.92 0.06 150);background:oklch(0.42 0.11 150)">live</span>' : `<button class="btn btn-secondary sm restore" data-sha="${esc(c.sha)}" data-short="${esc(c.short)}">Restore</button>`}</td>
+    </tr>`;
+  }
+  function renderHistory(commits, items) {
+    commits = commits || [];
+    items = (items || []).slice().sort((a, b) => (a.requestedAt < b.requestedAt ? 1 : -1));
+    const need = items.filter(needsAction).length;
+    const tag = $('historyActionTag');
+    if (tag) { if (need) { tag.textContent = need + ' action needed'; tag.classList.remove('hidden'); } else tag.classList.add('hidden'); }
+    const rows = items.map(inboxRow).concat(commits.map((c, i) => commitRow(c, i)));
+    const body = $('historyBody');
+    if (!rows.length) { body.innerHTML = '<tr><td colspan="6" class="muted">No history yet.</td></tr>'; return; }
+    body.innerHTML = rows.join('');
+    body.querySelectorAll('button.restore').forEach(b => b.addEventListener('click', () => restore(b.dataset.sha, b.dataset.short)));
+    body.querySelectorAll('[data-act]').forEach(b => b.addEventListener('click', () => resolveInbox(b.getAttribute('data-key'), b.getAttribute('data-act'))));
   }
 
   async function restore(sha, short) {

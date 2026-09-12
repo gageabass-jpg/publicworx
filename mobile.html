@@ -68,9 +68,12 @@
               </div>
               <div style="padding:0 18px 12px 18px;display:flex;flex-direction:column">
                 <sc-for list="{{ day.preview }}" as="p" hint-placeholder-count="4">
-                  <div style="display:flex;align-items:center;gap:11px;padding:9px 0;border-top:1px solid #efefed">
+                  <div style="display:flex;align-items:center;gap:11px;padding:9px 0;border-top:1px solid #efefed;opacity:{{ p.rowOpacity }}">
                     <span style="width:30px;height:30px;border-radius:50%;background-color:{{ p.avatarBg }};background-image:{{ p.img }};background-size:cover;background-position:center;color:{{ p.avatarFg }};display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex:none">{{ p.initials }}</span>
-                    <span style="font-size:14.5px;font-weight:500;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.name }}</span>
+                    <span style="font-size:14.5px;font-weight:500;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:{{ p.nameDecoration }}">{{ p.name }}</span>
+                    <sc-if value="{{ p.pending }}" hint-placeholder-val="{{ false }}">
+                      <span style="font-size:8px;font-weight:700;letter-spacing:0.08em;background:#f0e0c0;color:#7a5a10;border-radius:999px;padding:3px 7px">REQUESTED</span>
+                    </sc-if>
                     <sc-if value="{{ p.oncall }}" hint-placeholder-val="{{ false }}">
                       <span style="font-size:8.5px;font-weight:700;letter-spacing:0.09em;background:#111;color:#fff;border-radius:999px;padding:3px 8px">ON CALL</span>
                     </sc-if>
@@ -247,8 +250,8 @@
         </sc-if>
         <sc-if value="{{ isExpanded }}" hint-placeholder-val="{{ false }}">
           <div onClick="{{ collapse }}" style="position:absolute;inset:0;z-index:10;background:rgba(244,244,242,0.55);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);animation:ss-fade .18s ease"></div>
-          <div ref="{{ setOverlayRef }}" style="position:absolute;left:18px;right:18px;top:64px;bottom:60px;z-index:11;will-change:transform">
-            <div ref="{{ setFlipRef }}" style="position:relative;width:100%;height:100%">
+          <div ref="{{ setOverlayRef }}" style="position:absolute;left:18px;right:18px;top:64px;bottom:60px;z-index:11;will-change:transform;perspective:{{ persp }}">
+            <div style="position:relative;width:100%;height:100%;transform-style:{{ flipStyle }};transition:{{ flipTransition }};transform:{{ flipXform }}">
               <!-- FRONT -->
               <div style="position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;background:#ffffff;border-radius:24px;overflow:hidden;box-shadow:0 2px 6px rgba(17,17,17,0.08), 0 30px 70px rgba(17,17,17,0.24);visibility:{{ frontVis }}">
                 <div onClick="{{ collapse }}" title="Tap to close" style="display:flex;align-items:center;justify-content:space-between;padding:18px 18px 14px 18px;flex:none;cursor:pointer">
@@ -269,9 +272,12 @@
                 <div style="padding:0 18px 4px 18px;font-size:10.5px;font-weight:600;letter-spacing:0.08em;color:#b0b0ad;flex:none">{{ exp.countLabel }}</div>
                 <div class="nosb" style="flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:4px 18px 18px 18px">
                   <sc-for list="{{ exp.staff }}" as="p" hint-placeholder-count="5">
-                    <div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-top:1px solid #efefed">
+                    <div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-top:1px solid #efefed;opacity:{{ p.rowOpacity }}">
                       <span style="width:34px;height:34px;border-radius:50%;background-color:{{ p.avatarBg }};background-image:{{ p.img }};background-size:cover;background-position:center;color:{{ p.avatarFg }};display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex:none">{{ p.initials }}</span>
-                      <span style="font-size:15px;font-weight:500;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.name }}</span>
+                      <span style="font-size:15px;font-weight:500;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:{{ p.nameDecoration }}">{{ p.name }}</span>
+                      <sc-if value="{{ p.pending }}" hint-placeholder-val="{{ false }}">
+                        <span style="font-size:8px;font-weight:700;letter-spacing:0.08em;background:#f0e0c0;color:#7a5a10;border-radius:999px;padding:3px 7px">REQUESTED</span>
+                      </sc-if>
                       <sc-if value="{{ p.oncall }}" hint-placeholder-val="{{ false }}">
                         <span style="font-size:8.5px;font-weight:700;letter-spacing:0.09em;background:#111;color:#fff;border-radius:999px;padding:3px 8px">ON CALL</span>
                       </sc-if>
@@ -301,13 +307,18 @@
                 <div style="padding:0 18px 4px 18px;font-size:10.5px;font-weight:600;letter-spacing:0.08em;color:rgba(255,255,255,0.45);flex:none">TAP TRASH TO MARK NOT WORKING</div>
                 <div class="nosb" style="flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:4px 18px 18px 18px">
                   <sc-for list="{{ exp.staff }}" as="p" hint-placeholder-count="5">
-                    <div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-top:1px solid rgba(255,255,255,0.1)">
+                    <div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-top:1px solid rgba(255,255,255,0.1);opacity:{{ p.rowOpacity }}">
                       <span style="width:34px;height:34px;border-radius:50%;background-color:rgba(255,255,255,0.14);background-image:{{ p.img }};background-size:cover;background-position:center;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex:none">{{ p.initials }}</span>
-                      <span style="font-size:15px;font-weight:500;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.name }}</span>
+                      <span style="font-size:15px;font-weight:500;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:{{ p.nameDecoration }}">{{ p.name }}</span>
                       <span style="font-size:13px;color:rgba(255,255,255,0.5);white-space:nowrap">{{ p.time }}</span>
-                      <button onClick="{{ p.remove }}" title="Remove for this day" style="all:unset;cursor:pointer;width:32px;height:32px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;flex:none;background:rgba(224,72,72,0.16)" style-hover="background:rgba(224,72,72,0.3)">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ff6b6b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path><path d="M10 11v6"></path><path d="M14 11v6"></path></svg>
-                      </button>
+                      <sc-if value="{{ p.pending }}" hint-placeholder-val="{{ false }}">
+                        <span style="font-size:8px;font-weight:700;letter-spacing:0.08em;background:rgba(240,224,192,0.9);color:#7a5a10;border-radius:999px;padding:4px 8px;flex:none">REQUESTED</span>
+                      </sc-if>
+                      <sc-if value="{{ p.notPending }}" hint-placeholder-val="{{ true }}">
+                        <button onClick="{{ p.remove }}" title="Request removal for this day" style="all:unset;cursor:pointer;width:32px;height:32px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;flex:none;background:rgba(224,72,72,0.16)" style-hover="background:rgba(224,72,72,0.3)">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ff6b6b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path><path d="M10 11v6"></path><path d="M14 11v6"></path></svg>
+                        </button>
+                      </sc-if>
                     </div>
                   </sc-for>
                   <sc-if value="{{ exp.empty }}" hint-placeholder-val="{{ false }}">
@@ -323,7 +334,7 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;showRail&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Layout&quot;},&quot;scaleFalloff&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:0.03,&quot;min&quot;:0,&quot;max&quot;:0.08,&quot;step&quot;:0.01,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Motion&quot;}}">
 class Component extends DCLogic {
-  state = { periods: null, idx: 0, active: 0, expanded: null, flipped: false, flipping: false, removed: {}, railOpen: false, pickerOpen: false, todayFocus: false, todayMenuOpen: false, headerLogo: false, composerOpen: false, composerSent: false, cal: null, rangeStart: null, rangeEnd: null, scrubbing: false };
+  state = { periods: null, idx: 0, active: 0, expanded: null, flipped: false, flipping: false, flipAnim: false, flipDeg: 0, overlay: {}, railOpen: false, pickerOpen: false, todayFocus: false, todayMenuOpen: false, headerLogo: false, composerOpen: false, composerSent: false, cal: null, rangeStart: null, rangeEnd: null, scrubbing: false };
   cards = []; wraps = []; railRows = [];
   componentWillUnmount() { clearInterval(this._logoTimer); }
   componentDidMount() {
@@ -333,6 +344,7 @@ class Component extends DCLogic {
       let idx = P.findIndex(p => { const s = new Date(...p.start); const e = new Date(s); e.setDate(e.getDate() + 27); return today >= s && today <= e; });
       if (idx < 0) idx = P.length - 1;
       this.setState({ periods: P, idx }, () => {
+        this.loadRemovals();
         const to = this.todayOffset();
         const i = to ? to - 1 : 0;
         this.setState({ active: i });
@@ -388,7 +400,7 @@ class Component extends DCLogic {
     return name.split(/[\s(]+/).filter(Boolean).slice(0,2).map(w => w[0]).join('').toUpperCase().slice(0,2);
   }
   photo(name) {
-    const map = { 'Lora': 'lorahall', 'Heather': 'heatheryoung', 'Dave': 'davefrady', 'Trista': 'tristamiller', 'Christy': 'christybailey', 'Shelby': 'shelbysmith', 'Lana': 'lanamiller', 'Rachel': 'rachelboothe', 'Bailey': 'baileyadkins', 'Savannah': 'savannahplummer', 'Linsey': 'linseyhackney', 'Krista': 'kristamorton', 'Hannah': 'hannahmartin', 'Brayden': 'braydensims', 'Taryn': 'tarynpreece', 'Baylee': 'bayleeviars', 'Barb': 'barbhutchinson', 'Brandy': 'brandybeaver', 'Cory': 'corydolan', 'Dawson': 'dawsonquick', 'Jarrod': 'jarrodmcclanahan', 'Donnie': 'donniedavis', 'Lisa': 'lisaroberts' };
+    const map = { 'Lora': 'lorahall', 'Heather': 'heatheryoung', 'Dave': 'davefrady', 'Trista': 'tristamiller', 'Christy': 'christybailey', 'Shelby': 'shelbysmith', 'Lana': 'lanamiller', 'Rachel': 'rachelboothe', 'Bailey': 'baileyadkins', 'Savannah': 'savannahplummer', 'Linsey': 'linseyhackney', 'Krista': 'kristamorton', 'Hannah': 'hannahmartin', 'Brayden': 'braydensims', 'Taryn': 'tarynpreece', 'Baylee': 'bayleeviars', 'Barb': 'barbhutchinson', 'Brandy': 'brandybeaver', 'Cory': 'corydolan', 'Dawson': 'dawsonquick', 'Jarrod': 'jarrodmcclanahan', 'Donnie': 'donniedavis', 'Lisa': 'lisaroberts', 'Gage': 'gagebass' };
     const f = map[name.split(/[\s(]+/)[0]];
     return f ? "url('headshots/" + f + ".jpg')" : 'none';
   }
@@ -412,13 +424,40 @@ class Component extends DCLogic {
     const bar = p.sH < 12 ? '#e0a63a' : (p.sH < 18 ? '#8f80d6' : '#37b3a3');
     const img = this.photo(p.nm);
     const hasPhoto = img !== 'none';
+    const pending = !!p.pending;
     return {
-      name: p.nm, time: p.time, oncall: p.oncall, initials: hasPhoto ? '' : this.initials(p.nm), barColor: bar,
-      img,
+      name: p.nm, time: p.time, oncall: p.oncall, initials: this.initials(p.nm), barColor: bar,
+      img, pending, notPending: !pending, rowOpacity: pending ? '0.42' : '1', nameDecoration: pending ? 'line-through' : 'none',
       avatarBg: p.oncall && !hasPhoto ? '#111111' : '#f0f0ee',
       avatarFg: p.oncall ? '#ffffff' : '#111111',
-      remove: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState(s => ({ removed: { ...s.removed, [o + '-' + p.nm]: true } })); }
+      remove: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.requestRemoval(o, p.nm, p.time); }
     };
+  }
+  overlayKey(o, nm) { const per = this.state.periods[this.state.idx]; return per.title + '||' + o + '||' + nm; }
+  dayLabel(o) {
+    const d = new Date(this.base()); d.setDate(d.getDate() + o - 1);
+    return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+  }
+  loadRemovals() {
+    fetch('/api/removal-request?op=overlay', { cache: 'no-store' })
+      .then(r => r.json())
+      .then(d => {
+        const map = {};
+        (d && d.removals || []).forEach(x => { map[x.period + '||' + x.offset + '||' + x.name] = x.status; });
+        this.setState({ overlay: map });
+      })
+      .catch(() => {});
+  }
+  requestRemoval(o, nm, time) {
+    const per = this.state.periods[this.state.idx];
+    const key = per.title + '||' + o + '||' + nm;
+    if (this.state.overlay[key]) return;
+    this.setState(s => ({ overlay: { ...s.overlay, [key]: 'pending' } }));
+    fetch('/api/removal-request', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ kind: 'removal', period: per.title, offset: o, name: nm, day: this.dayLabel(o), time: time || '' }),
+    }).then(() => this.loadRemovals()).catch(() => {});
   }
   renderVals() {
     const st = this.state;
@@ -440,8 +479,12 @@ class Component extends DCLogic {
     const MON = ['January','February','March','April','May','June','July','August','September','October','November','December'];
     const dateOf = o => { const d = new Date(base); d.setDate(d.getDate() + o - 1); return d; };
     const roster = this.buildRoster(per);
-    const rem = st.removed;
-    const liveList = o => roster[o].slice().filter(p => !rem[o + '-' + p.nm]).sort((a, b) => a.sH - b.sH);
+    const overlay = st.overlay || {};
+    const statusOf = (o, nm) => overlay[per.title + '||' + o + '||' + nm];
+    const liveList = o => roster[o].slice()
+      .filter(p => statusOf(o, p.nm) !== 'approved')
+      .sort((a, b) => a.sH - b.sH)
+      .map(p => ({ ...p, pending: statusOf(o, p.nm) === 'pending' }));
     const active = st.active;
     const railOpen = st.railOpen;
     const scrubbing = st.scrubbing;
@@ -553,10 +596,13 @@ class Component extends DCLogic {
       frontVis: (!st.flipped || st.flipping) ? 'visible' : 'hidden',
       backVis: (st.flipped || st.flipping) ? 'visible' : 'hidden',
       backTransform: (st.flipped && !st.flipping) ? 'none' : 'rotateY(180deg)',
+      persp: st.flipping ? '1600px' : 'none',
+      flipStyle: st.flipping ? 'preserve-3d' : 'flat',
+      flipTransition: st.flipAnim ? 'transform .5s cubic-bezier(.4,.05,.2,1)' : 'none',
+      flipXform: st.flipping ? ('rotateY(' + (st.flipDeg || 0) + 'deg)') : 'none',
       toggleFlip: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.flipCard(); },
       collapse: () => this.closeCard(),
       setOverlayRef: el => { this.overlayEl = el; },
-      setFlipRef: el => { this.flipEl = el; },
       togglePeriod: () => this.setState(s => ({ idx: (s.idx + 1) % s.periods.length, active: 0, expanded: null, flipped: false }), () => {
         if (this.scroller) this.scroller.scrollTop = 0; this.onScroll();
       }),
@@ -680,16 +726,16 @@ class Component extends DCLogic {
     const msg = (this.msgEl && this.msgEl.value.trim()) || '(no message)';
     const range = this.rangeText();
     const per = this.state.periods ? this.state.periods[this.state.idx] : null;
-    fetch('https://formspree.io/f/moeqkzvq', {
+    // Route through our endpoint so it is both emailed and shown in the console.
+    fetch('/api/removal-request', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
+        kind: 'discrepancy',
         name: name,
         message: msg,
         regarding: range,
         period: per ? per.title : '',
-        _subject: 'Schedule Stream — discrepancy from ' + name,
-        source: 'mobile'
       })
     }).catch(() => {});
     this.setState({ composerSent: true }, () => { clearTimeout(this._sentT); this._sentT = setTimeout(() => this.slideComposer(false), 1600); });
@@ -721,45 +767,29 @@ class Component extends DCLogic {
     const src = this.cards[idx0];
     this._srcRect = src ? src.getBoundingClientRect() : null;
     this._expandIdx = idx0;
-    clearTimeout(this._flipT); this._flipping = false;
-    this.setState({ expanded: o, flipped: false, flipping: false }, () => {
-      // Rest state: flat, upright, scrollable. Clear any leftover 3D from a prior flip.
-      if (this.flipEl) { this.flipEl.style.transition = 'none'; this.flipEl.style.transform = 'none'; this.flipEl.style.transformStyle = 'flat'; }
-      if (this.overlayEl) this.overlayEl.style.perspective = 'none';
-      this.flipAnimate(true);
-    });
+    clearTimeout(this._flipT);
+    this.setState({ expanded: o, flipped: false, flipping: false, flipAnim: false, flipDeg: 0 }, () => this.flipAnimate(true));
   }
   flipCard() {
-    if (this._flipping) return;
-    const wrap = this.flipEl, ov = this.overlayEl;
+    if (this.state.flipping) return;
     const toBack = !this.state.flipped;
-    this._flipping = true;
-    // Enter a 3D context only for the duration of the flip, then flatten again
-    // so the resting face is a normal (scrollable) element on iOS.
-    this.setState({ flipping: true }, () => {
-      if (wrap) {
-        if (ov) ov.style.perspective = '1600px';
-        wrap.style.transformStyle = 'preserve-3d';
-        wrap.style.transition = 'none';
-        wrap.style.transform = toBack ? 'rotateY(0deg)' : 'rotateY(180deg)';
-        void wrap.offsetWidth;
-        requestAnimationFrame(() => {
-          wrap.style.transition = 'transform .5s cubic-bezier(.4,.05,.2,1)';
-          wrap.style.transform = toBack ? 'rotateY(180deg)' : 'rotateY(0deg)';
-        });
-      }
-      clearTimeout(this._flipT);
-      this._flipT = setTimeout(() => {
-        this._flipping = false;
-        if (wrap) { wrap.style.transition = 'none'; wrap.style.transform = 'none'; wrap.style.transformStyle = 'flat'; }
-        if (ov) ov.style.perspective = 'none';
-        this.setState({ flipped: toBack, flipping: false });
-      }, 540);
+    // Fully state-driven so any re-render (e.g. a removal update) recomputes a
+    // consistent resting state. A 3D context (perspective + preserve-3d) exists
+    // ONLY while flipping; at rest the shown face is a flat, scrollable element.
+    // Step 1: enter 3D at the current orientation with no transition.
+    this.setState({ flipping: true, flipAnim: false, flipDeg: toBack ? 0 : 180 }, () => {
+      requestAnimationFrame(() => {
+        // Step 2: turn the transition on and rotate to the target.
+        this.setState({ flipAnim: true, flipDeg: toBack ? 180 : 0 });
+        clearTimeout(this._flipT);
+        // Step 3: settle back to a flat, upright, scrollable rest state.
+        this._flipT = setTimeout(() => this.setState({ flipped: toBack, flipping: false, flipAnim: false, flipDeg: 0 }), 520);
+      });
     });
   }
   closeCard() {
     if (this._closing) return;
-    clearTimeout(this._flipT); this._flipping = false;
+    clearTimeout(this._flipT);
     this.flipAnimate(false);
   }
   flipAnimate(opening) {
