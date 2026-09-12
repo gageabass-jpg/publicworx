@@ -426,7 +426,7 @@ class Component extends DCLogic {
     const hasPhoto = img !== 'none';
     const pending = !!p.pending;
     return {
-      name: p.nm, time: p.time, oncall: p.oncall, initials: this.initials(p.nm), barColor: bar,
+      name: p.nm, time: p.time, oncall: p.oncall, initials: hasPhoto ? '' : this.initials(p.nm), barColor: bar,
       img, pending, notPending: !pending, rowOpacity: pending ? '0.42' : '1', nameDecoration: pending ? 'line-through' : 'none',
       avatarBg: p.oncall && !hasPhoto ? '#111111' : '#f0f0ee',
       avatarFg: p.oncall ? '#ffffff' : '#111111',
