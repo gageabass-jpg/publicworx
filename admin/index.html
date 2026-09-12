@@ -299,7 +299,7 @@
   const when = iso => {
     if (!iso) return '';
     const d = new Date(iso); const diff = (Date.now() - d.getTime()) / 1000;
-    const rel = diff < 60 ? 'just now' : diff < 3600 ? Math.floor(diff / 60) + ' min ago' : diff < 86400 ? Math.floor(diff / 3600) + ' h ago' : diff < 86400 * 14 ? Math.floor(diff / 86400) + ' d ago' : '';
+    const rel = diff < 60 ? 'Just Now' : diff < 3600 ? Math.floor(diff / 60) + ' min ago' : diff < 86400 ? Math.floor(diff / 3600) + ' h ago' : diff < 86400 * 14 ? Math.floor(diff / 86400) + ' d ago' : '';
     const abs = d.toLocaleString(undefined, { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' });
     return { rel: rel || abs, abs };
   };
@@ -406,14 +406,15 @@
   }
 
   function actionRow(w, desc, actions, need, statusTag) {
-    const rel = w ? `<div style="line-height:20px">${esc(w.rel)}</div><div class="muted" style="font-size:12px;line-height:16px">${esc(w.abs)}</div>` : '';
+    const rel = w ? `<div style="line-height:18px">${esc(w.rel)}</div><div class="muted" style="font-size:12px;line-height:15px">${esc(w.abs)}</div>` : '';
     const badge = need
       ? '<span class="tag" style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;background:rgba(224,160,48,.16);border:1px solid rgba(224,160,48,.5);color:#e3b45a">action needed</span>'
       : (statusTag || '');
     return `<tr style="background:${need ? 'rgba(224,160,48,.05)' : 'transparent'}">
-      <td style="white-space:nowrap;vertical-align:top">${rel}</td>
-      <td colspan="4" style="vertical-align:top"><div style="display:flex;flex-direction:column;gap:8px"><div>${desc}</div><div style="display:flex;gap:8px;flex-wrap:wrap">${actions}</div></div></td>
-      <td style="text-align:right;vertical-align:top">${badge}</td>
+      <td style="white-space:nowrap;vertical-align:middle">${rel}</td>
+      <td style="vertical-align:middle">${desc}</td>
+      <td colspan="2" style="vertical-align:middle"><div style="display:flex;gap:8px;flex-wrap:wrap">${actions}</div></td>
+      <td colspan="2" style="text-align:right;vertical-align:middle;white-space:nowrap">${badge}</td>
     </tr>`;
   }
   function inboxRow(x) {
@@ -425,14 +426,14 @@
       const actions = need
         ? `<button class="btn btn-primary sm" data-act="resolve" data-key="${esc(x.key)}">Resolve</button>`
         : `<button class="btn btn-secondary sm" data-act="delete" data-key="${esc(x.key)}">Delete</button>`;
-      return actionRow(w, desc, actions, need, '<span class="tag tag-neutral" style="font-size:10px">resolved</span>');
+      return actionRow(w, desc, actions, need, '<span class="tag tag-neutral" style="font-size:10px;white-space:nowrap">resolved</span>');
     }
     const detail = `${esc(x.day || ('Day ' + x.offset))}${x.time ? ' · ' + esc(x.time) : ''}`;
     const desc = `<div style="line-height:18px"><strong>Removal</strong> — ${esc(x.name)} · ${detail}</div><div class="muted" style="font-size:12px;line-height:16px">${esc(x.period)}</div>`;
     const actions = need
       ? `<button class="btn btn-primary sm" data-act="approve" data-key="${esc(x.key)}">Approve</button><button class="btn btn-secondary sm" data-act="reject" data-key="${esc(x.key)}">Reject</button>`
       : `<button class="btn btn-secondary sm" data-act="reject" data-key="${esc(x.key)}">Put back</button>`;
-    return actionRow(w, desc, actions, need, '<span class="tag tag-neutral" style="font-size:10px">approved · hidden</span>');
+    return actionRow(w, desc, actions, need, '<span class="tag tag-neutral" style="font-size:10px;white-space:nowrap">removed</span>');
   }
   function commitRow(c, i) {
     const w = when(c.date);

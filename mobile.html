@@ -72,12 +72,15 @@
                     <span style="width:30px;height:30px;border-radius:50%;background-color:{{ p.avatarBg }};background-image:{{ p.img }};background-size:cover;background-position:center;color:{{ p.avatarFg }};display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex:none">{{ p.initials }}</span>
                     <span style="font-size:14.5px;font-weight:500;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:{{ p.nameDecoration }}">{{ p.name }}</span>
                     <sc-if value="{{ p.pending }}" hint-placeholder-val="{{ false }}">
-                      <span style="font-size:8px;font-weight:700;letter-spacing:0.08em;background:#f0e0c0;color:#7a5a10;border-radius:999px;padding:3px 7px">REQUESTED</span>
+                      <span style="font-size:8px;font-weight:700;letter-spacing:0.08em;background:#f0e0c0;color:#7a5a10;border-radius:999px;padding:3px 7px;white-space:nowrap">REQUESTED</span>
+                    </sc-if>
+                    <sc-if value="{{ p.removed }}" hint-placeholder-val="{{ false }}">
+                      <span style="font-size:8px;font-weight:700;letter-spacing:0.08em;background:#efe1df;color:#a23b2f;border-radius:999px;padding:3px 7px;white-space:nowrap">OFF</span>
                     </sc-if>
                     <sc-if value="{{ p.oncall }}" hint-placeholder-val="{{ false }}">
                       <span style="font-size:8.5px;font-weight:700;letter-spacing:0.09em;background:#111;color:#fff;border-radius:999px;padding:3px 8px">ON CALL</span>
                     </sc-if>
-                    <span style="font-size:13px;color:#4a4a47;white-space:nowrap">{{ p.time }}</span>
+                    <span style="font-size:13px;color:#4a4a47;white-space:nowrap;text-decoration:{{ p.timeDecoration }}">{{ p.time }}</span>
                     <span style="width:4px;height:26px;border-radius:999px;flex:none;background:{{ p.barColor }}"></span>
                   </div>
                 </sc-for>
@@ -276,12 +279,15 @@
                       <span style="width:34px;height:34px;border-radius:50%;background-color:{{ p.avatarBg }};background-image:{{ p.img }};background-size:cover;background-position:center;color:{{ p.avatarFg }};display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex:none">{{ p.initials }}</span>
                       <span style="font-size:15px;font-weight:500;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:{{ p.nameDecoration }}">{{ p.name }}</span>
                       <sc-if value="{{ p.pending }}" hint-placeholder-val="{{ false }}">
-                        <span style="font-size:8px;font-weight:700;letter-spacing:0.08em;background:#f0e0c0;color:#7a5a10;border-radius:999px;padding:3px 7px">REQUESTED</span>
+                        <span style="font-size:8px;font-weight:700;letter-spacing:0.08em;background:#f0e0c0;color:#7a5a10;border-radius:999px;padding:3px 7px;white-space:nowrap">REQUESTED</span>
+                      </sc-if>
+                      <sc-if value="{{ p.removed }}" hint-placeholder-val="{{ false }}">
+                        <span style="font-size:8px;font-weight:700;letter-spacing:0.08em;background:#efe1df;color:#a23b2f;border-radius:999px;padding:3px 7px;white-space:nowrap">OFF</span>
                       </sc-if>
                       <sc-if value="{{ p.oncall }}" hint-placeholder-val="{{ false }}">
                         <span style="font-size:8.5px;font-weight:700;letter-spacing:0.09em;background:#111;color:#fff;border-radius:999px;padding:3px 8px">ON CALL</span>
                       </sc-if>
-                      <span style="font-size:13.5px;color:#4a4a47;white-space:nowrap">{{ p.time }}</span>
+                      <span style="font-size:13.5px;color:#4a4a47;white-space:nowrap;text-decoration:{{ p.timeDecoration }}">{{ p.time }}</span>
                       <span style="width:4px;height:30px;border-radius:999px;flex:none;background:{{ p.barColor }}"></span>
                     </div>
                   </sc-for>
@@ -310,11 +316,14 @@
                     <div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-top:1px solid rgba(255,255,255,0.1);opacity:{{ p.rowOpacity }}">
                       <span style="width:34px;height:34px;border-radius:50%;background-color:rgba(255,255,255,0.14);background-image:{{ p.img }};background-size:cover;background-position:center;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex:none">{{ p.initials }}</span>
                       <span style="font-size:15px;font-weight:500;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:{{ p.nameDecoration }}">{{ p.name }}</span>
-                      <span style="font-size:13px;color:rgba(255,255,255,0.5);white-space:nowrap">{{ p.time }}</span>
+                      <span style="font-size:13px;color:rgba(255,255,255,0.5);white-space:nowrap;text-decoration:{{ p.timeDecoration }}">{{ p.time }}</span>
                       <sc-if value="{{ p.pending }}" hint-placeholder-val="{{ false }}">
-                        <span style="font-size:8px;font-weight:700;letter-spacing:0.08em;background:rgba(240,224,192,0.9);color:#7a5a10;border-radius:999px;padding:4px 8px;flex:none">REQUESTED</span>
+                        <span style="font-size:8px;font-weight:700;letter-spacing:0.08em;background:rgba(240,224,192,0.9);color:#7a5a10;border-radius:999px;padding:4px 8px;flex:none;white-space:nowrap">REQUESTED</span>
                       </sc-if>
-                      <sc-if value="{{ p.notPending }}" hint-placeholder-val="{{ true }}">
+                      <sc-if value="{{ p.removed }}" hint-placeholder-val="{{ false }}">
+                        <span style="font-size:8px;font-weight:700;letter-spacing:0.08em;background:rgba(224,120,110,0.22);color:#f0a99f;border-radius:999px;padding:4px 8px;flex:none;white-space:nowrap">OFF</span>
+                      </sc-if>
+                      <sc-if value="{{ p.canRemove }}" hint-placeholder-val="{{ true }}">
                         <button onClick="{{ p.remove }}" title="Request removal for this day" style="all:unset;cursor:pointer;width:32px;height:32px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;flex:none;background:rgba(224,72,72,0.16)" style-hover="background:rgba(224,72,72,0.3)">
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ff6b6b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path><path d="M10 11v6"></path><path d="M14 11v6"></path></svg>
                         </button>
@@ -424,10 +433,15 @@ class Component extends DCLogic {
     const bar = p.sH < 12 ? '#e0a63a' : (p.sH < 18 ? '#8f80d6' : '#37b3a3');
     const img = this.photo(p.nm);
     const hasPhoto = img !== 'none';
-    const pending = !!p.pending;
+    const pending = p.status === 'pending';
+    const removed = p.status === 'approved';
+    const struck = pending || removed;
     return {
       name: p.nm, time: p.time, oncall: p.oncall, initials: hasPhoto ? '' : this.initials(p.nm), barColor: bar,
-      img, pending, notPending: !pending, rowOpacity: pending ? '0.42' : '1', nameDecoration: pending ? 'line-through' : 'none',
+      img, pending, removed, canRemove: !struck,
+      rowOpacity: removed ? '0.4' : (pending ? '0.55' : '1'),
+      nameDecoration: struck ? 'line-through' : 'none',
+      timeDecoration: removed ? 'line-through' : 'none',
       avatarBg: p.oncall && !hasPhoto ? '#111111' : '#f0f0ee',
       avatarFg: p.oncall ? '#ffffff' : '#111111',
       remove: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.requestRemoval(o, p.nm, p.time); }
@@ -481,10 +495,11 @@ class Component extends DCLogic {
     const roster = this.buildRoster(per);
     const overlay = st.overlay || {};
     const statusOf = (o, nm) => overlay[per.title + '||' + o + '||' + nm];
+    // Keep everyone visible; approved removals stay on the card with the shift struck through.
     const liveList = o => roster[o].slice()
-      .filter(p => statusOf(o, p.nm) !== 'approved')
       .sort((a, b) => a.sH - b.sH)
-      .map(p => ({ ...p, pending: statusOf(o, p.nm) === 'pending' }));
+      .map(p => ({ ...p, status: statusOf(o, p.nm) }));
+    const workingCount = list => list.filter(p => p.status !== 'approved').length;
     const active = st.active;
     const railOpen = st.railOpen;
     const scrubbing = st.scrubbing;
@@ -500,7 +515,7 @@ class Component extends DCLogic {
       days.push({
         num: d.getDate(), weekday: WD[d.getDay()], month: MON[d.getMonth()], letter: WL[d.getDay()],
         isToday: o === todayOff,
-        countLabel: list.length + ' ON SHIFT',
+        countLabel: workingCount(list) + ' ON SHIFT',
         empty: list.length === 0,
         clip: list.length > PREV,
         moreLabel: '+' + extra + ' more \u00b7 tap to open',
@@ -551,7 +566,7 @@ class Component extends DCLogic {
         num: d.getDate(), weekday: WD[d.getDay()],
         monthYear: MON[d.getMonth()] + ' ' + d.getFullYear(),
         isToday: o === todayOff,
-        countLabel: list.length + ' ON SHIFT',
+        countLabel: workingCount(list) + ' ON SHIFT',
         empty: list.length === 0,
         staff: list.map(p => this.person(p, o))
       };
