@@ -388,10 +388,16 @@
     return data;
   }
   const needsAction = x => (x.kind === 'removal' && x.status === 'pending') || (x.kind === 'discrepancy' && x.status === 'open');
+  let inboxTimer = null;
   async function loadInbox() {
     try { const d = await inboxApi('GET', 'inbox'); inboxItems = d.items || []; }
     catch (err) { if (err.status === 401) { signOut('Wrong password.'); return; } inboxItems = []; }
-    if (status) renderHistory(status.history, inboxItems);
+    renderHistory(status ? status.history : [], inboxItems);
+  }
+  function startInbox() {
+    loadInbox();
+    if (inboxTimer) clearInterval(inboxTimer);
+    inboxTimer = setInterval(loadInbox, 20000);
   }
   async function resolveInbox(key, action) {
     try { await inboxApi('POST', 'resolve', { key, action }); }
@@ -566,6 +572,7 @@
   // ---------- auth ----------
   function signOut(msg) {
     password = ''; try { sessionStorage.removeItem(KEY); } catch {}
+    if (inboxTimer) { clearInterval(inboxTimer); inboxTimer = null; }
     show($('main'), false); show($('signOut'), false); show($('signIn'), true);
     if (msg) setMsg($('signInMsg'), 'bad', esc(msg)); else show($('signInMsg'), false);
     $('password').focus();
@@ -578,6 +585,7 @@
     try { sessionStorage.setItem(KEY, pw); } catch {}
     show($('signIn'), false); show($('main'), true); show($('signOut'), true);
     loadStatus();
+    startInbox();
   }
 
   async function boot() {
@@ -594,7 +602,7 @@
       $('notConfiguredDetail').textContent = `Missing: ${missing}. Target: ${health.target.repo} · ${health.target.branch}.`;
       return;
     }
-    if (password) { show($('main'), true); show($('signOut'), true); loadStatus(); }
+    if (password) { show($('main'), true); show($('signOut'), true); loadStatus(); startInbox(); }
     else show($('signIn'), true);
   }
 
