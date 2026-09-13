@@ -247,7 +247,7 @@ class Component extends DCLogic {
   componentWillUnmount() { document.removeEventListener('click', this._onDoc); document.removeEventListener('keydown', this._onKey); }
   today() { const t = new Date(); t.setHours(0, 0, 0, 0); return t; }
   photo(name) {
-    const map = { 'Lora': 'lorahall', 'Heather': 'heatheryoung', 'Dave': 'davefrady', 'Trista': 'tristamiller', 'Christy': 'christybailey', 'Shelby': 'shelbysmith', 'Lana': 'lanamiller', 'Rachel': 'rachelboothe', 'Bailey': 'baileyadkins', 'Savannah': 'savannahplummer', 'Linsey': 'linseyhackney', 'Krista': 'kristamorton', 'Hannah': 'hannahmartin', 'Brayden': 'braydensims', 'Taryn': 'tarynpreece', 'Baylee': 'bayleeviars', 'Barb': 'barbhutchinson', 'Brandy': 'brandybeaver', 'Cory': 'corydolan', 'Dawson': 'dawsonquick', 'Jarrod': 'jarrodmcclanahan', 'Donnie': 'donniedavis', 'Lisa': 'lisaroberts' };
+    const map = { 'Lora': 'lorahall', 'Heather': 'heatheryoung', 'Dave': 'davefrady', 'Trista': 'tristamiller', 'Christy': 'christybailey', 'Shelby': 'shelbysmith', 'Lana': 'lanamiller', 'Rachel': 'rachelboothe', 'Bailey': 'baileyadkins', 'Savannah': 'savannahplummer', 'Linsey': 'linseyhackney', 'Krista': 'kristamorton', 'Hannah': 'hannahmartin', 'Brayden': 'braydensims', 'Taryn': 'tarynpreece', 'Baylee': 'bayleeviars', 'Barb': 'barbhutchinson', 'Brandy': 'brandybeaver', 'Cory': 'corydolan', 'Dawson': 'dawsonquick', 'Jarrod': 'jarrodmcclanahan', 'Donnie': 'donniedavis', 'Lisa': 'lisaroberts', 'Gage': 'gagebass' };
     const f = map[name.split(' ')[0]];
     return f ? 'headshots/' + f + '.jpg' : null;
   }
