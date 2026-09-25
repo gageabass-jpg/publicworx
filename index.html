@@ -263,6 +263,7 @@ class Component extends DCLogic {
     if (c === '/') return { off: true };
     if (c === 'V') return { vac: true };
     if (c === 'H') return { hol: true };
+    const om = c.match(/^or\b\s*(.*)$/i); if (om) return { orient: true, note: om[1] || '' };
     const maps = { '7': '7a-730p', '(7)': '7a-730p', '8': '8a-430p', '(8)': '8a-430p', '3': '3p-1130p', '11': '11p-730a', '2-1130p': '2p-1130p', '1-1130p': '1p-1130p', '530-1130p': '530p-1130p', '7-230': '7a-230p' };
     if (maps[c]) c = maps[c];
     const words = c.split(' ');
@@ -347,6 +348,7 @@ class Component extends DCLogic {
             if (p.off) { cell.dash = true; return cell; }
             if (p.vac) { Object.assign(cell, { has: true, l1: 'V', l2: '', bg: 'transparent', bd: 'rgba(233,233,237,.28)', fg: 'var(--color-neutral-300)', info: 'Vacation', verb: 'is on vacation', ttime: '' }); }
             else if (p.hol) { Object.assign(cell, { has: true, l1: 'H', l2: '', bg: 'rgba(233,233,237,.05)', bd: 'transparent', fg: 'var(--color-neutral-400)', info: 'Holiday', verb: 'has a holiday', ttime: '' }); }
+            else if (p.orient) { Object.assign(cell, { has: true, l1: 'Or', l2: '', note: p.note || '', bg: 'rgba(120,140,205,.16)', bd: 'rgba(120,140,205,.5)', fg: '#c3cdee', info: 'Orientation' + (p.note ? ' · ' + p.note : ''), verb: 'is in orientation', ttime: '' }); }
             else { const t = p.oncall ? T.oncall : T[p.type]; Object.assign(cell, { has: true, l1: p.l1, l2: p.l2, note: p.note, bg: t.bg, bd: t.bd, fg: t.fg, info: p.time + (p.oncall ? ' · On call' : ''), verb: 'is working', ttime: this.ampm(p.sL) + ' to ' + this.ampm(p.eL) + (p.extra ? ' ' + p.extra : ''), oncall: p.oncall }); }
             const info = { name, date: fmtD(d.date), shift: cell.info, verb: cell.verb, ttime: cell.ttime, oncall: !!cell.oncall, img: this.photo(name), bg: cell.bg, bd: cell.bd, fg: cell.fg };
             cell.onClick = () => this.setState({ sel: info });
@@ -412,7 +414,8 @@ class Component extends DCLogic {
       legend: [
         { label: 'Day', bg: T.day.bg, bd: T.day.bd, mark: '' }, { label: 'Evening', bg: T.eve.bg, bd: T.eve.bd, mark: '' },
         { label: 'Night', bg: T.night.bg, bd: T.night.bd, mark: '' }, { label: 'Vacation', bg: 'transparent', bd: 'rgba(233,233,237,.3)', mark: 'V' },
-        { label: 'Holiday', bg: 'rgba(233,233,237,.05)', bd: 'transparent', mark: 'H' }, { label: 'On call', bg: T.oncall.bg, bd: T.oncall.bd, mark: '' }
+        { label: 'Holiday', bg: 'rgba(233,233,237,.05)', bd: 'transparent', mark: 'H' }, { label: 'On call', bg: T.oncall.bg, bd: T.oncall.bd, mark: '' },
+        { label: 'Orientation', bg: 'rgba(120,140,205,.16)', bd: 'rgba(120,140,205,.5)', mark: '' }
       ],
       tipShow: !!st.tt, tipX: st.tt ? st.tt.x + 'px' : '0px', tipY: st.tt ? st.tt.y + 'px' : '0px',
       tipName: st.tt && st.tt.name, tipDate: st.tt && st.tt.date, tipShift: st.tt && st.tt.shift,

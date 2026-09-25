@@ -28,6 +28,7 @@
     if (code === '/') return { kind: 'off', red, pen };
     if (code === 'V') return { kind: 'vac', red, pen };
     if (code === 'H') return { kind: 'hol', red, pen };
+    if (/^or\b/i.test(code)) return { kind: 'orient', red, pen };
     const rangeStr = (CODES[code] || code).replace(/^SF\s+/, '').split(/\s+/)[0];
     const m = rangeStr.match(/^(\d{1,2})(\d{2})?([ap])?-(\d{1,2})(\d{2})?([ap])?$/);
     if (!m) return { kind: 'unknown', red, pen, code };

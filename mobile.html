@@ -390,6 +390,7 @@ class Component extends DCLogic {
     if (c === '/') return { off: true };
     if (c === 'V') return { vac: true };
     if (c === 'H') return { hol: true };
+    if (/^or\b/i.test(c)) return { orient: true };
     const maps = { '7': '7a-730p', '(7)': '7a-730p', '8': '8a-430p', '(8)': '8a-430p', '3': '3p-1130p', '11': '11p-730a', '2-1130p': '2p-1130p', '1-1130p': '1p-1130p', '530-1130p': '530p-1130p', '7-230': '7a-230p' };
     if (maps[c]) c = maps[c];
     const words = c.split(' ');
@@ -422,7 +423,7 @@ class Component extends DCLogic {
         spec.split(',').forEach(ent => {
           const i = ent.indexOf(':'); const o = +ent.slice(0, i); const code = ent.slice(i + 1);
           const p = this.parseCode(code);
-          if (p.off || p.vac || p.hol) return;
+          if (p.off || p.vac || p.hol || p.orient) return;
           roster[o].push({ nm, sH: p.sH, time: p.time, oncall: p.oncall });
         });
       });
