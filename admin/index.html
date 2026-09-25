@@ -496,6 +496,7 @@
   async function takeXlsx(file) {
     const bad = msg => { staged['bad:' + file.name] = { name: file.name, text: '', role: 'unknown', report: { role: 'data', ok: false, errors: [msg], warnings: [], bytes: 0 } }; renderStaged(); };
     try {
+      if (typeof window.ScheduleXlsx === 'undefined' || !window.ScheduleXlsx.aoaToPeriod) return bad('The import script did not finish loading. Hard-refresh the page (Ctrl/Cmd+Shift+R) and try again.');
       if (typeof XLSX === 'undefined') return bad('The spreadsheet reader (XLSX) did not load — a network block may be stopping it. Try again, or upload schedule-data.js instead.');
       const wb = XLSX.read(new Uint8Array(await file.arrayBuffer()), { type: 'array' });
       const sheet = wb.Sheets[wb.SheetNames.find(n => /schedule/i.test(n)) || wb.SheetNames[0]];
