@@ -410,7 +410,7 @@ class Component extends DCLogic {
     return name.split(/[\s(]+/).filter(Boolean).slice(0,2).map(w => w[0]).join('').toUpperCase().slice(0,2);
   }
   photo(name) {
-    const map = { 'Lora': 'lorahall', 'Heather': 'heatheryoung', 'Dave': 'davefrady', 'Trista': 'tristamiller', 'Christy': 'christybailey', 'Shelby': 'shelbysmith', 'Lana': 'lanamiller', 'Rachel': 'rachelboothe', 'Bailey': 'baileyadkins', 'Savannah': 'savannahplummer', 'Linsey': 'linseyhackney', 'Krista': 'kristamorton', 'Hannah': 'hannahmartin', 'Brayden': 'braydensims', 'Taryn': 'tarynpreece', 'Baylee': 'bayleeviars', 'Barb': 'barbhutchinson', 'Brandy': 'brandybeaver', 'Cory': 'corydolan', 'Dawson': 'dawsonquick', 'Jarrod': 'jarrodmcclanahan', 'Donnie': 'donniedavis', 'Lisa': 'lisaroberts', 'Gage': 'gagebass' };
+    const map = { 'Lora': 'lorahall', 'Heather': 'heatheryoung', 'Dave': 'davefrady', 'Trista': 'tristamiller', 'Christy': 'christybailey', 'Shelby': 'shelbysmith', 'Lana': 'lanamiller', 'Rachel': 'rachelboothe', 'Bailey': 'baileyadkins', 'Savannah': 'savannahplummer', 'Linsey': 'linseyhackney', 'Krista': 'kristamorton', 'Hannah': 'hannahmartin', 'Brayden': 'braydensims', 'Taryn': 'tarynpreece', 'Baylee': 'bayleeviars', 'Barb': 'barbhutchinson', 'Brandy': 'brandybeaver', 'Cory': 'corydolan', 'Dawson': 'dawsonquick', 'Jarrod': 'jarrodmcclanahan', 'Donnie': 'donniedavis', 'Lisa': 'lisaroberts', 'Gage': 'gagebass', 'Stephany': 'stephanylundy' };
     const f = map[name.split(/[\s(]+/)[0]];
     return f ? "url('headshots/" + f + ".jpg')" : 'none';
   }
