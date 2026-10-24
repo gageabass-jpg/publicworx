@@ -30,6 +30,7 @@ Without these, `/api/schedule?op=health` returns `configured: {password: false, 
 Every `.xlsx` upload in `/admin` (and any other upload with warnings or errors) saves a full, untruncated log. The console does this on its own and shows a "Log saved · view" link on the staged file.
 - Where: branch `import-logs` (override with `LOG_BRANCH`), one file per upload at `logs/<timestamp>-<kind>-<id>.json`. The branch is made from `main` on the first log. Logs never touch `main`, so they do not redeploy the site.
 - What: file name and size, sheet names, every error and warning, `unknownCells` (period, person, day, raw code for each cell the page cannot read), and the period summary. No grid dump.
+- Red fill: the `.xlsx` importer reads each cell's solid fill (SheetJS `cellStyles`). A red-filled shift cell gets the `*` on-call suffix. Off, vacation, holiday and blank cells get none. `isRedFill` in `admin/xlsx-import.js` decides what counts as red. The log holds `fillStats`: every fill colour found (`palette`), how many cells were marked on call, and how many red cells were blank. Check it if a colour is missed. SheetJS reads `indexed` palette colours and font colours as nothing, so those do not count.
 - How: `POST /api/schedule?op=log` (password required) in `api/schedule.js`; limit 512 KB per log.
 - Privacy: the repo is public, so the logs are public. They hold staff names and shift codes, the same data the public schedule shows.
 - Read them with the GitHub tools: list `logs/` on `import-logs`.
