@@ -1,5 +1,8 @@
 {
   "cleanUrls": true,
+  "functions": {
+    "api/calendar.js": { "includeFiles": "schedule-data.js" }
+  },
   "redirects": [
     { "source": "/schedule", "destination": "/", "permanent": false },
     { "source": "/schedule/", "destination": "/", "permanent": false }
