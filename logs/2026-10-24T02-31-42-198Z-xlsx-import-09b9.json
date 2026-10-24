@@ -1,0 +1,82 @@
+{
+  "kind": "xlsx-import",
+  "at": "2026-10-24T02:31:42.108Z",
+  "file": {
+    "name": "Rad Schedule Oct-Nov.xlsx",
+    "size": 15568
+  },
+  "errors": [],
+  "warnings": [
+    "\"Lana (SP)\" day 2: the cell has a line break; treated as a space.",
+    "\"Red fill = red cell on the original printout. Transcribed from photo — verify faint entries.\" has no shifts in this period; skipped."
+  ],
+  "unknownCells": [],
+  "periods": [
+    {
+      "label": "Aug 2 – 29",
+      "title": "August 2 – 29, 2026",
+      "start": [
+        2026,
+        7,
+        2
+      ],
+      "startIso": "2026-08-02",
+      "sections": 4,
+      "people": 23,
+      "cells": 361,
+      "onCall": 0
+    },
+    {
+      "label": "Aug 30 – Sep 26",
+      "title": "August 30 – September 26, 2026",
+      "start": [
+        2026,
+        7,
+        30
+      ],
+      "startIso": "2026-08-30",
+      "sections": 4,
+      "people": 25,
+      "cells": 372,
+      "onCall": 53
+    },
+    {
+      "label": "Sep 27 – Oct 24",
+      "title": "September 27 – October 24, 2026",
+      "start": [
+        2026,
+        8,
+        27
+      ],
+      "startIso": "2026-09-27",
+      "sections": 4,
+      "people": 23,
+      "cells": 375,
+      "onCall": 0
+    },
+    {
+      "label": "Oct 25 – Nov 21",
+      "title": "October 25 – November 21, 2026",
+      "start": [
+        2026,
+        9,
+        25
+      ],
+      "startIso": "2026-10-25",
+      "sections": 4,
+      "people": 23,
+      "cells": 363,
+      "onCall": 0
+    }
+  ],
+  "sheets": [
+    "Sheet1"
+  ],
+  "sheetUsed": "Sheet1",
+  "importWarnings": [
+    "\"Lana (SP)\" day 2: the cell has a line break; treated as a space.",
+    "\"Red fill = red cell on the original printout. Transcribed from photo — verify faint entries.\" has no shifts in this period; skipped."
+  ],
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+  "savedAt": "2026-10-24T02:31:42.198Z"
+}
