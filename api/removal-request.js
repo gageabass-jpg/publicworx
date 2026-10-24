@@ -285,3 +285,6 @@ async function handler(req, res) {
 }
 
 module.exports = handler;
+// api/calendar.js reuses these to hide approved removals from the calendar feed.
+module.exports.overlay = overlay;
+module.exports.config = config;

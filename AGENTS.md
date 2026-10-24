@@ -6,7 +6,9 @@ A static site (no build step) showing the X-ray department's monthly staff sched
 ## Architecture
 - `index.html` — desktop schedule grid (renders via `support.js`, a lightweight DC runtime that uses React/ReactDOM from CDN)
 - `mobile.html` — mobile calendar/card view (same runtime + data)
-- `mobile.html` also has an "Add to calendar" button (header, left of the date-range button). It lists every name in the data. Tapping one builds a `.ics` file in the page (`icsShifts`, `icsText`, `downloadIcs`) with that person's shifts from today on, and downloads it. Events use floating local times and stable IDs (`tmh-<name>-<period start>-<day>@schedule.exchange`). Approved removals are skipped. It is a snapshot, not a live subscription.
+- `mobile.html` also has an "Add to calendar" button (header, left of the date-range button). Tapping a name opens a second step: **Subscribe** (a `webcal://` link to `/api/calendar?name=...`, so the phone's calendar updates by itself), **Download file** (a one-time `.ics`, from today on), or **Copy link** (for Android / Google Calendar).
+- `ics.js` — shared by the mobile page (`window.ScheduleIcs`) and `api/calendar.js`. It builds one person's events with stable IDs (`tmh-<name>-<period start>-<day>@schedule.exchange`), so the download and the feed match. Its `parseCode` is a port of `parseCode` in `mobile.html`; change both together. The mobile page loads it with `<script src="./ics.js">`, so a fresh mobile design export must keep that tag and the button.
+- `api/calendar.js` — public feed, `GET /api/calendar?name=Angela%20(T)` (name match ignores case). It reads `schedule-data.js` (`includeFiles` in `vercel.json`), skips approved removals, includes past shifts so the calendar keeps its history, and is cached at the edge for 15 minutes. Errors: 400 no name, 404 unknown name, 405 not GET.
 - `brand.html` — brand sheet (standalone)
 - `admin/index.html` — admin console for publishing schedule changes to GitHub
 - `support.js` — generated DC runtime (do not edit; renders the HTML templates)

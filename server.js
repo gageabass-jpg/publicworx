@@ -7,6 +7,7 @@ const fs = require('fs');
 const path = require('path');
 const scheduleHandler = require('./api/schedule');
 const removalHandler = require('./api/removal-request');
+const calendarHandler = require('./api/calendar');
 
 const ROOT = __dirname;
 const PORT = process.env.PORT || 3000;
@@ -66,6 +67,10 @@ const server = http.createServer((req, res) => {
 
   if (pathname === '/api/removal-request') {
     return removalHandler(req, res);
+  }
+
+  if (pathname === '/api/calendar') {
+    return calendarHandler(req, res);
   }
 
   serveStatic(req, res, pathname);
