@@ -534,6 +534,8 @@
       file: { name: file.name, size: file.size },
       errors: r.errors || [], warnings: r.warnings || [],
       unknownCells: r.unknownCells || [], periods: r.periods || [],
+      // On an error, keep the generated schedule-data.js so the bad line can be found (public data, ~20 KB).
+      ...(r.errors && r.errors.length && item.role === 'data' && item.text && item.text.length < 300000 ? { generatedText: item.text } : {}),
       ...detail, userAgent: navigator.userAgent,
     };
     item.log = { state: 'saving' }; renderStaged();

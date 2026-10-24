@@ -28,10 +28,22 @@
   const SKIP_ROW = /^(vacanc|legend|day$|date$)/i;
 
   const s = v => (v === null || v === undefined) ? '' : String(v).trim();
+  const BREAK = /[\r\n\u2028\u2029]/;
+
+  // "2-11:30p" -> "2-1130p": the page reads 1130p, not 11:30p. A range with no a/p at all
+  // that starts at 1-6 is an afternoon shift ("2-11:30" -> "2p-1130p"). Ranges that start
+  // at 7 or later keep the page's own rule ("8-12" -> 8a-12p). Anything else passes through.
+  function fixRange(word) {
+    if (!/^\d{1,2}(:\d{2})?[ap]?-\d{1,2}(:\d{2})?[ap]?$/i.test(word)) return word;
+    const w = word.replace(/(\d{1,2}):(\d{2})/g, '$1$2');
+    const m = w.match(/^(\d{1,2})(\d{2})?-(\d{1,2})(\d{2})?$/);
+    if (m && +m[1] >= 1 && +m[1] <= 6) return `${m[1]}${m[2] || ''}p-${m[3]}${m[4] || ''}p`;
+    return w;
+  }
 
   // A cell value -> the code stored in schedule-data.js. Blank -> null (day omitted).
   function normalizeCell(raw) {
-    let c = s(raw);
+    let c = s(raw).replace(/\s+/g, ' '); // a line break or NBSP inside a cell would break the generated file
     if (!c) return null;
     // keep on-call (*) / pen (~) markers wherever they sit
     const flags = (c.match(/[*~]/g) || []).join('');
@@ -45,7 +57,7 @@
     if (words.length > 1 && Object.prototype.hasOwnProperty.call(EXPAND, first)) {
       return EXPAND[first] + ' ' + words.slice(1).join(' ') + flags;
     }
-    return core + flags; // ranges, bare shorthand, V/H//, notes-as-written pass through
+    return core.replace(/^\S+/, fixRange(first)) + flags; // ranges are fixed; shorthand, V/H//, notes pass through
   }
 
   // Parse a date cell into {y, m1, d}: real Date, JS Date, or "M/D"/"M/D/YY".
@@ -96,15 +108,18 @@
     // walk staff rows under section headers
     const sections = []; let cur = null;
     for (let i = dateRowIdx + 1; i < rows.length; i++) {
-      const name = rows[i][0];
+      const name = rows[i][0].replace(/\s+/g, ' ');
       if (!name) continue;
+      if (BREAK.test(rows[i][0])) warnings.push(`Row ${i + 1} "${name}": the name has a line break; treated as a space.`);
       const sec = SECTIONS.find(([re]) => re.test(name));
       if (sec && rows[i].slice(1).every(x => !x)) { cur = [sec[1], []]; sections.push(cur); continue; }
       if (SKIP_ROW.test(name)) continue;
       // staff row
       const parts = [];
       dayCols.forEach((c, idx) => {
-        const code = normalizeCell(aoa[i] ? aoa[i][c] : '');
+        const raw = aoa[i] ? aoa[i][c] : '';
+        if (BREAK.test(s(raw))) warnings.push(`"${name}" day ${idx + 1}: the cell has a line break; treated as a space.`);
+        const code = normalizeCell(raw);
         if (code !== null) parts.push((idx + 1) + ':' + code);
       });
       if (!parts.length) { warnings.push(`"${name}" has no shifts in this period; skipped.`); continue; }
@@ -140,7 +155,8 @@
     '// Codes: 7 = 7a-730p, (7)/(8) = same shift in parentheses on the paper, 8 = 8a-430p, 3 = 3p-1130p, 11 = 11p-730a, / = requested off, V = vacation, H = holiday, Or = orientation.',
   ].join('\n');
 
-  const q = str => "'" + String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'") + "'";
+  // Backstop: whatever reaches here, the output stays a valid JS string literal.
+  const q = str => "'" + String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n').replace(/\r/g, '\\r').replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029') + "'";
 
   function serialize(periods) {
     const body = periods.map(p => {
