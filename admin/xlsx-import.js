@@ -30,6 +30,15 @@
   const s = v => (v === null || v === undefined) ? '' : String(v).trim();
   const BREAK = /[\r\n\u2028\u2029]/;
 
+  // Does a 6-hex fill colour read as red? Excel red (FF0000), dark red (C00000), the theme red
+  // (C0504D) and FF6666 pass. Pink (FFC7CE), orange (ED7D31), yellow and brown do not.
+  function isRedFill(rgb) {
+    const h = String(rgb || '').replace(/^#/, '').slice(-6);
+    if (!/^[0-9a-f]{6}$/i.test(h)) return false;
+    const r = parseInt(h.slice(0, 2), 16), g = parseInt(h.slice(2, 4), 16), b = parseInt(h.slice(4, 6), 16);
+    return r >= 0xB0 && g <= 0x70 && b <= 0x70 && r - Math.max(g, b) >= 0x50;
+  }
+
   // "2-11:30p" -> "2-1130p": the page reads 1130p, not 11:30p. A range with no a/p at all
   // that starts at 1-6 is an afternoon shift ("2-11:30" -> "2p-1130p"). Ranges that start
   // at 7 or later keep the page's own rule ("8-12" -> 8a-12p). Anything else passes through.
@@ -76,8 +85,10 @@
   const fmtRange = (a, b) => `${MONTHS[a.getMonth()]} ${a.getDate()} – ${MONTHS[b.getMonth()]} ${b.getDate()}, ${b.getFullYear()}`;
   const fmtLabel = (a, b) => `${MON3[a.getMonth()]} ${a.getDate()} – ${MON3[b.getMonth()]} ${b.getDate()}`;
 
-  function aoaToPeriod(aoa) {
+  // `fills` (optional) is a grid parallel to `aoa` holding each cell's solid-fill rgb ('' = none).
+  function aoaToPeriod(aoa, fills) {
     const warnings = [], errors = [];
+    const palette = {}; let onCallMarked = 0, redBlank = 0;
     const rows = (aoa || []).map(r => (r || []).map(s));
     if (!rows.length) { errors.push('The sheet is empty.'); return { errors, warnings }; }
 
@@ -124,7 +135,14 @@
           const flat = s(raw).replace(/\s+/g, ' ');
           if (flat.split(' ').filter(w => /\d/.test(w) && w.includes('-')).length > 1) warnings.push(`"${name}" day ${idx + 1}: the cell has two times ("${flat}"); the page shows the first and keeps the rest as a note.`);
         }
-        const code = normalizeCell(raw);
+        let code = normalizeCell(raw);
+        const fill = fills && fills[i] ? String(fills[i][c] || '').slice(-6).toUpperCase() : '';
+        if (fill) palette[fill] = (palette[fill] || 0) + 1;
+        if (isRedFill(fill)) {
+          // red fill = on call (the "*" suffix). Off, vacation and holiday cells keep no mark.
+          if (code === null) redBlank++;
+          else if (!code.includes('*') && !['/', 'V', 'H'].includes(code.replace(/[*~]/g, ''))) { code += '*'; onCallMarked++; }
+        }
         if (code !== null) parts.push((idx + 1) + ':' + code);
       });
       if (!parts.length) { warnings.push(`"${name}" has no shifts in this period; skipped.`); continue; }
@@ -139,7 +157,7 @@
       start: [start.getFullYear(), start.getMonth(), start.getDate()],
       sections,
     };
-    return { period, warnings, errors };
+    return { period, warnings, errors, fillStats: fills ? { palette, onCallMarked, redBlank } : null };
   }
 
   // Replace the period sharing this one's start date; otherwise insert. Keep the rest,
@@ -174,5 +192,5 @@
     return `${HEADER}\nexport const PERIODS = [\n${body}\n];\n`;
   }
 
-  return { aoaToPeriod, normalizeCell, mergePeriod, serialize };
+  return { aoaToPeriod, normalizeCell, mergePeriod, serialize, isRedFill };
 });

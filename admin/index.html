@@ -324,7 +324,7 @@
     if (!periods || !periods.length) { el.innerHTML = '<div class="muted" style="font-size:12.5px">No periods found.</div>'; return; }
     el.innerHTML = periods.map(p => {
       const isNew = compare && !compare.some(q => q.title === p.title);
-      const stats = `${p.people} staff · ${p.sections} sections`;
+      const stats = `${p.people} staff · ${p.sections} sections${p.onCall ? ' · ' + p.onCall + ' on call' : ''}`;
       return `<div class="period"><div class="t">${esc(p.title)}${isNew ? ' <span class="new">new</span>' : ''}</div><div class="s">${esc(stats)}</div></div>`;
     }).join('');
   }
@@ -503,12 +503,20 @@
     try {
       if (typeof window.ScheduleXlsx === 'undefined' || !window.ScheduleXlsx.aoaToPeriod) return bad('The import script did not finish loading. Hard-refresh the page (Ctrl/Cmd+Shift+R) and try again.');
       if (typeof XLSX === 'undefined') return bad('The spreadsheet reader (XLSX) did not load — a network block may be stopping it. Try again, or upload schedule-data.js instead.');
-      const wb = XLSX.read(new Uint8Array(await file.arrayBuffer()), { type: 'array' });
+      const wb = XLSX.read(new Uint8Array(await file.arrayBuffer()), { type: 'array', cellStyles: true });
       const sheet = wb.Sheets[wb.SheetNames.find(n => /schedule/i.test(n)) || wb.SheetNames[0]];
       const aoa = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: false, defval: '' });
       detail = { sheets: wb.SheetNames, sheetUsed: wb.SheetNames.find(n => wb.Sheets[n] === sheet) };
-      const out = window.ScheduleXlsx.aoaToPeriod(aoa);
+      // Solid-fill colour of every cell, in the same row/column order as aoa (red fill = on call).
+      const origin = XLSX.utils.decode_range(sheet['!ref'] || 'A1');
+      const fills = aoa.map((row, i) => row.map((_, j) => {
+        const c = sheet[XLSX.utils.encode_cell({ r: origin.s.r + i, c: origin.s.c + j })];
+        const st = c && c.s;
+        return st && st.patternType === 'solid' && st.fgColor && st.fgColor.rgb ? String(st.fgColor.rgb) : '';
+      }));
+      const out = window.ScheduleXlsx.aoaToPeriod(aoa, fills);
       detail.importWarnings = out.warnings || [];
+      detail.fillStats = out.fillStats;
       if (out.errors && out.errors.length) return bad('Could not read this spreadsheet. ' + out.errors.join(' '));
       let live = [];
       try {
@@ -556,7 +564,7 @@
       const state = r.errors.length ? 'bad' : r.ok ? 'ok' : 'warn';
       const label = r.errors.length ? 'rejected' : same ? 'same as live?' : r.warnings.length ? 'ready · warnings' : 'ready';
       let extra = '';
-      if (s.role === 'data' && r.periods) extra += `<div class="period" style="margin-top:2px">${r.periods.map(p => `<div class="t">${esc(p.title)}</div><div class="s">${p.people} staff · ${p.sections} sections</div>`).join('')}</div>`;
+      if (s.role === 'data' && r.periods) extra += `<div class="period" style="margin-top:2px">${r.periods.map(p => `<div class="t">${esc(p.title)}</div><div class="s">${p.people} staff · ${p.sections} sections${p.onCall ? ' · ' + p.onCall + ' on call' : ''}</div>`).join('')}</div>`;
       if (r.changes && r.changes.length) extra += `<div class="msg info">Prepared for the site:<ul>${r.changes.map(c => '<li>' + esc(c) + '</li>').join('')}</ul></div>`;
       if (s.log) extra += `<div class="msg info">${s.log.state === 'saving' ? '<span class="spinner"></span> Saving log…' : s.log.state === 'ok' ? `Log saved · <a href="${esc(s.log.url)}" target="_blank" rel="noopener" class="mono">view</a>` : 'Log not saved: ' + esc(s.log.message)}</div>`;
       const target = ROLES.includes(s.role) && status ? ` <span class="dim mono" style="font-size:12px">→ ${esc(status.target.paths[s.role])}</span>` : '';
