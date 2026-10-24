@@ -397,6 +397,7 @@ class Component extends DCLogic {
     const ti = words.findIndex(w => /\d/.test(w) && w.includes('-'));
     if (ti < 0) return { off: true };
     const extra = words.filter((w, i) => i !== ti).join(' ');
+    const note = extra && !/^\(.*\)$/.test(extra) ? '(' + extra + ')' : extra; // notes show in parentheses
     const [sT, eT] = words[ti].split('-');
     const s = this.parseTok(sT), e = this.parseTok(eT);
     if (!s || !e) return { off: true };
@@ -404,13 +405,13 @@ class Component extends DCLogic {
     const h24 = t => t.h % 12 + (t.ap === 'p' ? 12 : 0) + (t.mm ? +t.mm / 60 : 0);
     const sH = h24(s); let eH = h24(e); if (eH <= sH) eH += 24;
     const sL = s.label + s.ap, eL = e.label + e.ap;
-    return { sL, eL, sH, extra, oncall, time: sL + '\u2013' + eL + (extra ? ' ' + extra : '') };
+    return { sL, eL, sH, extra, oncall, time: sL + '\u2013' + eL + (note ? ' ' + note : '') };
   }
   initials(name) {
     return name.split(/[\s(]+/).filter(Boolean).slice(0,2).map(w => w[0]).join('').toUpperCase().slice(0,2);
   }
   photo(name) {
-    const map = { 'Lora': 'lorahall', 'Heather': 'heatheryoung', 'Dave': 'davefrady', 'Trista': 'tristamiller', 'Christy': 'christybailey', 'Shelby': 'shelbysmith', 'Lana': 'lanamiller', 'Rachel': 'rachelboothe', 'Bailey': 'baileyadkins', 'Savannah': 'savannahplummer', 'Linsey': 'linseyhackney', 'Krista': 'kristamorton', 'Hannah': 'hannahmartin', 'Brayden': 'braydensims', 'Taryn': 'tarynpreece', 'Baylee': 'bayleeviars', 'Barb': 'barbhutchinson', 'Brandy': 'brandybeaver', 'Cory': 'corydolan', 'Dawson': 'dawsonquick', 'Jarrod': 'jarrodmcclanahan', 'Donnie': 'donniedavis', 'Lisa': 'lisaroberts', 'Gage': 'gagebass', 'Stephany': 'stephanylundy' };
+    const map = { 'Lora': 'lorahall', 'Heather': 'heatheryoung', 'Dave': 'davefrady', 'Trista': 'tristamiller', 'Christy': 'christybailey', 'Shelby': 'shelbysmith', 'Lana': 'lanamiller', 'Rachel': 'rachelboothe', 'Bailey': 'baileyadkins', 'Savannah': 'savannahplummer', 'Linsey': 'linseyhackney', 'Krista': 'kristamorton', 'Hannah': 'hannahmartin', 'Brayden': 'braydensims', 'Taryn': 'tarynpreece', 'Baylee': 'bayleeviars', 'Barb': 'barbhutchinson', 'Brandy': 'brandybeaver', 'Cory': 'corydolan', 'Dawson': 'dawsonquick', 'Jarrod': 'jarrodmcclanahan', 'Donnie': 'donniedavis', 'Lisa': 'lisaroberts', 'Gage': 'gagebass', 'Stephany': 'stephanylundy', 'Angela': 'angelafuller' };
     const f = map[name.split(/[\s(]+/)[0]];
     return f ? "url('headshots/" + f + ".jpg')" : 'none';
   }
