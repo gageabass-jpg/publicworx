@@ -1,0 +1,370 @@
+{
+  "kind": "xlsx-import",
+  "at": "2026-10-24T00:53:14.080Z",
+  "file": {
+    "name": "Rad Schedule Oct-Nov.xlsx",
+    "size": 15403
+  },
+  "errors": [],
+  "warnings": [
+    "\"Red fill = red cell on the original printout. Transcribed from photo — verify faint entries.\" has no shifts in this period; skipped.",
+    "Period 4 (October 25 – November 21, 2026): 48 cells with a code the page cannot read (shown as requested off): Rachel day 7 \"7a-11:30p\", Hannah day 3 \"2-11:30p\", Hannah day 4 \"2-11:30p\", Hannah day 5 \"2-11:30p\", Hannah day 8 \"2-11:30\", Hannah day 9 \"2-11:30\", …."
+  ],
+  "unknownCells": [
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Rachel",
+      "day": 7,
+      "code": "7a-11:30p"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Hannah",
+      "day": 3,
+      "code": "2-11:30p"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Hannah",
+      "day": 4,
+      "code": "2-11:30p"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Hannah",
+      "day": 5,
+      "code": "2-11:30p"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Hannah",
+      "day": 8,
+      "code": "2-11:30"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Hannah",
+      "day": 9,
+      "code": "2-11:30"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Hannah",
+      "day": 12,
+      "code": "2-11:30p"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Hannah",
+      "day": 13,
+      "code": "2-11:30p"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Hannah",
+      "day": 17,
+      "code": "2-11:30p"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Hannah",
+      "day": 18,
+      "code": "2-11:30p"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Hannah",
+      "day": 20,
+      "code": "2-11:30p"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Hannah",
+      "day": 21,
+      "code": "2-11:30p"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Hannah",
+      "day": 22,
+      "code": "2-11:30p"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Hannah",
+      "day": 24,
+      "code": "2-11:30p"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Hannah",
+      "day": 25,
+      "code": "2-11:30p"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Hannah",
+      "day": 26,
+      "code": "2-11:30p"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Brayden",
+      "day": 2,
+      "code": "1-11:30p"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Brayden",
+      "day": 3,
+      "code": "1-11:30p"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Brayden",
+      "day": 4,
+      "code": "1-11:30p"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Brayden",
+      "day": 7,
+      "code": "1-11:30p"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Brayden",
+      "day": 8,
+      "code": "1-11:30p"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Brayden",
+      "day": 9,
+      "code": "1-11:30p"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Brayden",
+      "day": 12,
+      "code": "1-11:30p"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Brayden",
+      "day": 13,
+      "code": "1-11:30p"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Brayden",
+      "day": 16,
+      "code": "1-11:30p"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Brayden",
+      "day": 17,
+      "code": "1-11:30p"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Brayden",
+      "day": 19,
+      "code": "1-11:30p"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Brayden",
+      "day": 21,
+      "code": "1-11:30p"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Brayden",
+      "day": 22,
+      "code": "1-11:30"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Brayden",
+      "day": 23,
+      "code": "1-11:30"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Brayden",
+      "day": 25,
+      "code": "1-11:30p"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Brayden",
+      "day": 27,
+      "code": "1-11:30p"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Gage",
+      "day": 5,
+      "code": "11a-11:30p"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Gage",
+      "day": 6,
+      "code": "11a-11:30p"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Gage",
+      "day": 10,
+      "code": "11a-11:30p"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Gage",
+      "day": 12,
+      "code": "11a-11:30p"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Gage",
+      "day": 18,
+      "code": "11a-11:30p"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Gage",
+      "day": 20,
+      "code": "11a-11:30p"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Gage",
+      "day": 26,
+      "code": "11a-11:30p"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Gage",
+      "day": 27,
+      "code": "11a-11:30p"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Baylee V.",
+      "day": 2,
+      "code": "11a-11:30p"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Baylee V.",
+      "day": 6,
+      "code": "11a-11:30p"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Baylee V.",
+      "day": 11,
+      "code": "11a-11:30p"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Baylee V.",
+      "day": 13,
+      "code": "11a-11:30p"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Baylee V.",
+      "day": 16,
+      "code": "11a-11:30p"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Baylee V.",
+      "day": 19,
+      "code": "11a-11:30p"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Baylee V.",
+      "day": 23,
+      "code": "11a-11:30p"
+    },
+    {
+      "period": "October 25 – November 21, 2026",
+      "person": "Baylee V.",
+      "day": 24,
+      "code": "11a-11:30p"
+    }
+  ],
+  "periods": [
+    {
+      "label": "Aug 2 – 29",
+      "title": "August 2 – 29, 2026",
+      "start": [
+        2026,
+        7,
+        2
+      ],
+      "startIso": "2026-08-02",
+      "sections": 4,
+      "people": 23,
+      "cells": 361,
+      "onCall": 0
+    },
+    {
+      "label": "Aug 30 – Sep 26",
+      "title": "August 30 – September 26, 2026",
+      "start": [
+        2026,
+        7,
+        30
+      ],
+      "startIso": "2026-08-30",
+      "sections": 4,
+      "people": 25,
+      "cells": 372,
+      "onCall": 53
+    },
+    {
+      "label": "Sep 27 – Oct 24",
+      "title": "September 27 – October 24, 2026",
+      "start": [
+        2026,
+        8,
+        27
+      ],
+      "startIso": "2026-09-27",
+      "sections": 4,
+      "people": 23,
+      "cells": 375,
+      "onCall": 0
+    },
+    {
+      "label": "Oct 25 – Nov 21",
+      "title": "October 25 – November 21, 2026",
+      "start": [
+        2026,
+        9,
+        25
+      ],
+      "startIso": "2026-10-25",
+      "sections": 4,
+      "people": 23,
+      "cells": 363,
+      "onCall": 0
+    }
+  ],
+  "sheets": [
+    "Sheet1"
+  ],
+  "sheetUsed": "Sheet1",
+  "importWarnings": [
+    "\"Red fill = red cell on the original printout. Transcribed from photo — verify faint entries.\" has no shifts in this period; skipped."
+  ],
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36",
+  "savedAt": "2026-10-24T00:53:14.152Z"
+}
