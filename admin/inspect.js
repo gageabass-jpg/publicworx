@@ -65,9 +65,9 @@
   }
 
   function inspectData(src, evaluator) {
-    const errors = [], warnings = [], periods = [];
+    const errors = [], warnings = [], periods = [], unknownCells = [];
     const bytes = byteLength(src);
-    if (!src || !src.trim()) return { role: 'data', ok: false, errors: ['The file is empty.'], warnings, periods, bytes };
+    if (!src || !src.trim()) return { role: 'data', ok: false, errors: ['The file is empty.'], warnings, periods, unknownCells, bytes };
     if (bytes > MAX_BYTES) errors.push('The file is over 2 MB.');
     if (!/export\s+const\s+PERIODS\s*=/.test(src)) errors.push('No `export const PERIODS` in the file. The pages import PERIODS from schedule-data.js.');
     let P;
@@ -106,7 +106,7 @@
               const s = parseShift(tok.slice(k + 1));
               cells++;
               if (s.red) onCall++;
-              if (s.kind === 'unknown') unknown.push(`${row[0]} day ${off} "${s.code}"`);
+              if (s.kind === 'unknown') { unknown.push(`${row[0]} day ${off} "${s.code}"`); unknownCells.push({ period: title, person: row[0], day: off, code: s.code }); }
             });
           });
         });
@@ -123,7 +123,7 @@
         }
       }
     }
-    return { role: 'data', ok: errors.length === 0, errors, warnings, periods, bytes };
+    return { role: 'data', ok: errors.length === 0, errors, warnings, periods, unknownCells, bytes };
   }
 
   // ---------- pages ----------
