@@ -38,6 +38,15 @@
     return { sL, eL, sH, eH, extra, oncall, time: sL + '\u2013' + eL + (note ? ' ' + note : '') };
   }
 
+  // Where a normal shift happens. A note of SF (St. Francis / Thomas Orthopedic) or UC (University of
+  // Charleston, without TMH) means another site, and we do not know that address, so no LOCATION.
+  const HOSPITAL = 'Thomas Memorial Hospital, 4605 MacCorkle Ave SW, South Charleston, WV 25309';
+  function placeFor(p) {
+    const w = String(p.extra || '').toUpperCase().split(/\s+/);
+    if (w.includes('SF') || (w.includes('UC') && !w.includes('TMH'))) return '';
+    return HOSPITAL;
+  }
+
   const clean = nm => String(nm).replace(' (traveler)', '');
   const slug = nm => String(nm).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
@@ -69,7 +78,7 @@
           if (from !== null && end.getTime() <= from) return;
           const uid = 'tmh-' + slug(name) + '-' + per.start.join('-') + '-' + o + '@schedule.exchange';
           if (seen[uid]) return; seen[uid] = true;
-          out.push({ uid, start, end, oncall: p.oncall, time: p.time });
+          out.push({ uid, start, end, oncall: p.oncall, time: p.time, place: placeFor(p) });
         });
       }));
     });
@@ -90,7 +99,9 @@
     shifts(periods, name, opts).forEach(s => {
       lines.push('BEGIN:VEVENT', 'UID:' + s.uid, 'DTSTAMP:' + stamp, 'DTSTART:' + local(s.start), 'DTEND:' + local(s.end),
         'SUMMARY:' + esc('TMH Radiology' + (s.oncall ? ' \u2013 On call' : '')),
-        'DESCRIPTION:' + esc(s.time + (s.oncall ? ' \u00b7 On call' : '')), 'END:VEVENT');
+        'DESCRIPTION:' + esc(s.time + (s.oncall ? ' \u00b7 On call' : '')));
+      if (s.place) lines.push('LOCATION:' + esc(s.place));
+      lines.push('END:VEVENT');
     });
     lines.push('END:VCALENDAR');
     return lines.map(fold).join('\r\n') + '\r\n';
