@@ -13,6 +13,9 @@
 //   SCHEDULE_DATA_PATH  optional. Defaults to "schedule-data.js".
 //   DESKTOP_PAGE_PATH   optional. Defaults to "index.html".
 //   MOBILE_PAGE_PATH    optional. Defaults to "mobile.html".
+//   LOG_BRANCH          optional. Branch that stores upload logs. Defaults to "import-logs".
+//                       Created from GITHUB_BRANCH on the first log. Logs never touch the
+//                       live branch, so saving one does not redeploy the site.
 
 'use strict';
 
@@ -22,6 +25,8 @@ const inspect = require('../admin/inspect.js');
 
 const HISTORY_LIMIT = 12;
 const ROLES = ['data', 'desktop', 'mobile'];
+const LOG_DIR = 'logs';
+const LOG_MAX_BYTES = 512 * 1024;
 
 function config() {
   const owner = process.env.VERCEL_GIT_REPO_OWNER || 'gageabass-jpg';
@@ -34,6 +39,7 @@ function config() {
       desktop: process.env.DESKTOP_PAGE_PATH || 'index.html',
       mobile: process.env.MOBILE_PAGE_PATH || 'mobile.html',
     },
+    logBranch: process.env.LOG_BRANCH || 'import-logs',
     token: process.env.GITHUB_TOKEN || '',
     password: process.env.ADMIN_PASSWORD || '',
     // Hide commits before the schedule project began (the repo's earlier life as the
@@ -224,6 +230,36 @@ async function publish(cfg, body) {
   return { code: 200, payload: { ok: true, commit, reports } };
 }
 
+// ---------- upload logs ----------
+// One JSON file per log, on its own branch: no read-modify-write races, no redeploys.
+async function ensureLogBranch(cfg) {
+  const enc = encodeURIComponent(cfg.logBranch);
+  try { await gh(cfg, 'GET', `/repos/${cfg.repo}/git/ref/heads/${enc}`); return; }
+  catch (err) { if (err.status !== 404) throw err; }
+  const base = await gh(cfg, 'GET', `/repos/${cfg.repo}/git/ref/heads/${encodeURIComponent(cfg.branch)}`);
+  try { await gh(cfg, 'POST', `/repos/${cfg.repo}/git/refs`, { ref: `refs/heads/${cfg.logBranch}`, sha: base.object.sha }); }
+  catch (err) { if (err.status !== 422) throw err; } // 422: another request made it first
+}
+
+async function saveLog(cfg, body) {
+  const entry = body.entry;
+  if (!entry || typeof entry !== 'object' || Array.isArray(entry)) return { code: 400, payload: { error: 'A log entry object is required.' } };
+  const kind = /^[a-z0-9-]{1,30}$/.test(String(body.kind || entry.kind || '')) ? String(body.kind || entry.kind) : 'upload';
+  const stamped = { ...entry, kind, savedAt: new Date().toISOString() };
+  const text = JSON.stringify(stamped, null, 2) + '\n';
+  if (Buffer.byteLength(text, 'utf8') > LOG_MAX_BYTES) return { code: 413, payload: { error: 'The log is over 512 KB.' } };
+  await ensureLogBranch(cfg);
+  const name = `${stamped.savedAt.replace(/[:.]/g, '-')}-${kind}-${crypto.randomBytes(2).toString('hex')}.json`;
+  const path = `${LOG_DIR}/${name}`;
+  const res = await gh(cfg, 'PUT', `/repos/${cfg.repo}/contents/${path}`, {
+    message: `Log ${kind}: ${String(entry.file && entry.file.name || name).slice(0, 80)}`,
+    content: Buffer.from(text, 'utf8').toString('base64'),
+    branch: cfg.logBranch,
+  });
+  const url = (res && res.content && res.content.html_url) || `https://github.com/${cfg.repo}/blob/${cfg.logBranch}/${path}`;
+  return { code: 200, payload: { ok: true, log: { path, branch: cfg.logBranch, url } } };
+}
+
 async function restore(cfg, ref) {
   const files = {};
   const reports = {};
@@ -257,6 +293,7 @@ async function handler(req, res) {
       const body = await readBody(req);
       const action = body.op || op;
       if (action === 'publish') { const r = await publish(cfg, body); return send(res, r.code, r.payload); }
+      if (action === 'log') { const r = await saveLog(cfg, body); return send(res, r.code, r.payload); }
       if (action === 'restore') {
         const ref = String(body.ref || '');
         if (!/^[0-9a-f]{7,40}$/i.test(ref)) return send(res, 400, { error: 'A commit SHA is required.' });

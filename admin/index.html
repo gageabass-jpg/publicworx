@@ -486,6 +486,7 @@
         const key = ROLES.includes(role) ? role : 'bad:' + file.name;
         staged[key] = { name: file.name, text, report, role };
         renderStaged();
+        if (report.errors.length || report.warnings.length) logUpload(staged[key], file, 'file-upload', { role });
       };
       reader.readAsText(file);
     });
@@ -494,14 +495,20 @@
   // .xlsx grid schedule -> schedule-data.js text, merged into the live periods,
   // then staged exactly like a dropped schedule-data.js.
   async function takeXlsx(file) {
-    const bad = msg => { staged['bad:' + file.name] = { name: file.name, text: '', role: 'unknown', report: { role: 'data', ok: false, errors: [msg], warnings: [], bytes: 0 } }; renderStaged(); };
+    let detail = {};
+    const bad = msg => {
+      const item = { name: file.name, text: '', role: 'unknown', report: { role: 'data', ok: false, errors: [msg], warnings: [], bytes: 0 } };
+      staged['bad:' + file.name] = item; renderStaged(); logUpload(item, file, 'xlsx-import', detail);
+    };
     try {
       if (typeof window.ScheduleXlsx === 'undefined' || !window.ScheduleXlsx.aoaToPeriod) return bad('The import script did not finish loading. Hard-refresh the page (Ctrl/Cmd+Shift+R) and try again.');
       if (typeof XLSX === 'undefined') return bad('The spreadsheet reader (XLSX) did not load — a network block may be stopping it. Try again, or upload schedule-data.js instead.');
       const wb = XLSX.read(new Uint8Array(await file.arrayBuffer()), { type: 'array' });
       const sheet = wb.Sheets[wb.SheetNames.find(n => /schedule/i.test(n)) || wb.SheetNames[0]];
       const aoa = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: false, defval: '' });
+      detail = { sheets: wb.SheetNames, sheetUsed: wb.SheetNames.find(n => wb.Sheets[n] === sheet) };
       const out = window.ScheduleXlsx.aoaToPeriod(aoa);
+      detail.importWarnings = out.warnings || [];
       if (out.errors && out.errors.length) return bad('Could not read this spreadsheet. ' + out.errors.join(' '));
       let live = [];
       try {
@@ -511,9 +518,28 @@
       const text = window.ScheduleXlsx.serialize(window.ScheduleXlsx.mergePeriod(live, out.period));
       const report = window.ScheduleInspect.inspect('data', text, evaluator);
       report.warnings = (out.warnings || []).concat(report.warnings || []);
-      staged['data'] = { name: file.name + ' → schedule-data.js', text, report, role: 'data' };
+      const item = staged['data'] = { name: file.name + ' → schedule-data.js', text, report, role: 'data' };
       renderStaged();
+      logUpload(item, file, 'xlsx-import', detail);
     } catch (e) { bad((e && e.message) || String(e)); }
+  }
+
+  // ---------- upload logs ----------
+  // Saves the full report (nothing truncated) to the import-logs branch so a bad upload
+  // can be debugged later. Never blocks the upload: a failed save only shows a note.
+  async function logUpload(item, file, kind, detail) {
+    const r = item.report;
+    const entry = {
+      kind, at: new Date().toISOString(),
+      file: { name: file.name, size: file.size },
+      errors: r.errors || [], warnings: r.warnings || [],
+      unknownCells: r.unknownCells || [], periods: r.periods || [],
+      ...detail, userAgent: navigator.userAgent,
+    };
+    item.log = { state: 'saving' }; renderStaged();
+    try { item.log = { state: 'ok', url: (await api('POST', 'log', { op: 'log', kind, entry })).log.url }; }
+    catch (err) { item.log = { state: 'bad', message: err.message }; }
+    renderStaged();
   }
 
   function renderStaged() {
@@ -530,6 +556,7 @@
       let extra = '';
       if (s.role === 'data' && r.periods) extra += `<div class="period" style="margin-top:2px">${r.periods.map(p => `<div class="t">${esc(p.title)}</div><div class="s">${p.people} staff · ${p.sections} sections</div>`).join('')}</div>`;
       if (r.changes && r.changes.length) extra += `<div class="msg info">Prepared for the site:<ul>${r.changes.map(c => '<li>' + esc(c) + '</li>').join('')}</ul></div>`;
+      if (s.log) extra += `<div class="msg info">${s.log.state === 'saving' ? '<span class="spinner"></span> Saving log…' : s.log.state === 'ok' ? `Log saved · <a href="${esc(s.log.url)}" target="_blank" rel="noopener" class="mono">view</a>` : 'Log not saved: ' + esc(s.log.message)}</div>`;
       const target = ROLES.includes(s.role) && status ? ` <span class="dim mono" style="font-size:12px">→ ${esc(status.target.paths[s.role])}</span>` : '';
       const icon = ICON[s.role] || ICON.data;
       return `<div class="frow">

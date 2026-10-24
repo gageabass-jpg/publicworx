@@ -26,6 +26,14 @@ The main schedule views need NO credentials. The admin console (`/admin`) needs:
 - `GITHUB_TOKEN` — fine-grained token with Contents: read+write on `gageabass-jpg/publicworx`
 Without these, `/api/schedule?op=health` returns `configured: {password: false, token: false}` and the admin console shows "not configured."
 
+## Upload logs
+Every `.xlsx` upload in `/admin` (and any other upload with warnings or errors) saves a full, untruncated log. The console does this on its own and shows a "Log saved · view" link on the staged file.
+- Where: branch `import-logs` (override with `LOG_BRANCH`), one file per upload at `logs/<timestamp>-<kind>-<id>.json`. The branch is made from `main` on the first log. Logs never touch `main`, so they do not redeploy the site.
+- What: file name and size, sheet names, every error and warning, `unknownCells` (period, person, day, raw code for each cell the page cannot read), and the period summary. No grid dump.
+- How: `POST /api/schedule?op=log` (password required) in `api/schedule.js`; limit 512 KB per log.
+- Privacy: the repo is public, so the logs are public. They hold staff names and shift codes, the same data the public schedule shows.
+- Read them with the GitHub tools: list `logs/` on `import-logs`.
+
 ## Verification
 - `curl localhost:3000/` → desktop schedule HTML (200)
 - `curl localhost:3000/mobile.html` → mobile schedule HTML (200)
