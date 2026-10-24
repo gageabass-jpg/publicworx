@@ -118,7 +118,12 @@
       const parts = [];
       dayCols.forEach((c, idx) => {
         const raw = aoa[i] ? aoa[i][c] : '';
-        if (BREAK.test(s(raw))) warnings.push(`"${name}" day ${idx + 1}: the cell has a line break; treated as a space.`);
+        // A notation on a second line is the same as one on the same line ("7a-730p SP"): no warning.
+        // Two times in one cell is different: the page keeps the first and shows the rest as a note.
+        if (BREAK.test(s(raw))) {
+          const flat = s(raw).replace(/\s+/g, ' ');
+          if (flat.split(' ').filter(w => /\d/.test(w) && w.includes('-')).length > 1) warnings.push(`"${name}" day ${idx + 1}: the cell has two times ("${flat}"); the page shows the first and keeps the rest as a note.`);
+        }
         const code = normalizeCell(raw);
         if (code !== null) parts.push((idx + 1) + ':' + code);
       });
