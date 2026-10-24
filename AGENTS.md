@@ -6,6 +6,7 @@ A static site (no build step) showing the X-ray department's monthly staff sched
 ## Architecture
 - `index.html` — desktop schedule grid (renders via `support.js`, a lightweight DC runtime that uses React/ReactDOM from CDN)
 - `mobile.html` — mobile calendar/card view (same runtime + data)
+- `mobile.html` also has an "Add to calendar" button (header, left of the date-range button). It lists every name in the data. Tapping one builds a `.ics` file in the page (`icsShifts`, `icsText`, `downloadIcs`) with that person's shifts from today on, and downloads it. Events use floating local times and stable IDs (`tmh-<name>-<period start>-<day>@schedule.exchange`). Approved removals are skipped. It is a snapshot, not a live subscription.
 - `brand.html` — brand sheet (standalone)
 - `admin/index.html` — admin console for publishing schedule changes to GitHub
 - `support.js` — generated DC runtime (do not edit; renders the HTML templates)

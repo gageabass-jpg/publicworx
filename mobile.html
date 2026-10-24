@@ -40,6 +40,11 @@
             </div>
           </div>
         </div>
+        <div style="position:absolute;top:12px;right:70px;z-index:40">
+          <button onClick="{{ openIcs }}" title="Add my shifts to my calendar" style="all:unset;cursor:pointer;width:44px;height:44px;border-radius:14px;background:#f4f4f2;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;flex:none" style-hover="background:#ececea">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2.5"></rect><path d="M3 9h18"></path><path d="M8 2.5v4"></path><path d="M16 2.5v4"></path><path d="M12 12v5"></path><path d="M9.5 14.8l2.5 2.5 2.5-2.5"></path></svg>
+          </button>
+        </div>
         <div style="display:flex;flex-direction:column;align-items:center;gap:20px;position:absolute;top:12px;right:16px;z-index:40">
           <button onClick="{{ openPicker }}" title="Change date range" style="all:unset;cursor:pointer;width:44px;height:44px;border-radius:14px;background:#f4f4f2;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;flex:none" style-hover="background:#ececea">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2.5"></rect><path d="M3 9h18"></path><path d="M8 2.5v4"></path><path d="M16 2.5v4"></path></svg>
@@ -251,6 +256,28 @@
             </div>
           </div>
         </sc-if>
+        <sc-if value="{{ icsOpen }}" hint-placeholder-val="{{ false }}">
+          <div onClick="{{ closeIcs }}" style="position:absolute;inset:0;z-index:20;background:rgba(244,244,242,0.55);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);animation:ss-fade .18s ease"></div>
+          <div style="position:absolute;left:18px;right:18px;top:70px;z-index:21;background:#ffffff;border-radius:24px;overflow:hidden;box-shadow:0 2px 6px rgba(17,17,17,0.08), 0 30px 70px rgba(17,17,17,0.24);animation:ss-pop .22s cubic-bezier(.2,.8,.3,1.1)">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 18px 4px 18px">
+              <span style="font-size:16px;font-weight:700;letter-spacing:-0.01em">Add to my calendar</span>
+              <button onClick="{{ closeIcs }}" style="all:unset;cursor:pointer;width:30px;height:30px;border-radius:50%;background:#f4f4f2;display:inline-flex;align-items:center;justify-content:center" style-hover="background:#ececea">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+              </button>
+            </div>
+            <div style="padding:0 18px 10px 18px;font-size:12px;line-height:1.4;color:#9a9a97">Pick your name to download your upcoming shifts. It is a snapshot. Download again after the schedule changes.</div>
+            <div class="nosb" style="max-height:56vh;overflow-y:auto;padding:0 12px 12px 12px">
+              <sc-for list="{{ icsList }}" as="ic" hint-placeholder-count="6">
+                <div onClick="{{ ic.pick }}" style="display:flex;align-items:center;gap:12px;padding:12px 12px;border-radius:14px;cursor:pointer;opacity:{{ ic.rowOpacity }}" style-hover="background:#f4f4f2">
+                  <span style="display:flex;flex-direction:column;flex:1;min-width:0">
+                    <span style="font-size:14.5px;font-weight:600;line-height:1.2">{{ ic.name }}</span>
+                    <span style="font-size:11.5px;color:#9a9a97;line-height:1.3">{{ ic.sub }}</span>
+                  </span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
         <sc-if value="{{ isExpanded }}" hint-placeholder-val="{{ false }}">
           <div onClick="{{ collapse }}" style="position:absolute;inset:0;z-index:10;background:rgba(244,244,242,0.55);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);animation:ss-fade .18s ease"></div>
           <div ref="{{ setOverlayRef }}" style="position:absolute;left:18px;right:18px;top:64px;bottom:60px;z-index:11;will-change:transform;perspective:{{ persp }}">
@@ -343,7 +370,7 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;showRail&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Layout&quot;},&quot;scaleFalloff&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:0.03,&quot;min&quot;:0,&quot;max&quot;:0.08,&quot;step&quot;:0.01,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Motion&quot;}}">
 class Component extends DCLogic {
-  state = { periods: null, idx: 0, active: 0, expanded: null, flipped: false, flipping: false, flipAnim: false, flipDeg: 0, overlay: {}, railOpen: false, pickerOpen: false, todayFocus: false, todayMenuOpen: false, headerLogo: false, composerOpen: false, composerSent: false, cal: null, rangeStart: null, rangeEnd: null, scrubbing: false };
+  state = { periods: null, idx: 0, active: 0, expanded: null, flipped: false, flipping: false, flipAnim: false, flipDeg: 0, overlay: {}, railOpen: false, pickerOpen: false, todayFocus: false, todayMenuOpen: false, headerLogo: false, composerOpen: false, composerSent: false, cal: null, rangeStart: null, rangeEnd: null, scrubbing: false, icsOpen: false };
   cards = []; wraps = []; railRows = [];
   componentWillUnmount() { clearInterval(this._logoTimer); }
   componentDidMount() {
@@ -405,7 +432,63 @@ class Component extends DCLogic {
     const h24 = t => t.h % 12 + (t.ap === 'p' ? 12 : 0) + (t.mm ? +t.mm / 60 : 0);
     const sH = h24(s); let eH = h24(e); if (eH <= sH) eH += 24;
     const sL = s.label + s.ap, eL = e.label + e.ap;
-    return { sL, eL, sH, extra, oncall, time: sL + '\u2013' + eL + (note ? ' ' + note : '') };
+    return { sL, eL, sH, eH, extra, oncall, time: sL + '\u2013' + eL + (note ? ' ' + note : '') };
+  }
+  // ---- "Add to calendar": build a .ics file for one person, in the page, from the loaded schedule ----
+  icsSlug(nm) { return nm.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
+  icsShifts(nm) {
+    const out = [], seen = {}, today = this.today();
+    this.state.periods.forEach(per => {
+      const s0 = new Date(...per.start);
+      per.sections.forEach(([, rows]) => rows.forEach(([name, spec]) => {
+        if (name.replace(' (traveler)', '') !== nm) return;
+        spec.split(',').forEach(ent => {
+          const i = ent.indexOf(':'); const o = +ent.slice(0, i);
+          const p = this.parseCode(ent.slice(i + 1));
+          if (p.off || p.vac || p.hol || p.orient) return;
+          if (this.state.overlay[per.title + '||' + o + '||' + nm] === 'approved') return;
+          const start = new Date(s0.getFullYear(), s0.getMonth(), s0.getDate() + o - 1, 0, Math.round(p.sH * 60));
+          const end = new Date(s0.getFullYear(), s0.getMonth(), s0.getDate() + o - 1, 0, Math.round(p.eH * 60));
+          if (end <= today) return;
+          const uid = 'tmh-' + this.icsSlug(nm) + '-' + per.start.join('-') + '-' + o + '@schedule.exchange';
+          if (seen[uid]) return; seen[uid] = true;
+          out.push({ uid, start, end, oncall: p.oncall, time: p.time });
+        });
+      }));
+    });
+    return out.sort((a, b) => a.start - b.start);
+  }
+  icsText(nm) {
+    const pad = n => String(n).padStart(2, '0');
+    const local = d => d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()) + 'T' + pad(d.getHours()) + pad(d.getMinutes()) + '00';
+    const esc = x => String(x).replace(/\\/g, '\\\\').replace(/;/g, '\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n');
+    const fold = l => { let o = '', r = l; while (r.length > 60) { o += r.slice(0, 60) + '\r\n '; r = r.slice(60); } return o + r; };
+    const n = new Date();
+    const stamp = n.getUTCFullYear() + pad(n.getUTCMonth() + 1) + pad(n.getUTCDate()) + 'T' + pad(n.getUTCHours()) + pad(n.getUTCMinutes()) + pad(n.getUTCSeconds()) + 'Z';
+    const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//TMH Radiology Schedule//EN', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH', 'X-WR-CALNAME:' + esc('TMH Radiology \u2013 ' + nm)];
+    this.icsShifts(nm).forEach(s => {
+      lines.push('BEGIN:VEVENT', 'UID:' + s.uid, 'DTSTAMP:' + stamp, 'DTSTART:' + local(s.start), 'DTEND:' + local(s.end),
+        'SUMMARY:' + esc('TMH Radiology' + (s.oncall ? ' \u2013 On call' : '')),
+        'DESCRIPTION:' + esc(s.time + (s.oncall ? ' \u00b7 On call' : '')), 'END:VEVENT');
+    });
+    lines.push('END:VCALENDAR');
+    return lines.map(fold).join('\r\n') + '\r\n';
+  }
+  downloadIcs(nm) {
+    const url = URL.createObjectURL(new Blob([this.icsText(nm)], { type: 'text/calendar;charset=utf-8' }));
+    const a = document.createElement('a');
+    a.href = url; a.download = 'tmh-shifts-' + this.icsSlug(nm) + '.ics';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+    this.setState({ icsOpen: false });
+  }
+  icsList() {
+    const names = {};
+    this.state.periods.forEach(per => per.sections.forEach(([, rows]) => rows.forEach(([name]) => { names[name.replace(' (traveler)', '')] = true; })));
+    return Object.keys(names).sort((a, b) => a.localeCompare(b)).map(nm => {
+      const n = this.icsShifts(nm).length;
+      return { name: nm, sub: n ? n + ' upcoming shift' + (n === 1 ? '' : 's') : 'No upcoming shifts', rowOpacity: n ? '1' : '0.45', pick: () => { if (n) this.downloadIcs(nm); } };
+    });
   }
   initials(name) {
     return name.split(/[\s(]+/).filter(Boolean).slice(0,2).map(w => w[0]).join('').toUpperCase().slice(0,2);
@@ -484,7 +567,7 @@ class Component extends DCLogic {
         reportDiscrepancy: () => {}, closeComposer: () => {}, sendComposer: () => {}, setComposerRef: () => {}, setComposerBackdrop: () => {}, setNameRef: () => {}, setMsgRef: () => {},
         monthLabel: '', calCells: [], rangeLabel: 'Select date(s)', weekdayLetters: ['S','M','T','W','T','F','S'], calPrev: () => {}, calNext: () => {},
         todayPressStart: () => {}, todayPressEnd: () => {}, todayPressCancel: () => {}, closeTodayMenu: () => {},
-        openPicker: () => {}, closePicker: () => {}, periodShort: 'Loading\u2026',
+        openPicker: () => {}, closePicker: () => {}, icsOpen: false, openIcs: () => {}, closeIcs: () => {}, icsList: [], periodShort: 'Loading\u2026',
         togglePeriod: () => {}, setScrollRef: el => { this.scroller = el; }, setRailRef: () => {}, scrubbing: false, scrubLabel: '', scrubCount: '', railDown: () => {}, railMove: () => {}, railUp: () => {} };
     }
     const per = st.periods[st.idx];
@@ -608,6 +691,10 @@ class Component extends DCLogic {
       pickerOpen: st.pickerOpen,
       openPicker: () => this.setState({ pickerOpen: true }),
       closePicker: () => this.setState({ pickerOpen: false }),
+      icsOpen: st.icsOpen,
+      openIcs: () => this.setState({ icsOpen: true }),
+      closeIcs: () => this.setState({ icsOpen: false }),
+      icsList: this.icsList(),
       periodShort: fmtR(base) + ' \u2013 ' + fmtR(endD),
       isExpanded: st.expanded != null,      exp: exp || { num: '', weekday: '', monthYear: '', isToday: false, countLabel: '', empty: true, staff: [] },
       frontVis: (!st.flipped || st.flipping) ? 'visible' : 'hidden',
