@@ -514,7 +514,7 @@
         const st = c && c.s;
         return st && st.patternType === 'solid' && st.fgColor && st.fgColor.rgb ? String(st.fgColor.rgb) : '';
       }));
-      const out = window.ScheduleXlsx.aoaToPeriod(aoa, fills);
+      const out = window.ScheduleXlsx.aoaToPeriod(aoa, fills, { name: file.name });
       detail.importWarnings = out.warnings || [];
       detail.fillStats = out.fillStats;
       if (out.errors && out.errors.length) return bad('Could not read this spreadsheet. ' + out.errors.join(' '));
