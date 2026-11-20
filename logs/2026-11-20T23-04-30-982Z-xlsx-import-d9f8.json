@@ -1,0 +1,101 @@
+{
+  "kind": "xlsx-import",
+  "at": "2026-11-20T23:04:30.850Z",
+  "file": {
+    "name": "Rad Schedule (Nov 22 to Dec 19).xlsx",
+    "size": 16063
+  },
+  "errors": [],
+  "warnings": [
+    "No 4-digit year in the sheet. \"Sun 11/22\" is a Sunday in 2026, so the period starts then."
+  ],
+  "unknownCells": [],
+  "periods": [
+    {
+      "label": "Aug 2 – 29",
+      "title": "August 2 – 29, 2026",
+      "start": [
+        2026,
+        7,
+        2
+      ],
+      "startIso": "2026-08-02",
+      "sections": 4,
+      "people": 23,
+      "cells": 361,
+      "onCall": 0
+    },
+    {
+      "label": "Aug 30 – Sep 26",
+      "title": "August 30 – September 26, 2026",
+      "start": [
+        2026,
+        7,
+        30
+      ],
+      "startIso": "2026-08-30",
+      "sections": 4,
+      "people": 25,
+      "cells": 372,
+      "onCall": 53
+    },
+    {
+      "label": "Sep 27 – Oct 24",
+      "title": "September 27 – October 24, 2026",
+      "start": [
+        2026,
+        8,
+        27
+      ],
+      "startIso": "2026-09-27",
+      "sections": 4,
+      "people": 23,
+      "cells": 375,
+      "onCall": 0
+    },
+    {
+      "label": "Oct 25 – Nov 21",
+      "title": "October 25 – November 21, 2026",
+      "start": [
+        2026,
+        9,
+        25
+      ],
+      "startIso": "2026-10-25",
+      "sections": 4,
+      "people": 23,
+      "cells": 363,
+      "onCall": 83
+    },
+    {
+      "label": "Nov 22 – Dec 19",
+      "title": "November 22 – December 19, 2026",
+      "start": [
+        2026,
+        10,
+        22
+      ],
+      "startIso": "2026-11-22",
+      "sections": 4,
+      "people": 25,
+      "cells": 386,
+      "onCall": 24
+    }
+  ],
+  "sheets": [
+    "Sheet1"
+  ],
+  "sheetUsed": "Sheet1",
+  "importWarnings": [
+    "No 4-digit year in the sheet. \"Sun 11/22\" is a Sunday in 2026, so the period starts then."
+  ],
+  "fillStats": {
+    "palette": {
+      "FF0000": 24
+    },
+    "onCallMarked": 24,
+    "redBlank": 0
+  },
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36",
+  "savedAt": "2026-11-20T23:04:30.982Z"
+}
