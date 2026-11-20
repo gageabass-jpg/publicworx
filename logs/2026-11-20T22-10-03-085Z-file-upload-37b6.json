@@ -1,0 +1,17 @@
+{
+  "kind": "file-upload",
+  "at": "2026-11-20T22:10:02.982Z",
+  "file": {
+    "name": "13 November 22-December 19, 2026 - Copy.docx",
+    "size": 143014
+  },
+  "errors": [
+    "Not a schedule file. Drop schedule-data.js, the desktop page, or the mobile page."
+  ],
+  "warnings": [],
+  "unknownCells": [],
+  "periods": [],
+  "role": "unknown",
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36",
+  "savedAt": "2026-11-20T22:10:03.085Z"
+}
