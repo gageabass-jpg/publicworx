@@ -1,0 +1,21 @@
+{
+  "kind": "xlsx-import",
+  "at": "2026-11-20T22:51:52.290Z",
+  "file": {
+    "name": "Rad Schedule (Nov 22 to Dec 19).xlsx",
+    "size": 16063
+  },
+  "errors": [
+    "Could not read this spreadsheet. Could not read the first date cell (\"Sun 11/22\")."
+  ],
+  "warnings": [],
+  "unknownCells": [],
+  "periods": [],
+  "sheets": [
+    "Sheet1"
+  ],
+  "sheetUsed": "Sheet1",
+  "importWarnings": [],
+  "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36",
+  "savedAt": "2026-11-20T22:51:52.363Z"
+}
